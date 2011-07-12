@@ -1,0 +1,10 @@
+<package>
+  <description brief="my_gazebo_worlds">
+     my_gazebo_worlds is a collection of gazebo world and model files, placed in a package to allow
+     them to be found using package-relative paths.
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+</package>
+
+

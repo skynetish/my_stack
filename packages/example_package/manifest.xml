@@ -1,0 +1,14 @@
+<package>
+  <description brief="example_package">
+
+     example_package
+
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/example_package</url>
+
+</package>
+
+

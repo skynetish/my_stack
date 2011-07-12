@@ -1,0 +1,9 @@
+<stack>
+  <description brief="example_stack">example_stack</description>
+  <author>Maintained by Kevin LeBlanc</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/example_stack</url>
+  <depend stack="ros" />
+
+</stack>
