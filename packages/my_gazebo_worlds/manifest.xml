@@ -5,6 +5,9 @@
   </description>
   <author>Kevin LeBlanc</author>
   <license>BSD</license>
+
+  <depend package="gazebo"/>
+  <export>
+    <gazebo gazebo_media_path="${prefix}" />
+  </export>
 </package>
-
-
