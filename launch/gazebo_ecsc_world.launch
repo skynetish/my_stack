@@ -10,7 +10,7 @@
     name="spawn_walls"
     pkg="gazebo"
     type="spawn_model"
-    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/peishome.model"
+    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/ecsc.model"
     respawn="false"
     output="screen"
   />
