@@ -77,13 +77,13 @@
         <normal>0 0 1</normal>
         <size>100 100</size>
         <segments>10 10</segments>
-        <uvTile>100 100</uvTile>
+        <uvTile>200 400</uvTile>
         <material>Gazebo/GrayGrid</material>
       </geom:plane>
     </body:plane>
   </model:physical>
 
-  <model:renderable name="light">
+  <model:renderable name="light1">
     <xyz>0.0 0.0 10</xyz>
     <rpy>0.0 0.0 0</rpy>
     <enableGravity>false</enableGravity>
@@ -92,7 +92,55 @@
       <diffuseColor>0.8 0.8 0.8</diffuseColor>
       <specularColor>.1 .1 .1</specularColor>
       <attenuation>0.2 0.1 0</attenuation>
-      <range>100</range>
+      <range>25</range>
+    </light>
+  </model:renderable>
+  <model:renderable name="light2">
+    <xyz>25.0 25.0 10</xyz>
+    <rpy>0.0 0.0 0</rpy>
+    <enableGravity>false</enableGravity>
+    <light>
+      <type>point</type>
+      <diffuseColor>0.8 0.8 0.8</diffuseColor>
+      <specularColor>.1 .1 .1</specularColor>
+      <attenuation>0.2 0.1 0</attenuation>
+      <range>25</range>
+    </light>
+  </model:renderable>
+  <model:renderable name="light3">
+    <xyz>-25.0 25.0 10</xyz>
+    <rpy>0.0 0.0 0</rpy>
+    <enableGravity>false</enableGravity>
+    <light>
+      <type>point</type>
+      <diffuseColor>0.8 0.8 0.8</diffuseColor>
+      <specularColor>.1 .1 .1</specularColor>
+      <attenuation>0.2 0.1 0</attenuation>
+      <range>25</range>
+    </light>
+  </model:renderable>
+  <model:renderable name="light4">
+    <xyz>25.0 -25.0 10</xyz>
+    <rpy>0.0 0.0 0</rpy>
+    <enableGravity>false</enableGravity>
+    <light>
+      <type>point</type>
+      <diffuseColor>0.8 0.8 0.8</diffuseColor>
+      <specularColor>.1 .1 .1</specularColor>
+      <attenuation>0.2 0.1 0</attenuation>
+      <range>25</range>
+    </light>
+  </model:renderable>
+  <model:renderable name="light5">
+    <xyz>-25.0 -25.0 10</xyz>
+    <rpy>0.0 0.0 0</rpy>
+    <enableGravity>false</enableGravity>
+    <light>
+      <type>point</type>
+      <diffuseColor>0.8 0.8 0.8</diffuseColor>
+      <specularColor>.1 .1 .1</specularColor>
+      <attenuation>0.2 0.1 0</attenuation>
+      <range>25</range>
     </light>
   </model:renderable>
 

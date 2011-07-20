@@ -12,7 +12,7 @@
       <height>2.0</height>
       <scale>0.05</scale>
       <offset>0 0 0</offset>
-      <material>Gazebo/Rocky</material>
+      <material>Gazebo/LightWood</material>
     </geom:map>
   </body:map>
 </model:physical>

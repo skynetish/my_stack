@@ -1,0 +1,7 @@
+<material>Gazebo/White</material>
+<material>Gazebo/WoodFloor</material>
+<material>Gazebo/LightWood</material>
+<material>Gazebo/CeilingTiled</material>
+<material>Gazebo/GrayGrid</material>
+<material>Gazebo/Rocky</material>
+<material>Gazebo/Rockwall</material>
