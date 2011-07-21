@@ -1,0 +1,40 @@
+<launch>
+
+  <!-- Start the Gazebo simulator with an empty world -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo.launch" >
+    <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world" />
+  </include>
+
+  <!-- Spawn walls -->
+  <node
+    name="spawn_walls"
+    pkg="gazebo"
+    type="spawn_model"
+    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/ecsc.model"
+    respawn="false"
+    output="screen"
+  />
+
+  <!-- Spawn robot -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_robot.launch" >
+    <arg name="namespace" value="robot1" />
+    <arg name="x"         value="2" />
+    <arg name="y"         value="2" />
+    <arg name="z"         value="0" />
+    <arg name="roll"      value="0" />
+    <arg name="pitch"     value="0" />
+    <arg name="yaw"       value="0" />
+  </include>
+
+  <!-- Spawn robot -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_robot.launch" >
+    <arg name="namespace" value="robot2" />
+    <arg name="x"         value="3" />
+    <arg name="y"         value="3" />
+    <arg name="z"         value="0" />
+    <arg name="roll"      value="0" />
+    <arg name="pitch"     value="0" />
+    <arg name="yaw"       value="0" />
+  </include>
+
+</launch>

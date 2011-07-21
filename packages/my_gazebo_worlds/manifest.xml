@@ -1,13 +1,20 @@
 <package>
+
   <description brief="my_gazebo_worlds">
      my_gazebo_worlds is a collection of gazebo world and model files, placed in a package to allow
      them to be found using package-relative paths.
   </description>
   <author>Kevin LeBlanc</author>
   <license>BSD</license>
+  <url></url>
 
-  <depend package="gazebo"/>
+  <depend package="gazebo" />
+  <depend package="xacro" />
+  <depend package="p2os_urdf" />
+  <depend package="pr2_controller_manager" />
+
   <export>
     <gazebo gazebo_media_path="${prefix}" />
   </export>
+
 </package>
