@@ -9,10 +9,10 @@
   <arg name="pitch"     default="0" />
   <arg name="yaw"       default="0" />
 
-  <!-- The pioneer3dx robot -->
+  <!-- The namespace -->
   <group ns="$(arg namespace)">
 
-    <!-- Converts the pioneer urdf.xacro to urdf and loads it in the parameter server -->
+    <!-- Converts the pioneer3dx urdf.xacro to urdf and loads it in the parameter server -->
     <param name="robot_description" command="$(find xacro)/xacro.py $(find p2os_urdf)/defs/pioneer3dx.xacro" />
 
     <!-- Spawn robot -->

@@ -15,7 +15,7 @@
     output="screen"
   />
 
-  <!-- Spawn robot -->
+  <!-- Spawn robot in given namespace at given position -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo_robot.launch" >
     <arg name="namespace" value="robot1" />
     <arg name="x"         value="2" />
