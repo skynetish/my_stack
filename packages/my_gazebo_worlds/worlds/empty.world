@@ -4,6 +4,16 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <gazebo:world xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" xmlns:geo="http://willowgarage.com/xmlschema/#geo" xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint" xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" xmlns:param="http://playerstage.sourceforge.net/gazebo/xmlschema/#param" xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics" xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable" xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:ui="http://playerstage.sourceforge.net/gazebo/xmlschema/#ui" xmlns:window="http://playerstage.sourceforge.net/gazebo/xmlschema/#window" xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--=========================-->
+  <!-- BEGIN XACRO DEFINITIONS -->
+  <!--=========================-->
+  <!-- Ground plane size in metres (both x and y) -->
+  <!-- Range and height for each light -->
+  <!-- Macro to create one point light at given position -->
+  <!-- Macro to create point lights distributed around the world -->
+  <!--=========================-->
+  <!-- END XACRO DEFINITIONS   -->
+  <!--=========================-->
   <thread>4</thread>
   <verbosity>5</verbosity>
   <physics:ode>
@@ -72,11 +82,11 @@
       <diffuseColor>0.8 0.8 0.8</diffuseColor>
       <specularColor>.1 .1 .1</specularColor>
       <attenuation>0.2 0.1 0</attenuation>
-      <range>25</range>
+      <range>25.0</range>
     </light>
   </model:renderable>
   <model:renderable name="light_2">
-    <xyz>20 20 10</xyz>
+    <xyz>25.0 25.0 10</xyz>
     <rpy>0.0 0.0 0</rpy>
     <enableGravity>false</enableGravity>
     <light>
@@ -84,11 +94,11 @@
       <diffuseColor>0.8 0.8 0.8</diffuseColor>
       <specularColor>.1 .1 .1</specularColor>
       <attenuation>0.2 0.1 0</attenuation>
-      <range>25</range>
+      <range>25.0</range>
     </light>
   </model:renderable>
   <model:renderable name="light_3">
-    <xyz>20 -20 10</xyz>
+    <xyz>25.0 -25.0 10</xyz>
     <rpy>0.0 0.0 0</rpy>
     <enableGravity>false</enableGravity>
     <light>
@@ -96,11 +106,11 @@
       <diffuseColor>0.8 0.8 0.8</diffuseColor>
       <specularColor>.1 .1 .1</specularColor>
       <attenuation>0.2 0.1 0</attenuation>
-      <range>25</range>
+      <range>25.0</range>
     </light>
   </model:renderable>
   <model:renderable name="light_4">
-    <xyz>-20 20 10</xyz>
+    <xyz>-25.0 25.0 10</xyz>
     <rpy>0.0 0.0 0</rpy>
     <enableGravity>false</enableGravity>
     <light>
@@ -108,11 +118,11 @@
       <diffuseColor>0.8 0.8 0.8</diffuseColor>
       <specularColor>.1 .1 .1</specularColor>
       <attenuation>0.2 0.1 0</attenuation>
-      <range>25</range>
+      <range>25.0</range>
     </light>
   </model:renderable>
   <model:renderable name="light_5">
-    <xyz>-20 -20 10</xyz>
+    <xyz>-25.0 -25.0 10</xyz>
     <rpy>0.0 0.0 0</rpy>
     <enableGravity>false</enableGravity>
     <light>
@@ -120,7 +130,7 @@
       <diffuseColor>0.8 0.8 0.8</diffuseColor>
       <specularColor>.1 .1 .1</specularColor>
       <attenuation>0.2 0.1 0</attenuation>
-      <range>25</range>
+      <range>25.0</range>
     </light>
   </model:renderable>
 </gazebo:world>

@@ -20,6 +20,46 @@
   xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
   >
 
+  <!--=========================-->
+  <!-- BEGIN XACRO DEFINITIONS -->
+  <!--=========================-->
+
+  <!-- Ground plane size in metres (both x and y) -->
+  <xacro:property name="ground_plane_size"  value="100" />
+
+  <!-- Range and height for each light -->
+  <xacro:property name="light_range"        value="${ground_plane_size/4}" />
+  <xacro:property name="light_height"       value="10" />
+
+  <!-- Macro to create one point light at given position -->
+  <xacro:macro name="light_macro" params="n x y z">
+    <model:renderable name="light_${n}">
+      <xyz>${x} ${y} ${z}</xyz>
+      <rpy>0.0 0.0 0</rpy>
+      <enableGravity>false</enableGravity>
+      <light>
+        <type>point</type>
+        <diffuseColor>0.8 0.8 0.8</diffuseColor>
+        <specularColor>.1 .1 .1</specularColor>
+        <attenuation>0.2 0.1 0</attenuation>
+        <range>${light_range}</range>
+      </light>
+    </model:renderable>
+  </xacro:macro>
+
+  <!-- Macro to create point lights distributed around the world -->
+  <xacro:macro name="lights_macro">
+    <xacro:light_macro n="1" x="0"                y="0"               z="${light_height}" />
+    <xacro:light_macro n="2" x="${light_range}"   y="${light_range}"  z="${light_height}" />
+    <xacro:light_macro n="3" x="${light_range}"   y="-${light_range}" z="${light_height}" />
+    <xacro:light_macro n="4" x="-${light_range}"  y="${light_range}"  z="${light_height}" />
+    <xacro:light_macro n="5" x="-${light_range}"  y="-${light_range}" z="${light_height}" />
+  </xacro:macro>
+
+  <!--=========================-->
+  <!-- END XACRO DEFINITIONS   -->
+  <!--=========================-->
+
   <thread>4</thread>
   <verbosity>5</verbosity>
 
@@ -76,7 +116,7 @@
         <kp>1000000000.0</kp>
         <kd>1.0</kd>
         <normal>0 0 1</normal>
-        <size>100 100</size>
+        <size>${ground_plane_size} ${ground_plane_size}</size>
         <segments>10 10</segments>
         <uvTile>200 400</uvTile>
         <material>Gazebo/GrayGrid</material>
@@ -84,25 +124,6 @@
     </body:plane>
   </model:physical>
 
-  <xacro:macro name="light_macro" params="n x y z">
-    <model:renderable name="light_${n}">
-      <xyz>${x} ${y} ${z}</xyz>
-      <rpy>0.0 0.0 0</rpy>
-      <enableGravity>false</enableGravity>
-      <light>
-        <type>point</type>
-        <diffuseColor>0.8 0.8 0.8</diffuseColor>
-        <specularColor>.1 .1 .1</specularColor>
-        <attenuation>0.2 0.1 0</attenuation>
-        <range>25</range>
-      </light>
-    </model:renderable>
-  </xacro:macro>
-
-  <xacro:light_macro n="1" x="0"   y="0"   z="10" />
-  <xacro:light_macro n="2" x="20"  y="20"  z="10" />
-  <xacro:light_macro n="3" x="20"  y="-20" z="10" />
-  <xacro:light_macro n="4" x="-20" y="20"  z="10" />
-  <xacro:light_macro n="5" x="-20" y="-20" z="10" />
+  <xacro:lights_macro/>
 
 </gazebo:world>

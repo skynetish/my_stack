@@ -16,7 +16,7 @@
   />
 
   <!-- Spawn robot in given namespace at given position -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_robot.launch" >
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
     <arg name="namespace" value="robot1" />
     <arg name="x"         value="2" />
     <arg name="y"         value="2" />
@@ -27,7 +27,7 @@
   </include>
 
   <!-- Spawn robot -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_robot.launch" >
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
     <arg name="namespace" value="robot2" />
     <arg name="x"         value="3" />
     <arg name="y"         value="3" />

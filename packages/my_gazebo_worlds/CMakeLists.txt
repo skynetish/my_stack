@@ -1,67 +1,38 @@
 cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
-
-rosbuild_init()
-
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
-
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
-
-
-
-
-
-# Load the xacro package
+# Find the xacro package and include the xacro cmake macro file
 rosbuild_find_ros_package(xacro)
 include(${xacro_PACKAGE_PATH}/cmake/xacro.cmake)
+# THE ABOVE IS DEPRECATED, USE THIS INSTEAD WHEN XACRO IS FIXED:
+# rosbuild_include(xacro xacro)
 
-# Variable containing input world.xacro files
+# Declare variable containing all (input) world.xacro files
 file(GLOB world_xacro_files ${CMAKE_CURRENT_SOURCE_DIR}/worlds/*.world.xacro)
 
-# Variable containing output world files
+# Declare variable containing all (output) world files
 set(world_files "")
 
-# For each world.xacro file
-foreach(it ${world_xacro_files})
+# For each input file
+foreach(input_file ${world_xacro_files})
 
-  # Get path and basename without extension
-  get_filename_component(basepath ${it} PATH)
-  get_filename_component(basename ${it} NAME_WE)
+  # Get basepath and basename without extension
+  get_filename_component(basepath ${input_file} PATH)
+  get_filename_component(basename ${input_file} NAME_WE)
 
-  # Set output filename
-  set(expanded_file "${basepath}/${basename}.world")
+  # Declare variable containing output filename
+  set(output_file "${basepath}/${basename}.world")
 
-  message("Converting file ${it} to ${expanded_file}")
+  # Status message
+  message("Converting file ${input_file} to ${output_file}")
 
   # Process with xacro
-  xacro_add_xacro_file(${it} ${expanded_file})
+  xacro_add_xacro_file(${input_file} ${output_file})
 
-  # Add to list of output world files
-  set(world_files ${world_files} ${expanded_file})
+  # Add to list of output files
+  set(world_files ${world_files} ${output_file})
 
-endforeach(it)
+endforeach(file)
 
-# Add target to ensure that the world files are created
-add_custom_target(media_files ALL DEPENDS ${world_files})
+# Add target to ensure that the world files are properly updated
+add_custom_target(world_files_target ALL DEPENDS ${world_files})
