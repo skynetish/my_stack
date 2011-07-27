@@ -3,7 +3,7 @@
   <!-- The world argument -->
   <arg name="world" default="$(find my_gazebo_worlds)/worlds/empty.world" />
 
-  <!-- Other arguments (such as "-g" for no GUI) can be included here -->
+  <!-- Other arguments (such as "-g" for no GUI or "-r" for no rendering) can be included here -->
   <arg name="args" default="" />
 
   <!-- Set this to true in the parameter server to tell everyone to use simulated time -->

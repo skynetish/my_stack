@@ -1,11 +1,11 @@
 <launch>
 
-  <!-- Start the Gazebo simulator with an empty world -->
+  <!-- Gazebo -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo.launch" >
     <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world" />
   </include>
 
-  <!-- Spawn walls -->
+  <!-- Walls -->
   <node
     name="spawn_walls"
     pkg="gazebo"
@@ -15,7 +15,7 @@
     output="screen"
   />
 
-  <!-- Spawn robot in given namespace at given position -->
+  <!-- Robot -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
     <arg name="namespace" value="robot1" />
     <arg name="x"         value="2" />
@@ -26,7 +26,7 @@
     <arg name="yaw"       value="0" />
   </include>
 
-  <!-- Spawn robot -->
+  <!-- Robot -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
     <arg name="namespace" value="robot2" />
     <arg name="x"         value="3" />

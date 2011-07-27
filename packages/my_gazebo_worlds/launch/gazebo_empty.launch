@@ -1,5 +1,8 @@
 <launch>
-  <include file="gazebo.launch">
+
+  <!-- Gazebo -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo.launch" >
     <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world" />
   </include>
+
 </launch>
