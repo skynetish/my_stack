@@ -10,7 +10,10 @@
   <!-- Ground plane size in metres (both x and y) -->
   <!-- Range and height for each light -->
   <!-- Macro to create one point light at given position -->
-  <!-- Macro to create point lights distributed around the world -->
+  <!--
+    Macro to create point lights distributed around the world.  This is just an easy way to get
+    light everwhere.  If we could spawn lights we might choose to spawn lights as needed instead.
+  -->
   <!-- ============================ -->
   <!-- END XACRO DEFINITIONS        -->
   <!-- ============================ -->
@@ -19,7 +22,9 @@
   <physics:ode>
     <stepTime>0.001</stepTime>
     <gravity>0 0 -9.8</gravity>
+    <!-- Stiffness -->
     <cfm>1e-10</cfm>
+    <!-- Damping -->
     <erp>0.2</erp>
     <stepType>quick</stepType>
     <stepIters>10</stepIters>
@@ -68,7 +73,7 @@
         <normal>0 0 1</normal>
         <size>100 100</size>
         <segments>10 10</segments>
-        <uvTile>200 400</uvTile>
+        <uvTile>200.0 400.0</uvTile>
         <material>Gazebo/GrayGrid</material>
       </geom:plane>
     </body:plane>

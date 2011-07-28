@@ -7,7 +7,7 @@
 
   <!-- Walls -->
   <node
-    name="spawn_walls"
+    name="$(anon walls_spawn_model_node)"
     pkg="gazebo"
     type="spawn_model"
     args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/ecsc.model"
@@ -15,9 +15,20 @@
     output="screen"
   />
 
-  <!-- Robot -->
+  <!-- Spawn a Pioneer 3DX robot in it's own namespace at the given position -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
-    <arg name="namespace" value="robot1" />
+    <arg name="namespace" value="pioneer3dx_1" />
+    <arg name="x"         value="1" />
+    <arg name="y"         value="1" />
+    <arg name="z"         value="0" />
+    <arg name="roll"      value="0" />
+    <arg name="pitch"     value="0" />
+    <arg name="yaw"       value="0" />
+  </include>
+
+  <!-- Spawn a Pioneer 3DX robot in it's own namespace at the given position -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
+    <arg name="namespace" value="pioneer3dx_2" />
     <arg name="x"         value="2" />
     <arg name="y"         value="2" />
     <arg name="z"         value="0" />
@@ -26,9 +37,9 @@
     <arg name="yaw"       value="0" />
   </include>
 
-  <!-- Robot -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
-    <arg name="namespace" value="robot2" />
+  <!-- Spawn a Pioneer 2DX robot in it's own namespace at the given position -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer2dx.launch" >
+    <arg name="namespace" value="pioneer2dx_1" />
     <arg name="x"         value="3" />
     <arg name="y"         value="3" />
     <arg name="z"         value="0" />

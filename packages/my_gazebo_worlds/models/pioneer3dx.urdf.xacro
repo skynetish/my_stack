@@ -11,23 +11,33 @@
   <!-- BEGIN XACRO DEFINITIONS      -->
   <!-- ============================ -->
 
-  <!-- PI -->
+  <!-- Define PI -->
   <xacro:property name="PI" value="3.14159" />
 
+  <!-- Wheel moments of inertia -->
+  <xacro:property name="IXX" value="0.012411765597" />
+  <xacro:property name="IYY" value="0.015218160428" />
+  <xacro:property name="IZZ" value="0.011763977943" />
+  <xacro:property name="IXY" value="0.0"            />
+  <xacro:property name="IXZ" value="0.0"            />
+  <xacro:property name="IYZ" value="0.0"            />
+
   <!-- Macro to create a wheel -->
-  <xacro:macro name="P3DX_WHEEL" params="suffix parent reflect">
-    <link name="p3dx_${suffix}_wheel">
+  <xacro:macro name="WHEEL" params="name parent reflect">
+
+    <!-- Wheel -->
+    <link name="${name}_wheel">
       <inertial>
         <mass value="0.5"/>
         <origin xyz="0 0 0"/>
-        <inertia ixx="0.012411765597" iyy="0.015218160428" izz="0.011763977943" ixy="0" ixz="0" iyz="0" />
+        <inertia ixx="${IXX}" iyy="${IYY}" izz="${IZZ}" ixy="${IXY}" ixz="${IXZ}" iyz="${IYZ}"/>
       </inertial>
-      <visual name="base_visual">
+      <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry name="pioneer_geom">
-          <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/${suffix}_wheel.stl"/>
+        <geometry>
+          <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/${name}_wheel.stl"/>
         </geometry>
-        <material name="WheelBlack">
+        <material name="WheelBlack" >
           <color rgba="0.117 0.117 0.117 1"/>
         </material>
       </visual>
@@ -38,25 +48,27 @@
         </geometry>
       </collision>
     </link>
+    <gazebo reference="${name}_wheel">
+      <material value="Gazebo/Black"/>
+      <elem key="mu1" value="0.5" />
+      <elem key="mu2" value="50.0" />
+      <elem key="kp"  value="100000000.0" />
+      <elem key="kd"  value="1.0" />
+    </gazebo>
 
-    <joint name="base_${suffix}_hubcap_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="p3dx_${suffix}_wheel"/>
-      <child link="p3dx_${suffix}_hubcap"/>
-    </joint>
-
-    <link name="p3dx_${suffix}_hubcap">
+    <!-- Hubcap -->
+    <link name="${name}_hubcap">
       <inertial>
         <mass value="0.01"/>
         <origin xyz="0 0 0"/>
-        <inertia ixx="0.012411765597" iyy="0.015218160428" izz="0.011763977943" ixy="0" ixz="0" iyz="0" />
+        <inertia ixx="${IXX}" iyy="${IYY}" izz="${IZZ}" ixy="${IXY}" ixz="${IXZ}" iyz="${IYZ}"/>
       </inertial>
-      <visual name="base_visual">
+      <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry name="pioneer_geom">
-          <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/${suffix}_hubcap.stl"/>
+        <geometry>
+          <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/${name}_hubcap.stl"/>
         </geometry>
-        <material name="HubcapYellow">
+        <material name="HubcapYellow" >
           <color rgba="1.0 0.811 0.151 1.0"/>
         </material>
       </visual>
@@ -67,34 +79,35 @@
         </geometry>
       </collision>
     </link>
+    <gazebo reference="${name}_hubcap">
+      <material value="Gazebo/Yellow"/>
+    </gazebo>
 
-    <transmission type="pr2_mechanism_model/SimpleTransmission" name="${parent}_${suffix}_wheel_trans">
-      <actuator name="base_${suffix}_wheel_motor" />
-      <joint name="base_${suffix}_wheel_joint" />
-      <mechanicalReduction>${reflect * 624/35 * 80/19}</mechanicalReduction>
-    </transmission>
+    <!-- Join the wheel and hubcap -->
+    <joint name="base_${name}_hubcap_joint" type="fixed">
+      <parent link="${name}_wheel"/>
+      <child link="${name}_hubcap"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
 
-    <joint name="base_${suffix}_wheel_joint" type="continuous">
+    <!-- Join the wheel and chassis -->
+    <joint name="base_${name}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${name}_wheel"/>
       <axis xyz="0 1 0"/>
       <anchor xyz="0 0 0"/>
       <limit effort="100" velocity="100" />
       <joint_properties damping="0.0" friction="0.0" />
       <origin xyz="0 ${reflect*0.158} 0.091" rpy="0 0 0"/>
-      <parent link="base_link"/>
-      <child link="p3dx_${suffix}_wheel"/>
     </joint>
 
-    <gazebo reference="p3dx_${suffix}_hubcap">
-      <material value="Gazebo/Yellow"/>
-    </gazebo>
-
-    <gazebo reference="p3dx_${suffix}_wheel">
-      <material value="Gazebo/Black"/>
-      <elem key="mu1" value="0.5" />
-      <elem key="mu2" value="50.0" />
-      <elem key="kp"  value="100000000.0" />
-      <elem key="kd"  value="1.0" />
-    </gazebo>
+    <!--
+    <transmission name="${parent}_${name}_wheel_trans" type="pr2_mechanism_model/SimpleTransmission">
+      <actuator name="base_${name}_wheel_motor" />
+      <joint name="base_${name}_wheel_joint" />
+      <mechanicalReduction>${reflect * 624/35 * 80/19}</mechanicalReduction>
+    </transmission>
+    -->
 
   </xacro:macro>
 
@@ -103,7 +116,7 @@
   <!-- ============================ -->
 
 
-  <!-- Chassis -->
+  <!-- Base link -->
   <link name="base_link">
     <inertial>
       <mass value="3.5"/>
@@ -126,12 +139,11 @@
         </geometry>
     </collision>
   </link>
-
   <gazebo reference="base_link">
     <material value="Gazebo/Red"/>
   </gazebo>
 
-  <!-- Top -->
+  <!-- Top plate -->
   <link name="top_plate">
     <inertial>
       <mass value="0.01"/>
@@ -158,6 +170,7 @@
     <material value="Gazebo/Black"/>
   </gazebo>
 
+  <!-- Join the top_plate and base_link -->
   <joint name="base_top_joint" type="fixed">
     <origin xyz="-0.045 0 0.234" rpy="0 0 0"/>
     <parent link="base_link"/>
@@ -171,22 +184,22 @@
       <origin xyz="0 0 0"/>
       <inertia ixx="0.01" ixy="0" ixz="0"
          iyy="0.01" iyz="0" izz="0.01"/>
-      </inertial>
-  <visual name="base_visual">
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry name="pioneer_geom">
-      <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/swivel.stl"/>
-    </geometry>
-    <material name="swivel">
-      <color rgba="0.5 0.5 0.5 1"/>
-    </material>
-  </visual>
-  <collision>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry>
-      <box size="0 0 0"/>
-    </geometry>
-  </collision>
+    </inertial>
+    <visual name="base_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="pioneer_geom">
+        <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/swivel.stl"/>
+      </geometry>
+      <material name="swivel">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0 0 0"/>
+      </geometry>
+    </collision>
   </link>
   <gazebo reference="swivel">
     <material value="Gazebo/Grey"/>
@@ -194,38 +207,37 @@
 
 
   <joint name="base_swivel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="swivel"/>
     <origin xyz="-0.185 0 0.055" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <anchor xyz="0 0 0"/>
     <limit effort="100" velocity="100" k_velocity="0" />
     <joint_properties damping="0.0" friction="0.0" />
-    <parent link="base_link"/>
-    <child link="swivel"/>
   </joint>
 
-<!-- Center Wheel + Hubcap -->
+  <!-- Center Wheel + Hubcap -->
   <link name="center_hubcap">
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="0.012411765597" ixy="-0.000711733678" ixz="0.00050272983"
-         iyy="0.015218160428" iyz="-0.000004273467" izz="0.011763977943"/>
-      </inertial>
-  <visual name="base_visual">
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry name="pioneer_geom">
-      <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/center_hubcap.stl"/>
-    </geometry>
-    <material name="swivel">
-      <color rgba="0.5 0.5 0.5 1"/>
-    </material>
-  </visual>
-  <collision>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry>
-      <box size="0 0 0"/>
-    </geometry>
-  </collision>
+      <inertia ixx="0.012411765597" ixy="-0.000711733678" ixz="0.00050272983" iyy="0.015218160428" iyz="-0.000004273467" izz="0.011763977943"/>
+    </inertial>
+    <visual name="base_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="pioneer_geom">
+        <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/center_hubcap.stl"/>
+      </geometry>
+      <material name="swivel">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0 0 0"/>
+      </geometry>
+    </collision>
   </link>
   <gazebo reference="center_hubcap">
     <material value="Gazebo/Grey"/>
@@ -245,33 +257,25 @@
     <inertial>
       <mass value="0.1"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="0.012411765597" ixy="-0.000711733678" ixz="0.00050272983"
-         iyy="0.015218160428" iyz="-0.000004273467" izz="0.011763977943"/>
-      </inertial>
-  <visual name="base_visual">
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry name="pioneer_geom">
-      <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/center_wheel.stl"/>
-    </geometry>
-    <material name="WheelBlack">
-      <color rgba="0.117 0.117 0.117 1"/>
-    </material>
-  </visual>
-  <collision>
-    <origin xyz="0 0 0" rpy="${-PI/2.0} 0 0"/>
-    <geometry>
-      <!--<mesh filename="package://p2os_urdf/meshes/p3dx_meshes/center_wheel.stl"/>-->
-      <cylinder radius="0.0375" length="0.01"/>
-    </geometry>
-  </collision>
+      <inertia ixx="0.012411765597" ixy="-0.000711733678" ixz="0.00050272983" iyy="0.015218160428" iyz="-0.000004273467" izz="0.011763977943"/>
+    </inertial>
+    <visual name="base_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="pioneer_geom">
+        <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/center_wheel.stl"/>
+      </geometry>
+      <material name="WheelBlack">
+        <color rgba="0.117 0.117 0.117 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${-PI/2.0} 0 0"/>
+      <geometry>
+        <!--<mesh filename="package://p2os_urdf/meshes/p3dx_meshes/center_wheel.stl"/>-->
+        <cylinder radius="0.0375" length="0.01"/>
+      </geometry>
+    </collision>
   </link>
-
-  <joint name="center_wheel_joint" type="fixed">
-    <origin xyz="-0.0035 0 -0.001" rpy="0 0 0"/>
-    <parent link="center_wheel"/>
-    <child link="center_hubcap"/>
-  </joint>
-
   <gazebo reference="center_wheel">
     <material value="Gazebo/Black"/>
     <elem key="mu1" value="10.0" />
@@ -280,11 +284,17 @@
     <elem key="kd"  value="1.0" />
   </gazebo>
 
+  <joint name="center_wheel_joint" type="fixed">
+    <origin xyz="-0.0035 0 -0.001" rpy="0 0 0"/>
+    <parent link="center_wheel"/>
+    <child link="center_hubcap"/>
+  </joint>
 
-  <xacro:P3DX_WHEEL suffix="left" parent="base_link" reflect="1"/>
-  <xacro:P3DX_WHEEL suffix="right" parent="base_link" reflect="-1"/>
+  <!-- Wheels -->
+  <xacro:WHEEL name="left" parent="base_link" reflect="1"/>
+  <xacro:WHEEL name="right" parent="base_link" reflect="-1"/>
 
-  <!-- Front + Back Sonar -->
+  <!-- Sonars -->
   <link name="front_sonar">
     <inertial>
       <mass value="0.0001"/>
@@ -308,15 +318,13 @@
       </geometry>
     </collision>
   </link>
-
   <gazebo reference="front_sonar">
     <material value="Gazebo/Yellow"/>
   </gazebo>
-
   <joint name="base_front_joint" type="fixed">
-    <origin xyz="-0.198 0 0.208" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="front_sonar"/>
+    <origin xyz="-0.198 0 0.208" rpy="0 0 0"/>
   </joint>
 
   <link name="back_sonar">
@@ -361,11 +369,10 @@
       <wheelSeparation>0.39</wheelSeparation>
       <wheelDiameter>0.15</wheelDiameter>
       <torque>5</torque>
-
-
       <interface:position name="position_iface_0"/>
     </controller:differential_position2d>
 
+    <!--
     <controller:gazebo_ros_p3d name="p3d_base_controller" plugin="libgazebo_ros_p3d.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>100.0</updateRate>
@@ -373,19 +380,21 @@
       <topicName>base_pose_ground_truth</topicName>
       <gaussianNoise>0.01</gaussianNoise>
       <frameName>map</frameName>
-      <xyzOffsets>0 0 0</xyzOffsets> <!-- initialize odometry for fake localization-->
+      <xyzOffsets>0 0 0</xyzOffsets>
       <rpyOffsets>0 0 0</rpyOffsets>
       <interface:position name="p3d_base_position"/>
     </controller:gazebo_ros_p3d>
-
+    -->
     <!-- this publishes empty joint_states due to no transmission, but
          triggering robot_state_puublisher to publish tf between fixed joints in erratic,
          (e.g. base_laser_link for the base_scan frame) -->
+    <!--
     <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>1000.0</updateRate>
       <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
     </controller:gazebo_ros_controller_manager>
+    -->
   </gazebo>
 
 </robot>

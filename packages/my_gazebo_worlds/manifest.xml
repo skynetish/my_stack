@@ -1,5 +1,6 @@
 <package>
 
+  <!-- Package summary -->
   <description brief="my_gazebo_worlds">
      my_gazebo_worlds is a collection of world, model, and launch files, placed in a package to
      allow them to be found using package-relative paths.
@@ -8,12 +9,21 @@
   <license>BSD</license>
   <url></url>
 
+  <!-- We use the gazebo simulator -->
   <depend package="gazebo" />
+
+  <!-- We use xacro to process certain XML files -->
   <depend package="xacro" />
+
+  <!-- This lets us use meshes for p2os robots -->
   <depend package="p2os_urdf" />
+
+  <!-- This is used by some of the robot models -->
   <depend package="pr2_controller_manager" />
 
+  <!-- Exported values -->
   <export>
+    <!-- This allows gazebo to find resources in our local "Media" directory -->
     <gazebo gazebo_media_path="${prefix}" />
   </export>
 

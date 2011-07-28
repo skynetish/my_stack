@@ -7,12 +7,13 @@
   <!-- ============================ -->
   <!-- BEGIN XACRO DEFINITIONS      -->
   <!-- ============================ -->
-  <!-- PI -->
+  <!-- Define PI -->
+  <!-- Wheel moments of inertia -->
   <!-- Macro to create a wheel -->
   <!-- ============================ -->
   <!-- END XACRO DEFINITIONS        -->
   <!-- ============================ -->
-  <!-- Chassis -->
+  <!-- Base link -->
   <link name="base_link">
     <inertial>
       <mass value="3.5"/>
@@ -38,7 +39,7 @@
   <gazebo reference="base_link">
     <material value="Gazebo/Red"/>
   </gazebo>
-  <!-- Top -->
+  <!-- Top plate -->
   <link name="top_plate">
     <inertial>
       <mass value="0.01"/>
@@ -64,6 +65,7 @@
   <gazebo reference="top_plate">
     <material value="Gazebo/Black"/>
   </gazebo>
+  <!-- Join the top_plate and base_link -->
   <joint name="base_top_joint" type="fixed">
     <origin rpy="0 0 0" xyz="-0.045 0 0.234"/>
     <parent link="base_link"/>
@@ -96,13 +98,13 @@
     <material value="Gazebo/Grey"/>
   </gazebo>
   <joint name="base_swivel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="swivel"/>
     <origin rpy="0 0 0" xyz="-0.185 0 0.055"/>
     <axis xyz="0 0 1"/>
     <anchor xyz="0 0 0"/>
     <limit effort="100" k_velocity="0" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
-    <parent link="base_link"/>
-    <child link="swivel"/>
   </joint>
   <!-- Center Wheel + Hubcap -->
   <link name="center_hubcap">
@@ -162,11 +164,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="center_wheel_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.0035 0 -0.001"/>
-    <parent link="center_wheel"/>
-    <child link="center_hubcap"/>
-  </joint>
   <gazebo reference="center_wheel">
     <material value="Gazebo/Black"/>
     <elem key="mu1" value="10.0"/>
@@ -174,15 +171,21 @@
     <elem key="kp" value="1000000.0"/>
     <elem key="kd" value="1.0"/>
   </gazebo>
-  <link name="p3dx_left_wheel">
+  <joint name="center_wheel_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.0035 0 -0.001"/>
+    <parent link="center_wheel"/>
+    <child link="center_hubcap"/>
+  </joint>
+  <!-- Wheels -->
+  <link name="left_wheel">
     <inertial>
       <mass value="0.5"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="0.012411765597" ixy="0" ixz="0" iyy="0.015218160428" iyz="0" izz="0.011763977943"/>
+      <inertia ixx="0.012411765597" ixy="0.0" ixz="0.0" iyy="0.015218160428" iyz="0.0" izz="0.011763977943"/>
     </inertial>
-    <visual name="base_visual">
+    <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry name="pioneer_geom">
+      <geometry>
         <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/left_wheel.stl"/>
       </geometry>
       <material name="WheelBlack">
@@ -196,16 +199,18 @@
       </geometry>
     </collision>
   </link>
-  <joint name="base_left_hubcap_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="p3dx_left_wheel"/>
-    <child link="p3dx_left_hubcap"/>
-  </joint>
-  <link name="p3dx_left_hubcap">
+  <gazebo reference="left_wheel">
+    <material value="Gazebo/Black"/>
+    <elem key="mu1" value="0.5"/>
+    <elem key="mu2" value="50.0"/>
+    <elem key="kp" value="100000000.0"/>
+    <elem key="kd" value="1.0"/>
+  </gazebo>
+  <link name="left_hubcap">
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="0.012411765597" ixy="0" ixz="0" iyy="0.015218160428" iyz="0" izz="0.011763977943"/>
+      <inertia ixx="0.012411765597" ixy="0.0" ixz="0.0" iyy="0.015218160428" iyz="0.0" izz="0.011763977943"/>
     </inertial>
     <visual name="base_visual">
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -223,39 +228,37 @@
       </geometry>
     </collision>
   </link>
-  <transmission name="base_link_left_wheel_trans" type="pr2_mechanism_model/SimpleTransmission">
-    <actuator name="base_left_wheel_motor"/>
-    <joint name="base_left_wheel_joint"/>
-    <mechanicalReduction>75.0676691729</mechanicalReduction>
-  </transmission>
+  <gazebo reference="left_hubcap">
+    <material value="Gazebo/Yellow"/>
+  </gazebo>
+  <joint name="base_left_hubcap_joint" type="fixed">
+    <parent link="left_wheel"/>
+    <child link="left_hubcap"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
   <joint name="base_left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
     <axis xyz="0 1 0"/>
     <anchor xyz="0 0 0"/>
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
     <origin rpy="0 0 0" xyz="0 0.158 0.091"/>
-    <parent link="base_link"/>
-    <child link="p3dx_left_wheel"/>
   </joint>
-  <gazebo reference="p3dx_left_hubcap">
-    <material value="Gazebo/Yellow"/>
-  </gazebo>
-  <gazebo reference="p3dx_left_wheel">
-    <material value="Gazebo/Black"/>
-    <elem key="mu1" value="0.5"/>
-    <elem key="mu2" value="50.0"/>
-    <elem key="kp" value="100000000.0"/>
-    <elem key="kd" value="1.0"/>
-  </gazebo>
-  <link name="p3dx_right_wheel">
+  <transmission name="base_link_left_wheel_trans" type="pr2_mechanism_model/SimpleTransmission">
+    <actuator name="base_left_wheel_motor"/>
+    <joint name="base_left_wheel_joint"/>
+    <mechanicalReduction>75.0676691729</mechanicalReduction>
+  </transmission>
+  <link name="right_wheel">
     <inertial>
       <mass value="0.5"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="0.012411765597" ixy="0" ixz="0" iyy="0.015218160428" iyz="0" izz="0.011763977943"/>
+      <inertia ixx="0.012411765597" ixy="0.0" ixz="0.0" iyy="0.015218160428" iyz="0.0" izz="0.011763977943"/>
     </inertial>
-    <visual name="base_visual">
+    <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry name="pioneer_geom">
+      <geometry>
         <mesh filename="package://p2os_urdf/meshes/p3dx_meshes/right_wheel.stl"/>
       </geometry>
       <material name="WheelBlack">
@@ -269,16 +272,18 @@
       </geometry>
     </collision>
   </link>
-  <joint name="base_right_hubcap_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="p3dx_right_wheel"/>
-    <child link="p3dx_right_hubcap"/>
-  </joint>
-  <link name="p3dx_right_hubcap">
+  <gazebo reference="right_wheel">
+    <material value="Gazebo/Black"/>
+    <elem key="mu1" value="0.5"/>
+    <elem key="mu2" value="50.0"/>
+    <elem key="kp" value="100000000.0"/>
+    <elem key="kd" value="1.0"/>
+  </gazebo>
+  <link name="right_hubcap">
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="0.012411765597" ixy="0" ixz="0" iyy="0.015218160428" iyz="0" izz="0.011763977943"/>
+      <inertia ixx="0.012411765597" ixy="0.0" ixz="0.0" iyy="0.015218160428" iyz="0.0" izz="0.011763977943"/>
     </inertial>
     <visual name="base_visual">
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -296,31 +301,29 @@
       </geometry>
     </collision>
   </link>
-  <transmission name="base_link_right_wheel_trans" type="pr2_mechanism_model/SimpleTransmission">
-    <actuator name="base_right_wheel_motor"/>
-    <joint name="base_right_wheel_joint"/>
-    <mechanicalReduction>-75.0676691729</mechanicalReduction>
-  </transmission>
+  <gazebo reference="right_hubcap">
+    <material value="Gazebo/Yellow"/>
+  </gazebo>
+  <joint name="base_right_hubcap_joint" type="fixed">
+    <parent link="right_wheel"/>
+    <child link="right_hubcap"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
   <joint name="base_right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
     <axis xyz="0 1 0"/>
     <anchor xyz="0 0 0"/>
     <limit effort="100" velocity="100"/>
     <joint_properties damping="0.0" friction="0.0"/>
     <origin rpy="0 0 0" xyz="0 -0.158 0.091"/>
-    <parent link="base_link"/>
-    <child link="p3dx_right_wheel"/>
   </joint>
-  <gazebo reference="p3dx_right_hubcap">
-    <material value="Gazebo/Yellow"/>
-  </gazebo>
-  <gazebo reference="p3dx_right_wheel">
-    <material value="Gazebo/Black"/>
-    <elem key="mu1" value="0.5"/>
-    <elem key="mu2" value="50.0"/>
-    <elem key="kp" value="100000000.0"/>
-    <elem key="kd" value="1.0"/>
-  </gazebo>
-  <!-- Front + Back Sonar -->
+  <transmission name="base_link_right_wheel_trans" type="pr2_mechanism_model/SimpleTransmission">
+    <actuator name="base_right_wheel_motor"/>
+    <joint name="base_right_wheel_joint"/>
+    <mechanicalReduction>-75.0676691729</mechanicalReduction>
+  </transmission>
+  <!-- Sonars -->
   <link name="front_sonar">
     <inertial>
       <mass value="0.0001"/>
@@ -347,9 +350,9 @@
     <material value="Gazebo/Yellow"/>
   </gazebo>
   <joint name="base_front_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.198 0 0.208"/>
     <parent link="base_link"/>
     <child link="front_sonar"/>
+    <origin rpy="0 0 0" xyz="-0.198 0 0.208"/>
   </joint>
   <link name="back_sonar">
     <inertial>

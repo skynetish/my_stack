@@ -7,7 +7,7 @@
 
   <!-- Walls -->
   <node
-    name="spawn_walls"
+    name="$(anon walls_spawn_model_node)"
     pkg="gazebo"
     type="spawn_model"
     args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/peishome.model"

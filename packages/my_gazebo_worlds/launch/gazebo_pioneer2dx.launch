@@ -1,0 +1,35 @@
+<launch>
+
+  <!-- The namespace and position arguments -->
+  <arg name="namespace" default="" />
+  <arg name="x"         default="0" />
+  <arg name="y"         default="0" />
+  <arg name="z"         default="0" />
+  <arg name="roll"      default="0" />
+  <arg name="pitch"     default="0" />
+  <arg name="yaw"       default="0" />
+
+  <!-- The namespace -->
+  <group ns="$(arg namespace)">
+
+    <!--
+      Ignore z argument and force 0.15m, which is the clearance of this robot.  This is needed since
+      spawn_model doesn't take model offsets into account so we can't move the robot's origin in the
+      model file.  Ideally we'd like to add 0.15m to the input argument, but there doesn't seem to
+      be any way to do that either.
+    -->
+    <arg name="zz" value="0.15" />
+
+    <!-- Spawn robot from gazebo package model -->
+    <node
+      name="$(anon robot_spawn_model_node)"
+      pkg="gazebo"
+      type="spawn_model"
+      args="-x $(arg x) -y $(arg y) -z $(arg zz) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -gazebo -file $(find my_gazebo_worlds)/models/pioneer2dx.model -model $(arg namespace) -namespace $(arg namespace)"
+      respawn="false"
+      output="screen"
+    />
+
+  </group>
+
+</launch>
