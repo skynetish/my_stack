@@ -13,7 +13,6 @@
   <group ns="$(arg namespace)">
 
     <!-- Converts the pioneer3dx urdf.xacro to urdf and loads it in the parameter server -->
-    <!--param name="robot_description" command="$(find xacro)/xacro.py $(find p2os_urdf)/defs/pioneer3dx.xacro" /-->
     <param name="robot_description" command="$(find xacro)/xacro.py $(find my_gazebo_worlds)/models/pioneer3dx.urdf.xacro" />
 
     <!-- Spawn robot -->
