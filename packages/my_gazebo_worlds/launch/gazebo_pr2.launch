@@ -12,7 +12,18 @@
   <!-- The namespace -->
   <group ns="$(arg namespace)">
 
-    <!-- TODO -->
+    <!-- Upload robot description -->
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_description)/robots/pr2.urdf.xacro'" />
+
+    <!-- Spawn robot -->
+    <node
+      name="$(anon robot_spawn_model_node)"
+      pkg="gazebo"
+      type="spawn_model"
+      args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -urdf -param robot_description -model $(arg namespace) -namespace $(arg namespace)"
+      respawn="false"
+      output="screen"
+    />
 
   </group>
 

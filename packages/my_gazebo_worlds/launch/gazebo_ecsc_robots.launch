@@ -48,4 +48,15 @@
     <arg name="yaw"       value="0" />
   </include>
 
+  <!-- Spawn a PR2 robot in it's own namespace at the given position -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_pr2.launch" >
+    <arg name="namespace" value="pr2_1" />
+    <arg name="x"         value="2" />
+    <arg name="y"         value="7" />
+    <arg name="z"         value="0" />
+    <arg name="roll"      value="0" />
+    <arg name="pitch"     value="0" />
+    <arg name="yaw"       value="0" />
+  </include>
+
 </launch>

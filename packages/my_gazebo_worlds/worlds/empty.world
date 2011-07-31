@@ -88,7 +88,7 @@
         <normal>0 0 1</normal>
         <size>100 100</size>
         <segments>10 10</segments>
-        <uvTile>200.0 400.0</uvTile>
+        <uvTile>100 100</uvTile>
         <material>Gazebo/GrayGrid</material>
       </geom:plane>
     </body:plane>

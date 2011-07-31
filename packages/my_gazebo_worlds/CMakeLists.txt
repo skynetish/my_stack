@@ -16,7 +16,7 @@ include(${xacro_PACKAGE_PATH}/cmake/xacro.cmake)
 set(extension "xacro")
 
 # Declare variable containing all input files
-file(GLOB_RECURSE input_files ${CMAKE_CURRENT_SOURCE_DIR}/*.${extension})
+file(GLOB_RECURSE input_files ${CMAKE_CURRENT_SOURCE_DIR}/worlds/*.${extension})
 
 # Declare variable containing all output files
 set(output_files "")

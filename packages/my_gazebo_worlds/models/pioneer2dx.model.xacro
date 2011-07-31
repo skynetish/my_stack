@@ -15,12 +15,15 @@
   <!-- BEGIN XACRO DEFINITIONS      -->
   <!-- ============================ -->
 
+  <!-- Height to elevate all parts -->
+  <xacro:property name="HEIGHT" value="0.15"/>
+
   <!-- Macro to create a wheel -->
   <xacro:macro name="WHEEL" params="name parent reflect">
 
     <!-- Wheel body -->
     <body:cylinder name="${name}_wheel">
-      <xyz>0.1 ${-reflect*0.17} -0.0725</xyz>
+      <xyz>0.1 ${-reflect*0.17} ${-0.0725 + HEIGHT}</xyz>
       <rpy>0 90 90</rpy>
       <geom:cylinder name="${name}_wheel_geom">
         <size>0.075 0.05</size>
@@ -48,7 +51,7 @@
     </body:cylinder>
 
     <!-- Join wheel and base_link -->
-    <joint:hinge name="${name}_wheel_hinge">
+    <joint:hinge name="${name}_wheel_joint">
       <body1>${name}_wheel</body1>
       <body2>base_link</body2>
       <anchor>${name}_wheel</anchor>
@@ -71,7 +74,7 @@
 
   <!-- Base link -->
   <body:box name="base_link">
-    <xyz>0.0 0.0 0.0</xyz>
+    <xyz>0.0 0.0 ${0.0 + HEIGHT}</xyz>
     <rpy>0.0 0.0 0.0</rpy>
     <geom:box name="base_link_geom">
       <xyz>0 0 0.0</xyz>
@@ -86,7 +89,7 @@
         <material>Gazebo/Pioneer2Body</material>
       </visual>
       <visual>
-        <xyz>0.015 0 0.09</xyz>
+        <xyz>0.015 0 0.0975</xyz>
         <rpy>0 0 0</rpy>
         <mesh>Pioneer2at/chassis_top.mesh</mesh>
         <material>Gazebo/Black</material>
@@ -110,7 +113,7 @@
 
   <!-- Castor -->
   <body:sphere name="castor">
-    <xyz>-0.200 0 -0.108</xyz>
+    <xyz>-0.200 0 ${-0.108 + HEIGHT}</xyz>
     <rpy>0 0 0</rpy>
     <geom:sphere name="castor_geom">
       <size>0.04</size>
@@ -138,8 +141,9 @@
 
   <!-- Controller -->
   <controller:differential_position2d name="controller1">
-    <leftJoint>left_wheel_hinge</leftJoint>
-    <rightJoint>right_wheel_hinge</rightJoint>
+    <update>100</update>
+    <leftJoint>left_wheel_joint</leftJoint>
+    <rightJoint>right_wheel_joint</rightJoint>
     <wheelSeparation>0.34</wheelSeparation>
     <wheelDiameter>0.15</wheelDiameter>
     <torque>5</torque>

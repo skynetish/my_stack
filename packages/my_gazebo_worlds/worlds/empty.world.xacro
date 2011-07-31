@@ -150,7 +150,7 @@
         <normal>0 0 1</normal>
         <size>${GROUND_PLANE_SIZE} ${GROUND_PLANE_SIZE}</size>
         <segments>10 10</segments>
-        <uvTile>${GROUND_PLANE_SIZE*2} ${GROUND_PLANE_SIZE*4}</uvTile>
+        <uvTile>${GROUND_PLANE_SIZE} ${GROUND_PLANE_SIZE}</uvTile>
         <material>Gazebo/GrayGrid</material>
       </geom:plane>
     </body:plane>
