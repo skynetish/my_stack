@@ -13,7 +13,7 @@
   <group ns="$(arg namespace)">
 
     <!-- Upload robot description -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2_description)/robots/pr2.urdf.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find my_gazebo_worlds)/models/pioneer3dx.urdf.xacro'" />
 
     <!-- Spawn robot -->
     <node

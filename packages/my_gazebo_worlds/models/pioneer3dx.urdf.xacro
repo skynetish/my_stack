@@ -242,7 +242,7 @@
   </gazebo>
 
   <!-- Join center_wheel and swivel -->
-  <joint name="swivel_hubcap_joint" type="continuous">
+  <joint name="center_wheel_joint" type="continuous">
     <parent link="swivel"/>
     <child link="center_wheel"/>
     <origin xyz="-0.026 0 -0.016" rpy="0 0 0"/>
@@ -277,15 +277,11 @@
   </gazebo>
 
   <!-- Join center_wheel and center_hubcap -->
-  <joint name="center_wheel_joint" type="fixed">
+  <joint name="center_hubcap_joint" type="fixed">
     <parent link="center_wheel"/>
     <child link="center_hubcap"/>
     <origin xyz="-0.0035 0 -0.001" rpy="0 0 0"/>
   </joint>
-
-  <!-- Wheels -->
-  <xacro:WHEEL name="left" parent="base_link" reflect="1"/>
-  <xacro:WHEEL name="right" parent="base_link" reflect="-1"/>
 
   <!-- Front sonars -->
   <link name="front_sonar">
@@ -313,7 +309,7 @@
   </gazebo>
 
   <!-- Join front_sonar and base_link -->
-  <joint name="front_joint" type="fixed">
+  <joint name="front_sonar_joint" type="fixed">
     <parent link="base_link"/>
     <child link="front_sonar"/>
     <origin xyz="-0.198 0 0.208" rpy="0 0 0"/>
@@ -345,13 +341,17 @@
   </gazebo>
 
   <!-- Join back_sonar and base_link -->
-  <joint name="back_joint" type="fixed">
+  <joint name="back_sonar_joint" type="fixed">
     <parent link="base_link"/>
     <child link="back_sonar"/>
     <origin xyz="0.109 0 0.209" rpy="0 0 0"/>
   </joint>
 
-  <!-- Connect controllers -->
+  <!-- Wheels -->
+  <xacro:WHEEL name="left" parent="base_link" reflect="1"/>
+  <xacro:WHEEL name="right" parent="base_link" reflect="-1"/>
+
+  <!-- Controllers -->
   <gazebo>
     <controller:differential_position2d name="controller1">
       <update>100</update>

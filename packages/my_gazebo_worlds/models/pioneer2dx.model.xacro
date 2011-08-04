@@ -15,7 +15,7 @@
   <!-- BEGIN XACRO DEFINITIONS      -->
   <!-- ============================ -->
 
-  <!-- Height to elevate all parts -->
+  <!-- Height to elevate all parts to avoid collision with the ground-->
   <xacro:property name="HEIGHT" value="0.15"/>
 
   <!-- Macro to create a wheel -->
@@ -127,7 +127,7 @@
   </body:sphere>
 
   <!-- Join castor and base_link -->
-  <joint:ball name="ball_joint">
+  <joint:ball name="castor_joint">
     <body1>castor</body1>
     <body2>base_link</body2>
     <anchor>castor</anchor>
