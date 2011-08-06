@@ -1,0 +1,111 @@
+<package>
+
+  <!-- Package summary -->
+  <description brief="A collection of robot descriptions.">
+
+    This package is a collection of urdf and other files used to describe various robots.  Most
+    robots have descriptions in their own robot-specific packages, but these descriptions are often
+    written in inconsistent and inappropriate ways, using different naming conventions and improper
+    namespace handling.  In particular, many robot descriptions do not properly allow all topics to
+    be pushed into a particular namespace, which makes having multiple robots of the same type
+    problematic.  This package tries to present these robot descriptions in a consistent manner, and
+    it allows them to be customised and cleaned up.
+
+    By convention, urdf robot descriptions are uploaded to a "robot_description" key in the
+    parameter server on launch.  Some ROS nodes and gazebo plugins assume that this convention is
+    followed, and some things may actually break if this is not done.  The intention is to avoid
+    such dependencies, but in some cases this may be difficult, so by default the convention is
+    followed.
+
+    Although xacro robot descriptions could be passed through xacro when the package is built, it is
+    more convenient to pass the files through xacro on launch (which is how they are loaded into the
+    parameter server), since this means that one doesn't need to remember to build the package after
+    each xacro file update.
+
+    There seem to be several ways to control differential drive robots in ROS.
+
+      1. gazebo: a)gazebo's "differential_position2d" controller in model
+                 b)gazebo_plugin's "gazebo_ros_diffdrive" executabe
+         Notes: The executable simply translates between ROS topics and gazebo position interface
+                commands and messages.  It is a ROS node which connects to the gazebo server.
+                However, gazebo_ros_diffdrive.cpp is poorly written.  It uses hard-coded values for
+                a lot of things, for instance the interface name (which depends on the model name,
+                which is chosen when spawning models in gazebo) must be "robot_description". It also
+                publishes to and subscribes from hard-coded absolute topics.  Maybe a rewritten
+                version of this would be a good idea?  If we could select the interface and topic
+                names at runtime this would be pretty convenient.  Having a separate binary to run
+                in order to start "talking" to ROS is also good.  First, it's more like the real
+                robot (where you need to start a driver), and second, it allows you to start the
+                simulated robot without forcing another ROS node (process) into existence.  The fact
+                that the standard gazebo position2d controller is used is nice too, since this means
+                that this robot description can also be used with gazebo and player.
+
+      2. gazebo: a) erratic_gazebo_plugin's "libdiffdrive_plugin.so" in model
+         Notes: The library is a gazebo plugin which translates between ROS topics and gazebo
+                position interface commands and messages.  It is a ROS node which runs from within
+                the gazebo server.  It is fairly well written, although there are a few questions
+                in the code saying rviz has problems, which may indicate some underlying issue.  The
+                namespace can be set in the robot description file, but if this is not set then the
+                namespace can be set via the launch files, which is good.  The topics being used
+                need to be set when the model is loaded, however, which means they need to be set
+                in the robot model file.  Normally we can decide what topics we want to use by
+                convention, but this is a bit unfortunate nonetheless.  And since the model is
+                spawned inside the gazebo process remapping won't work, since remapping affects the
+                spawner process, not the spawned process.  The namespace argument allows the spawned
+                process to be moved, but the topic name will be fixed.  This is how other ROS gazebo
+                plugins work, however (e.g. p3d), so maybe this is the way to go?  Then again the
+                p3d ground truth plugin can only exist in gazebo, so maybe it's normal that it stays
+                there.  But it would be nice to be able to start the robot model without forcing
+                the p3d node/topic into existence, actually.  Although running inside the server
+                probably yields a slight performance edge, since there's no need to interface to
+                gazebo in the same way.
+
+
+
+      3. erratic robot: a) player wrapper which does...???
+      4. p2os robots: a) p2os controller which does...???
+      5. pr2 transmission + controller manager + ...???
+
+
+
+
+
+
+
+    The preferred way of handling robot descriptions involves the following files:
+
+    urdf/
+      common.xacro          - common xacro definitions
+      (part).urdf[.xacro]   - urdf definition for a robot part or sensor (robot element has no name)
+
+    robots/
+      (robot).urdf[.xacro]  - urdf definition for a robot (robot element has name)
+
+
+    By convention, each robot should subscribe to the following topics in its namespace:
+
+      geometry_msgs/Twist   cmd_vel   Desired 6D velocity (subset of the fields are considered)
+      (...add entries for other controllers)
+
+    By convention each robot may publish the following topics in its namespace:
+
+      nav_msgs/Odometry     pose_ground_truth   Ground truth 6D pose
+      nav_msgs/Odometry     odom                Odometric updates
+      nav_msgs/Odometry     imu                 Inertial updates
+      (...add entries for other sensors)
+
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+  <url></url>
+
+  <!-- We use the erratic robot description -->
+  <depend package="erratic_description" />
+
+  <!-- We use the p2os robot descriptions -->
+  <depend package="p2os_urdf" />
+
+  <!-- We use the pr2 robot description -->
+  <depend package="pr2_description" />
+
+</package>

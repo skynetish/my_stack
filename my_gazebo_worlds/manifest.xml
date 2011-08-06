@@ -1,0 +1,39 @@
+<package>
+
+  <!-- Package summary -->
+  <description brief="A collection of world, model, and launch files.">
+
+    This package is a collection of world, model, and launch files used to launch various robots in
+    various gazebo worlds.  The idea is that launching these files should be equivalent to powering
+    on the created robots.  Controllers and sensors should be connected separately.
+
+    Since gazebo needs world files to be passed as physical files, *.world.xacro files are
+    converted to *.world files when building the package.  Only *.world.xacro files should be
+    edited (rather than *.world files), and the package should be built after all edits.
+
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+  <url></url>
+
+  <!-- We use xacro to process certain XML files -->
+  <depend package="xacro" />
+
+  <!-- We use the gazebo simulator -->
+  <depend package="gazebo" />
+
+  <!-- We use the gazebo simulator plugins -->
+  <depend package="gazebo_plugins" />
+
+  <!-- We use robot descriptions -->
+  <depend package="my_robot_descriptions" />
+
+  <!-- Exported values -->
+  <export>
+
+    <!-- This allows gazebo to find resources in our local "Media" directory -->
+    <gazebo gazebo_media_path="${prefix}" />
+
+  </export>
+
+</package>

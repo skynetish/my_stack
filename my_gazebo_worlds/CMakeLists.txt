@@ -5,18 +5,15 @@ cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 #######################################
-# Process all ${extension}.xacro files
+# Process certain xacro files
 #######################################
 # Find the xacro package and include the xacro cmake macro file
 # THIS IS DEPRECATED, USE THIS INSTEAD WHEN XACRO IS FIXED: rosbuild_include(xacro xacro)
 rosbuild_find_ros_package(xacro)
 include(${xacro_PACKAGE_PATH}/cmake/xacro.cmake)
 
-# Set variable containing file extension to consider
-set(extension "xacro")
-
 # Declare variable containing all input files
-file(GLOB_RECURSE input_files ${CMAKE_CURRENT_SOURCE_DIR}/worlds/*.${extension})
+file(GLOB_RECURSE input_files ${CMAKE_CURRENT_SOURCE_DIR}/worlds/*.world.xacro)
 
 # Declare variable containing all output files
 set(output_files "")
@@ -25,7 +22,7 @@ set(output_files "")
 foreach(input_file ${input_files})
 
   # Declare variable containing output filename
-  string(REPLACE ".${extension}" "" output_file ${input_file})
+  string(REPLACE ".xacro" "" output_file ${input_file})
 
   # Status message
   message("Converting file ${input_file} to ${output_file}")

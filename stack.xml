@@ -1,0 +1,34 @@
+<stack>
+
+  <!-- Stack summary -->
+  <description brief="Setup and control various real and simulated robots.">
+
+    This stack contains a collection of packages used to setup and control various real and
+    simulated robots.
+
+  <description/>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+
+  <!-- roslib, rosbuild, etc. -->
+  <depend stack="ros"/>
+
+  <!-- xacro -->
+  <depend stack="common"/>
+
+  <!-- geometry_msgs, nav_msgs, etc. -->
+  <depend stack="common_msgs"/>
+
+  <!-- tf, angles, etc. -->
+  <depend stack="geometry"/>
+
+  <!-- urdf, robot_state_publisher, etc. -->
+  <depend stack="robot_model" />
+
+  <!-- roscpp, rospy, etc. -->
+  <depend stack="ros_comm" />
+
+  <!-- gazebo, gazebo_plugins, etc. -->
+  <depend stack="simulator_gazebo" />
+
+</stack>
