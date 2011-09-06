@@ -1,0 +1,22 @@
+<package>
+
+  <!-- Package summary -->
+  <description brief="A collection of launch files.">
+
+    This package is a collection of launch files used to launch various gazebo scenarios.
+
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+  <url></url>
+
+  <!-- We use gazebo worlds -->
+  <depend package="my_gazebo_worlds" />
+
+  <!-- We use gazebo robots -->
+  <depend package="my_gazebo_robots" />
+
+  <!-- We use gazebo controllers -->
+  <depend package="my_gazebo_controllers" />
+
+</package>

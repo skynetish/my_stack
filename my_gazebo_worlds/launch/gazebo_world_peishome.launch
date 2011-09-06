@@ -1,8 +1,12 @@
 <launch>
 
+  <!-- Extra arguments for gazebo -->
+  <arg name="args" default="" />
+
   <!-- Gazebo -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo.launch" >
     <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world" />
+    <arg name="args" value="$(arg args)" />
   </include>
 
   <!-- Walls -->
@@ -10,7 +14,7 @@
     name="$(anon walls_spawn_model_node)"
     pkg="gazebo"
     type="spawn_model"
-    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/ecsc.model"
+    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/peishome.model"
     respawn="false"
     output="screen"
   />

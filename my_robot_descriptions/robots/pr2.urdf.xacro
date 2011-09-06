@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<robot name="pr2" >
+  <include filename="$(find pr2_description)/robots/pr2.urdf.xacro" />
+</robot>

@@ -3,13 +3,21 @@
   <!-- Package summary -->
   <description brief="A collection of world, model, and launch files.">
 
-    This package is a collection of world, model, and launch files used to launch various robots in
-    various gazebo worlds.  The idea is that launching these files should be equivalent to powering
-    on the created robots.  Controllers and sensors should be connected separately.
+    This package is a collection of world, model, and launch files used to launch various gazebo
+    worlds.  Since gazebo needs world files to be passed as physical files, *.world.xacro files are
+    converted to *.world files when building the package.  Only *.world.xacro files should be edited
+    (rather than editing *.world files directly), and the package should be re-built after any
+    changes to these files.
 
-    Since gazebo needs world files to be passed as physical files, *.world.xacro files are
-    converted to *.world files when building the package.  Only *.world.xacro files should be
-    edited (rather than *.world files), and the package should be built after all edits.
+    For reference, some of the materials which work well for walls and floors include:
+
+      Gazebo/White
+      Gazebo/WoodFloor
+      Gazebo/LightWood
+      Gazebo/CeilingTiled
+      Gazebo/GrayGrid
+      Gazebo/Rocky
+      Gazebo/Rockwall
 
   </description>
   <author>Kevin LeBlanc</author>
@@ -21,12 +29,6 @@
 
   <!-- We use the gazebo simulator -->
   <depend package="gazebo" />
-
-  <!-- We use the gazebo simulator plugins -->
-  <depend package="gazebo_plugins" />
-
-  <!-- We use robot descriptions -->
-  <depend package="my_robot_descriptions" />
 
   <!-- Exported values -->
   <export>

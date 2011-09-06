@@ -1,12 +1,12 @@
 <launch>
 
-  <!-- The world argument -->
+  <!-- The world argument defaults to the empty world -->
   <arg name="world" default="$(find my_gazebo_worlds)/worlds/empty.world" />
 
-  <!-- Other arguments (such as "-g" for no GUI or "-r" for no rendering) can be included here -->
+  <!-- Extra arguments for gazebo, for example "-g" for no GUI, "-r" for no rendering -->
   <arg name="args" default="" />
 
-  <!-- Set this to true in the parameter server to tell everyone to use simulated time -->
+  <!-- Setting this to true in the parameter server tells everyone to use simulated time -->
   <param name="/use_sim_time" value="true" />
 
   <!--

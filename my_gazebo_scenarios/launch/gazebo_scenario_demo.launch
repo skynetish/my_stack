@@ -1,22 +1,10 @@
 <launch>
 
   <!-- Gazebo -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo.launch" >
-    <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world" />
-  </include>
-
-  <!-- Walls -->
-  <node
-    name="$(anon walls_spawn_model_node)"
-    pkg="gazebo"
-    type="spawn_model"
-    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/ecsc.model"
-    respawn="false"
-    output="screen"
-  />
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_world_ecsc.launch" />
 
   <!-- Spawn an erratic robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_erratic.launch" >
+  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_erratic.launch" >
     <arg name="namespace" value="erratic_1" />
     <arg name="x"         value="2" />
     <arg name="y"         value="2" />
@@ -27,7 +15,7 @@
   </include>
 
   <!-- Spawn a Pioneer 3DX robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer3dx.launch" >
+  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
     <arg name="namespace" value="pioneer3dx_1" />
     <arg name="x"         value="1" />
     <arg name="y"         value="7" />
@@ -38,7 +26,7 @@
   </include>
 
   <!-- Spawn a Pioneer 2DX robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_pioneer2dx.launch" >
+  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer2dx.launch" >
     <arg name="namespace" value="pioneer2dx_1" />
     <arg name="x"         value="3" />
     <arg name="y"         value="7" />
@@ -49,7 +37,7 @@
   </include>
 
   <!-- Spawn a PR2 robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_worlds)/launch/gazebo_pr2.launch" >
+  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pr2.launch" >
     <arg name="namespace" value="pr2_1" />
     <arg name="x"         value="2" />
     <arg name="y"         value="11" />

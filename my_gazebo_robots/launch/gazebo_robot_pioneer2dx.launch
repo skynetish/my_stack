@@ -13,14 +13,14 @@
   <group ns="$(arg namespace)">
 
     <!-- Upload robot description -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find p2os_urdf)/defs/pioneer3dx.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find my_robot_descriptions)/robots/pioneer2dx.model.xacro'" />
 
     <!-- Spawn robot -->
     <node
       name="$(anon robot_spawn_model_node)"
       pkg="gazebo"
       type="spawn_model"
-      args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -param robot_description -model $(arg namespace) -namespace $(arg namespace) -urdf"
+      args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -param robot_description -model $(arg namespace) -namespace $(arg namespace) -gazebo"
       respawn="false"
       output="screen"
     />
