@@ -23,12 +23,12 @@
 
     The preferred way of handling robot descriptions involves the following files:
 
-    urdf/
-      common.xacro          - common xacro definitions
-      (part).urdf[.xacro]   - urdf definition for a robot part or sensor (robot element has no name)
+      urdf/
+        common.xacro          - common xacro definitions
+        (part).urdf[.xacro]   - urdf definition for a robot part/sensor (robot element has no name)
 
-    robots/
-      (robot).urdf[.xacro]  - urdf definition for a robot (robot element has name)
+      robots/
+        (robot).urdf[.xacro]  - urdf definition for a robot (robot element has name)
 
     By convention, each robot should subscribe to the following topics in its namespace:
 
@@ -42,46 +42,6 @@
       nav_msgs/Odometry     imu                 Inertial updates in 6D
       (...add entries for other sensors)
 
-
-
-    Notes:
-
-    There are several ways to control differential drive robots in ROS.
-
-      1. p2os + gazebo:
-          -packages:
-            -gazebo: "differential_position2d" controller in model
-            -gazebo_plugins: "gazebo_ros_diffdrive" executable
-          -description: driver is ROS node which connects to the gazebo simulation and position2d
-           interfaces, and translates between ROS topics and gazebo position interface data.
-          -cons: hard-coded everything (interface name, topics, etc.); slight performance penalty
-           since need another process (compared to running a real gazebo plugin)
-          -pros: separate binary is like real robots (separate driver); separate binary avoids
-           having unused ROS nodes and topics; uses standard gazebo position2d controller which
-           allows description to be used via player
-      2. erratic + gazebo:
-          -packages:
-            -erratic_gazebo_plugins "libdiffdrive_plugin.so" in model
-            -pr2_mechanism_model: SimpleTransmission for each wheel in model                                      -- WHY???
-            -gazebo_ros_controller_manager: "libgazebo_ros_controller_manager.so" for each transmission in model  -- WHY???
-            -robot_state_publisher: state_publisher executable                                                    -- WHY???
-          -description: pure gazebo plugin and ROS node loaded with model; translates between ROS
-           topics and gazebo position interface data.
-          -cons: rviz issues mentioned in code; topic names set in model and can't be mapped; forces
-           ROS node and topics on load even if not used (i.e. no separate driver)
-          -pros: slight performance edge (compared to running a separate gazebo client)
-      3. erratic:
-          -packages: erratic_player driver talks to real erratic robot by wrapping player driver
-      4. p2os:
-          -packages: p2os_driver talks to real p2os controller directly
-      5. pr2 + gazebo:
-          -transmission + controller manager + ...???
-      6. pr2:
-          -transmission + controller manager + ...???
-
-    TODO: Fix robot descriptions per below.
-    TODO: Write new version of gazebo diff drive driver like the p2os robots use in my_gazebo_controllers
-    TODO: Write keyboard teleop program
 
   </description>
   <author>Kevin LeBlanc</author>

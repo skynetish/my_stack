@@ -1,50 +1,89 @@
 <launch>
 
-  <!-- Gazebo -->
+  <!-- ================================================ -->
+  <!-- Which robots to create                           -->
+  <!-- ================================================ -->
+  <arg name="create_erratic"    default="true" />
+  <arg name="create_pioneer2dx" default="true" />
+  <arg name="create_pioneer3dx" default="true" />
+  <arg name="create_pr2"        default="false" />
+
+
+  <!-- ================================================ -->
+  <!-- Create the world                                 -->
+  <!-- ================================================ -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo_world_ecsc.launch" />
 
-  <!-- Spawn an erratic robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_erratic.launch" >
-    <arg name="namespace" value="erratic_1" />
-    <arg name="x"         value="2" />
-    <arg name="y"         value="2" />
-    <arg name="z"         value="0" />
-    <arg name="roll"      value="0" />
-    <arg name="pitch"     value="0" />
-    <arg name="yaw"       value="0" />
-  </include>
 
-  <!-- Spawn a Pioneer 3DX robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
-    <arg name="namespace" value="pioneer3dx_1" />
-    <arg name="x"         value="1" />
-    <arg name="y"         value="7" />
-    <arg name="z"         value="0" />
-    <arg name="roll"      value="0" />
-    <arg name="pitch"     value="0" />
-    <arg name="yaw"       value="0" />
-  </include>
+  <!-- ================================================ -->
+  <!-- Spawn an erratic robot in it's own namespace     -->
+  <!-- ================================================ -->
+  <group ns="erratic_1_namespace" if="$(arg create_erratic)" >
 
-  <!-- Spawn a Pioneer 2DX robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer2dx.launch" >
-    <arg name="namespace" value="pioneer2dx_1" />
-    <arg name="x"         value="3" />
-    <arg name="y"         value="7" />
-    <arg name="z"         value="0" />
-    <arg name="roll"      value="0" />
-    <arg name="pitch"     value="0" />
-    <arg name="yaw"       value="0" />
-  </include>
+    <!-- Create a unique name for the gazebo robot model -->
+    <arg name="robot_name" value="erratic_1_name" />
 
-  <!-- Spawn a PR2 robot in it's own namespace at the given position -->
-  <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pr2.launch" >
-    <arg name="namespace" value="pr2_1" />
-    <arg name="x"         value="2" />
-    <arg name="y"         value="11" />
-    <arg name="z"         value="0" />
-    <arg name="roll"      value="0" />
-    <arg name="pitch"     value="0" />
-    <arg name="yaw"       value="0" />
-  </include>
+    <!-- Create the robot -->
+    <include file="$(find my_gazebo_robots)/launch/gazebo_robot_erratic.launch" >
+      <arg name="robot_name"  value="$(arg robot_name)" />
+      <arg name="x"           value="2"                 />
+      <arg name="y"           value="2"                 />
+    </include>
+
+  </group>
+
+
+  <!-- ================================================ -->
+  <!-- Spawn a pioneer3dx robot in it's own namespace   -->
+  <!-- ================================================ -->
+  <group ns="pioneer3dx_1_namespace" if="$(arg create_pioneer3dx)" >
+
+    <!-- Create a unique name for the gazebo robot model -->
+    <arg name="robot_name" value="pioneer3dx_1_name" />
+
+    <!-- Create the robot -->
+    <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
+      <arg name="robot_name"  value="$(arg robot_name)" />
+      <arg name="x"           value="1"                 />
+      <arg name="y"           value="7"                 />
+    </include>
+
+  </group>
+
+
+  <!-- ================================================ -->
+  <!-- Spawn a pioneer2dx robot in it's own namespace   -->
+  <!-- ================================================ -->
+  <group ns="pioneer2dx_1_namespace" if="$(arg create_pioneer2dx)" >
+
+    <!-- Create a unique name for the gazebo robot model -->
+    <arg name="robot_name" value="pioneer2dx_1_name" />
+
+    <!-- Create the robot -->
+    <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer2dx.launch" >
+      <arg name="robot_name"  value="$(arg robot_name)" />
+      <arg name="x"           value="3"                 />
+      <arg name="y"           value="7"                 />
+    </include>
+
+  </group>
+
+
+  <!-- ================================================ -->
+  <!-- Spawn a pr2 robot in it's own namespace          -->
+  <!-- ================================================ -->
+  <group ns="pr2_1_namespace" if="$(arg create_pr2)" >
+
+    <!-- Create a unique name for the gazebo robot model -->
+    <arg name="robot_name" value="pr2_1_name" />
+
+    <!-- Create the robot -->
+    <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pr2.launch" >
+      <arg name="robot_name"  value="$(arg robot_name)" />
+      <arg name="x"           value="2"                 />
+      <arg name="y"           value="11"                />
+    </include>
+
+  </group>
 
 </launch>
