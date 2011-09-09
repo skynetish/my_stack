@@ -3,7 +3,7 @@
   <!-- Package summary -->
   <description brief="A collection of robot descriptions.">
 
-    This package is a collection of urdf (and other) files used to describe various robots.  Most
+    This package is a collection of urdf (and possibly other) files describing various robots.  Most
     robots have descriptions in their own robot-specific packages, but these descriptions are often
     written in inconsistent or even incorrect ways, using differing naming conventions and improper
     namespace handling.  In particular, many robot descriptions do not properly allow all topics to
@@ -15,7 +15,7 @@
     parameter server on launch.  Some ROS nodes and gazebo plugins assume that this convention is
     followed, and some things may actually break if this is not done.  The intention is to avoid
     such dependencies, but in some cases this may be difficult, so by default the convention should
-    be followed.
+    normally be followed.
 
     The urdf descriptions are stored in *.urdf.xacro format, and they should be edited directly.
     This means we don't have to build this package to "process" the xacro files.  Instead, xacro can

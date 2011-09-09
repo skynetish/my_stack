@@ -5,7 +5,7 @@
 
     This package is a collection of launch files used to launch various robots in gazebo.  The idea
     is that launching these files should be equivalent to powering on the created robots.  Drivers
-    for controllers and sensors will normally have to be connected separately as needed.  By
+    for controllers and sensors will normally have to be connected separately, as needed.  By
     convention, urdf robot descriptions are uploaded to a "robot_description" key in the parameter
     server on launch.  See the "my_robot_descriptions" package for more information about this.
 
