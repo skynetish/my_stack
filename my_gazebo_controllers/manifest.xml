@@ -1,0 +1,22 @@
+<package>
+
+  <!-- Package summary -->
+  <description brief="Gazebo controllers.">
+
+    This package contains gazebo robot controllers.
+
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+  <url></url>
+
+  <!-- Dependencies -->
+  <depend package="roscpp" />
+  <depend package="gazebo" />
+  <depend package="tf" />
+  <depend package="geometry_msgs" />
+  <depend package="nav_msgs" />
+
+</package>
+
+
