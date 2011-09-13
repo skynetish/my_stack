@@ -1,0 +1,13 @@
+<package>
+
+  <!-- Package summary -->
+  <description brief="Robot tele-operation.">
+
+    This package provides the means to tele-operate robots.
+
+  </description>
+  <author>Kevin LeBlanc</author>
+  <license>BSD</license>
+  <url></url>
+
+</package>
