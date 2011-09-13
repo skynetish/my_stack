@@ -22,11 +22,14 @@
 #include <gazebo/Quatern.hh>
 
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <tf/transform_broadcaster.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 
 #include <boost/bind.hpp>
+
+
 
 
 #define KEY_SERVER_ID           "server_id"
@@ -38,6 +41,8 @@
 #define KEY_INTERFACE_NAME      "interface_name"
 #define KEY_COMMAND_TOPIC       "command_topic"
 #define KEY_ODOMETRY_TOPIC      "odometry_topic"
+#define KEY_TF_PARENT           "tf_parent"
+#define KEY_TF_CHILD            "tf_child"
 
 #define DEFAULT_SERVER_ID       0
 #define DEFAULT_THREADS         2
@@ -46,8 +51,11 @@
 #define DEFAULT_UPDATE_PERIOD   0.01 //seconds
 #define DEFAULT_MODEL_NAME      "robot_description"
 #define DEFAULT_INTERFACE_NAME  "position_iface_0"
-#define DEFAULT_COMMAND_TOPIC 	"cmd_vel"
-#define DEFAULT_ODOMETRY_TOPIC 	"odom"
+#define DEFAULT_COMMAND_TOPIC   "cmd_vel"
+#define DEFAULT_ODOMETRY_TOPIC  "odom"
+#define DEFAULT_TF_PARENT       "odom"
+#define DEFAULT_TF_CHILD        "base_link"
+
 
 
 
@@ -59,11 +67,11 @@ public:
   ros::Publisher   pub_;
 
   void cmdVelCallBack(const geometry_msgs::Twist::ConstPtr& cmd_msg) {
-    std::cout << " pos " << this->posIface
-              <<    " x " << cmd_msg->linear.x
-              <<    " y " << cmd_msg->linear.y
-              <<    " z " << cmd_msg->angular.z
-              << std::endl;
+    ROS_DEBUG_STREAM(
+        " pos " << this->posIface
+        <<    " x " << cmd_msg->linear.x
+        <<    " y " << cmd_msg->linear.y
+        <<    " z " << cmd_msg->angular.z);
 
     if (this->posIface) {
       this->posIface->Lock(1);
@@ -81,8 +89,7 @@ public:
     libgazebo::Client *client = new libgazebo::Client();
     libgazebo::SimulationIface *simIface = new libgazebo::SimulationIface();
     this->posIface = new libgazebo::PositionIface();
-    this->rnh_ = new ros::NodeHandle();
-    std::string ns = rnh_->getNamespace();
+    this->rnh_ = new ros::NodeHandle("~");
 
     //Parameters
     int serverId;
@@ -94,6 +101,8 @@ public:
     std::string interfaceName;
     std::string commandTopic;
     std::string odometryTopic;
+    std::string tfParent;
+    std::string tfChild;
 
     //Load parameters and set defaults
     rnh_->param(std::string(KEY_SERVER_ID), serverId, DEFAULT_SERVER_ID);
@@ -105,18 +114,27 @@ public:
     rnh_->param(std::string(KEY_INTERFACE_NAME), interfaceName, std::string(DEFAULT_INTERFACE_NAME));
     rnh_->param(std::string(KEY_COMMAND_TOPIC), commandTopic, std::string(DEFAULT_COMMAND_TOPIC));
     rnh_->param(std::string(KEY_ODOMETRY_TOPIC), odometryTopic, std::string(DEFAULT_ODOMETRY_TOPIC));
+    rnh_->param(std::string(KEY_TF_PARENT), tfParent, std::string(DEFAULT_TF_PARENT));
+    rnh_->param(std::string(KEY_TF_CHILD), tfChild, std::string(DEFAULT_TF_CHILD));
 
-    //DEBUG
-    std::cout << "ns: " << rnh_->getNamespace() << "\n";
-    std::string temp;
-    rnh_->getParam("model_name", temp);
-    std::cout << "rnh_->getParam(\"model_name\"): " << temp << "\n";
+    //Advertise final parameters
+    rnh_->setParam(std::string(KEY_SERVER_ID), serverId);
+    rnh_->setParam(std::string(KEY_THREADS), threads);
+    rnh_->setParam(std::string(KEY_COMMAND_QUEUE), commandQueue);
+    rnh_->setParam(std::string(KEY_ODOMETRY_QUEUE), odometryQueue);
+    rnh_->setParam(std::string(KEY_UPDATE_PERIOD), updatePeriod);
+    rnh_->setParam(std::string(KEY_MODEL_NAME), modelName);
+    rnh_->setParam(std::string(KEY_INTERFACE_NAME), interfaceName);
+    rnh_->setParam(std::string(KEY_COMMAND_TOPIC), commandTopic);
+    rnh_->setParam(std::string(KEY_ODOMETRY_TOPIC), odometryTopic);
+    rnh_->setParam(std::string(KEY_TF_PARENT), tfParent);
+    rnh_->setParam(std::string(KEY_TF_CHILD), tfChild);
 
     //Connect to the gazebo server
     try {
       client->ConnectWait(serverId, GZ_CLIENT_ID_USER_FIRST);
     } catch (gazebo::GazeboError e) {
-      std::cout << "Gazebo error: Unable to connect\n" << e << "\n";
+      ROS_DEBUG_STREAM("Gazebo error: Unable to connect to gazebo: " << e);
       return;
     }
 
@@ -124,7 +142,7 @@ public:
     try {
       simIface->Open(client, "default");
     } catch (gazebo::GazeboError e) {
-      std::cout << "Gazebo error: Unable to connect to the simulator interface\n" << e << "\n";
+      ROS_DEBUG_STREAM("Gazebo error: Unable to connect to the simulator interface: " << e);
       return;
     }
 
@@ -132,7 +150,7 @@ public:
     try {
       this->posIface->Open(client, modelName + "::" + interfaceName);
     } catch (std::string e) {
-      std::cout << "Gazebo error: Unable to connect to the position interface\n" << e << "\n";
+      ROS_DEBUG_STREAM("Gazebo error: Unable to connect to the position interface: " << e);
       return;
     }
 
@@ -142,8 +160,8 @@ public:
     this->posIface->Unlock();
 
     //Subscribe to the command topic and publish the odometry topic
-    this->sub_ = rnh_->subscribe<geometry_msgs::Twist>(ns + "/" + commandTopic, commandQueue, &DiffDrive::cmdVelCallBack,this);
-    this->pub_ = rnh_->advertise<nav_msgs::Odometry>(ns + "/" + odometryTopic, odometryQueue);
+    this->sub_ = rnh_->subscribe<geometry_msgs::Twist>(commandTopic, commandQueue, &DiffDrive::cmdVelCallBack,this);
+    this->pub_ = rnh_->advertise<nav_msgs::Odometry>(odometryTopic, odometryQueue);
 
     //Spawn threads
     ros::MultiThreadedSpinner s(threads);
@@ -153,13 +171,13 @@ public:
     nav_msgs::Odometry odom;
 
     //Create transform broadcaster
-    tf::TransformBroadcaster transform_broadcaster_ ;
+    tf::TransformBroadcaster transform_broadcaster_;
 
     //Set update frequency
     ros::Duration d;
     d.fromSec(updatePeriod);
 
-    while(rnh_->ok()) {
+    while(ros::ok()) {
       if (this->posIface) {
         this->posIface->Lock(1);
 
@@ -175,7 +193,7 @@ public:
         qt.setRPY(this->posIface->data->pose.roll, this->posIface->data->pose.pitch, this->posIface->data->pose.yaw);
         btVector3 vt(this->posIface->data->pose.pos.x, this->posIface->data->pose.pos.y, this->posIface->data->pose.pos.z);
         tf::Transform base_link_to_odom(qt, vt);
-        transform_broadcaster_.sendTransform(tf::StampedTransform(base_link_to_odom,ros::Time::now(),"odom","base_link"));
+        transform_broadcaster_.sendTransform(tf::StampedTransform(base_link_to_odom,ros::Time::now(), tfParent, tfChild));
 
         // publish odom topic
         odom.pose.pose.position.x = this->posIface->data->pose.pos.x;
@@ -214,9 +232,11 @@ public:
 //Main
 int main(int argc, char** argv) {
   //Initialise
-  ros::init(argc,argv,"gazebo_ros_diffdrive", ros::init_options::NoSigintHandler);
+  ros::init(argc,argv,"gazebo_ros_diffdrive");
 
   //Create instance
   DiffDrive d;
+
+  //Done
   return 0;
 }

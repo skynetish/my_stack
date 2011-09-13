@@ -1,0 +1,18 @@
+<launch>
+
+  <!-- Required general arguments -->
+  <arg name="controller_name" />
+  <arg name="model_name" />
+
+  <!-- Launch node -->
+  <node
+    name="$(arg controller_name)"
+    pkg="my_gazebo_controllers"
+    type="gazebo_ros_diffdrive"
+    respawn="false"
+    output="screen"
+    >
+    <param name="model_name"      value="$(arg model_name)" />
+  </node>
+
+</launch>

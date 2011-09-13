@@ -20,26 +20,21 @@
   <!-- ================================================ -->
   <group ns="pioneer3dx_1_namespace" if="$(arg create_pioneer3dx)" >
 
-    <!-- Create a unique name for the gazebo robot model and post it to the parameter server-->
-    <arg name="model_name" value="pioneer3dx_1_name" />
-    <param name="model_name" value="$(arg model_name)" />
+    <!-- Create a unique name for the gazebo robot model -->
+    <arg name="model_name"        value="pioneer3dx_1_name" />
 
     <!-- Create the robot -->
     <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
-      <arg name="model_name"  value="$(arg model_name)" />
-      <arg name="x"           value="1"                 />
-      <arg name="y"           value="8"                 />
+      <arg name="model_name"      value="$(arg model_name)" />
+      <arg name="x"               value="1" />
+      <arg name="y"               value="8" />
     </include>
 
-    <!-- Create a controller -->
-    <node
-      name="gazebo_ros_diffdrive"
-      pkg="my_gazebo_controllers"
-      type="gazebo_ros_diffdrive"
-      args=""
-      respawn="false"
-      output="screen"
-    />
+    <!-- Create a base controller -->
+    <include file="$(find my_gazebo_controllers)/launch/gazebo_controller_diffdrive.launch" >
+      <arg name="controller_name" value="base_controller" />
+      <arg name="model_name"      value="$(arg model_name)" />
+    </include>
 
   </group>
 
