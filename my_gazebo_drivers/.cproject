@@ -234,7 +234,7 @@
 <pathentry kind="mac" name="__GXX_RTTI" path="" value="1"/>
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
-<pathentry include="/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_controllers/include" kind="inc" path="" system="true"/>
+<pathentry include="/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_drivers/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include/libxml2" kind="inc" path="" system="true"/>
 <pathentry include="/opt/ros/diamondback/stacks/simulator_gazebo/gazebo/gazebo/include" kind="inc" path="" system="true"/>
 <pathentry include="/opt/ros/diamondback/stacks/simulator_gazebo/gazebo/msg_gen/cpp/include" kind="inc" path="" system="true"/>
@@ -481,6 +481,6 @@
 </cconfiguration>
 </storageModule>
 <storageModule moduleId="cdtBuildSystem" version="4.0.0">
-<project id="my_gazebo_controllers.null.1" name="my_gazebo_controllers"/>
+<project id="my_gazebo_drivers.null.1" name="my_gazebo_drivers"/>
 </storageModule>
 </cproject>

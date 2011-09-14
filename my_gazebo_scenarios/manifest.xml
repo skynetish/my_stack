@@ -16,7 +16,7 @@
   <!-- We use gazebo robots -->
   <depend package="my_gazebo_robots" />
 
-  <!-- We use gazebo controllers -->
-  <depend package="my_gazebo_controllers" />
+  <!-- We use gazebo drivers -->
+  <depend package="my_gazebo_drivers" />
 
 </package>

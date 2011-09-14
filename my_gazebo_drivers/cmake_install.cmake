@@ -1,4 +1,4 @@
-# Install script for directory: /home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_controllers
+# Install script for directory: /home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_drivers
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,7 +38,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_controllers/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_drivers/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_controllers/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_drivers/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)

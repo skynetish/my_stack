@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>my_gazebo_controllers-RelWithDeb@my_gazebo_controllers</name>
+	<name>my_gazebo_drivers-RelWithDeb@my_gazebo_drivers</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -47,7 +47,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_controllers</value>
+					<value>/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_drivers</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
@@ -83,7 +83,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.build.location</key>
-					<value>/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_controllers</value>
+					<value>/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_gazebo_drivers</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.autoBuildTarget</key>

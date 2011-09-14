@@ -1,9 +1,9 @@
 <package>
 
   <!-- Package summary -->
-  <description brief="Gazebo controllers.">
+  <description brief="Gazebo drivers.">
 
-    This package contains gazebo robot controllers.
+    This package contains gazebo robot drivers.
 
   </description>
   <author>Kevin LeBlanc</author>

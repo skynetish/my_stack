@@ -1,13 +1,13 @@
 <launch>
 
   <!-- Required general arguments -->
-  <arg name="controller_name" />
+  <arg name="driver_name" />
   <arg name="model_name" />
 
   <!-- Launch node -->
   <node
-    name="$(arg controller_name)"
-    pkg="my_gazebo_controllers"
+    name="$(arg driver_name)"
+    pkg="my_gazebo_drivers"
     type="gazebo_ros_diffdrive"
     respawn="false"
     output="screen"
