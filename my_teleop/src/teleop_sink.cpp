@@ -47,12 +47,6 @@
 #define PARAM_DEFAULT_NUM_STEPS 10
 
 
-/**
- * ...Use simple read from termios because the proper way to read key events
- * with press/release requires either an X server (which we shouldn't need),
- * or access to the /dev/input/event* files, which normally requires root or
- * at least elevated privileges, which we'd rather not fiddle with.
- */
 class TeleopSourceKeyboard
 {
 public:
