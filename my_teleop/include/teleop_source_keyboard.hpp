@@ -29,49 +29,42 @@
 
 
 //=============================================================================
+#ifndef INCLUDE_TELEOP_SOURCE_KEYBOARD_HPP
+#define INCLUDE_TELEOP_SOURCE_KEYBOARD_HPP
+//=============================================================================
+
+
+
+
+//=============================================================================
 //Includes
 //=============================================================================
 #include <teleop_source.hpp>
-//#include <teleop_source_keyboard.hpp>
-//#include <teleop_source_joystick.hpp>
-#include <ros/ros.h>
 
 
 
 
 //=============================================================================
-//Method definitions
+//Classes
 //=============================================================================
 
+/** Teleop namespace */
 namespace teleop {
 
-static TeleopSource TeleopSource::TeleopSourceFactory(int type) {
-  switch (type) {
-    case TELEOP_SOURCE_TYPE_DEFAULT:
-    case TELEOP_SOURCE_TYPE_KEYBOARD:
-      return TeleopSourceKeyboard();
-      break;
-    case TELEOP_SOURCE_TYPE_JOYSTICK:
-      return TeleopSourceJoystick();
-      break;
-    default:
-      printf("TeleopSourceFactory: invalid type (%d)\n", type);
-      return null;
-  }
-}
 
-bool TeleopSource::start(bool blocking) {
-  if (blocking) {
-    return loop();
-  } else {
-    boost::thread(loop());
-  }
-}
-
-bool TeleopSource::loop() {
-  while (true) {
-    listen();
-  }
-}
+/**
+ * This class implements a keyboard teleop source.
+ */
+class TeleopSourceKeyboard : TeleopSource
+{
+  bool listen(std::vector<teleop_msgs::Teleop>* teleop);
+}; //class
 
 } //namespace
+
+
+
+
+//=============================================================================
+#endif //#ifndef INCLUDE_TELEOP_SOURCE_KEYBOARD_HPP
+//=============================================================================

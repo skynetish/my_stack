@@ -117,8 +117,8 @@ public:
   bool stop(bool reset);
 
   /**
-   * Block while listening for teleop source device events.  When events occur,
-   * update the teleop output status via the teleop parameter and return.
+   * Blocks while listening for teleop source device events.  When events occur,
+   * updates the teleop output status via the teleop parameter and returns.
    *
    *   @param teleop [in/out] - the current teleop output, to be updated
    *
@@ -131,6 +131,11 @@ private:
   ros::Publisher publisher_;
   std::string topic_;
   std::vector<teleop_msgs::Teleop> teleop_;
+
+  /**
+   * Internal function to carry out the main listen loop.
+   */
+  bool loop();
 
 }; //class
 
