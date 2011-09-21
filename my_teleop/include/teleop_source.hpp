@@ -39,28 +39,30 @@
 //=============================================================================
 //Includes
 //=============================================================================
-#include <ros/ros.h>
+#include <teleop_common.hpp>
+
+
+
+//=============================================================================
+//Namespace
+//=============================================================================
+namespace teleop {
 
 
 
 
 //=============================================================================
-//Defines
+//Types
 //=============================================================================
 
-/** Source types */
-#define TELEOP_SOURCE_TYPE_DEFAULT        0
-#define TELEOP_SOURCE_TYPE_UNKNOWN        1
-#define TELEOP_SOURCE_TYPE_KEYBOARD       2
-#define TELEOP_SOURCE_TYPE_JOYSTICK       3
-
-/** Macro to determine source type name */
-#define TELEOP_SOURCE_TYPE_NAME(x) (\
-  ((x) == TELEOP_SOURCE_TYPE_DEFAULT      ) ? "TELEOP_SOURCE_TYPE_DEFAULT"    :\
-  ((x) == TELEOP_SOURCE_TYPE_UNKNOWN      ) ? "TELEOP_SOURCE_TYPE_UNKNOWN"    :\
-  ((x) == TELEOP_SOURCE_TYPE_KEYBOARD     ) ? "TELEOP_SOURCE_TYPE_KEYBOARD"   :\
-  ((x) == TELEOP_SOURCE_TYPE_JOYSTICK     ) ? "TELEOP_SOURCE_TYPE_JOYSTICK"   :\
-                                              "TELEOP_SOURCE_TYPE_UNDEFINED"  )
+/**
+ * Callback used to report an updated teleop state.
+ *
+ *   @param teleopState [in] - The latest teleop state
+ *
+ *   @return true on success
+ */
+typedef bool (*TeleopSourceCallback)(TeleopState* teleopState);
 
 
 
@@ -69,23 +71,19 @@
 //Classes
 //=============================================================================
 
-/** Teleop namespace */
-namespace teleop {
-
-
 /**
  * This class provides a framework for generic handling of tele-operation
- * sources.  The static teleopSourceFactory() method creates a teleop source
- * instance of a given type.
+ * sources.  The start() method starts a listening loop in a separate thread.
+ * The start method can optionally be blocking, in which case the listening
+ * thread is joined before start returns.
  *
- * The start() method starts a loop (in a separate thread if non-blocking) in
- * which the pure virtual listen() method is called in each iteration.
+ * The pure virtual listen() method will be called in each iteration of the
+ * listening loop.  This method must be implemented by a sub-class (i.e. a
+ * teleop source).  The method should block until one or more teleop events
+ * are detected.  Detected events should be used to update the current teleop
+ * state.
  *
- * The listen() method must be implemented by a sub-class (i.e. a teleop source
- * type), and it should simply block until one or more teleop events are
- * detected.  Detected events are processed in the listen() method and the
- * resulting output is published on a given topic from within the start()
- * method's loop.
+ * Once the state has been updated, the new state is passed into the should then be passed to the given callback.
  */
 class TeleopSource
 {
@@ -93,9 +91,14 @@ class TeleopSource
 public:
 
   /**
-   * Static factory method to create a teleop source of a given type.
+   * Constructor.
    */
-  static TeleopSource TeleopSourceFactory(int type);
+  TeleopSource(TeleopSourceCallback callback);
+
+  /**
+   * Destructor.
+   */
+  ~TeleopSource();
 
   /**
    * Start listening and publishing teleop device activity.
@@ -108,13 +111,29 @@ public:
 
   /**
    * Stop listening and publishing teleop device activity.  If start was called
-   * in blocking mode, it returns.
+   * in blocking mode, it returns after stop is called.  This method can also
+   * be blocking or non-blocking.
    *
-   *   @param reset [in] - true if this method should set outputs to zero
+   *   @param blocking [in] - true if this method should block
    *
    *   @return true on success
    */
-  bool stop(bool reset);
+  bool stop(bool blocking);
+
+  /**
+   * Check if source is running (listening and publishing).
+   *
+   *   @return true if running.
+   */
+  bool isRunning();
+
+private:
+
+  /** Callback */
+  TeleopSourceCallback mCallback;
+
+  /** Listening thread */
+  boost::thread mThread;
 
   /**
    * Blocks while listening for teleop source device events.  When events occur,
@@ -124,22 +143,24 @@ public:
    *
    *   @return true on success
    */
-  virtual bool listen(std::vector<teleop_msgs::Teleop>* teleop) = 0;
-
-private:
-  ros::NodeHandle* nodeHandle_;
-  ros::Publisher publisher_;
-  std::string topic_;
-  std::vector<teleop_msgs::Teleop> teleop_;
+  virtual bool listen(TeleopState* teleopState) = 0;
 
   /**
-   * Internal function to carry out the main listen loop.
+   * Executes main listen loop.
+   *
+   *   @return true on success
    */
   bool loop();
 
 }; //class
 
+
+
+
+
+//=============================================================================
 } //namespace
+//=============================================================================
 
 
 

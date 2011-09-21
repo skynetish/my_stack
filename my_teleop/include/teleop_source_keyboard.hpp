@@ -39,7 +39,16 @@
 //=============================================================================
 //Includes
 //=============================================================================
+#include <teleop_common.hpp>
 #include <teleop_source.hpp>
+
+
+
+
+//=============================================================================
+//Namespace
+//=============================================================================
+namespace teleop {
 
 
 
@@ -48,19 +57,27 @@
 //Classes
 //=============================================================================
 
-/** Teleop namespace */
-namespace teleop {
-
-
 /**
  * This class implements a keyboard teleop source.
  */
-class TeleopSourceKeyboard : TeleopSource
+class TeleopSourceKeyboard : public TeleopSource
 {
-  bool listen(std::vector<teleop_msgs::Teleop>* teleop);
+
+private:
+
+  /**
+   * Override listen from parent class.
+   */
+  bool listen(TeleopState* teleop);
+
 }; //class
 
+
+
+
+//=============================================================================
 } //namespace
+//=============================================================================
 
 
 

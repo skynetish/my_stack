@@ -37,6 +37,14 @@
 
 
 //=============================================================================
+//Namespace
+//=============================================================================
+namespace teleop {
+
+
+
+
+//=============================================================================
 //Defines
 //=============================================================================
 
@@ -115,6 +123,38 @@
   ((x) == TELEOP_BUTTON_TYPE_KEY_SHIFT    ) ? "TELEOP_BUTTON_TYPE_KEY_SHIFT"    :\
   ((x) == TELEOP_BUTTON_TYPE_KEY_ALT      ) ? "TELEOP_BUTTON_TYPE_KEY_ALT"      :\
                                               "TELEOP_BUTTON_TYPE_UNDEFINED"    )
+
+
+
+
+//=============================================================================
+//Structs
+//=============================================================================
+
+/** Teleop device axis */
+typedef struct {
+  int type;
+  double value;
+} TeleopAxis;
+
+/** Teleop device button */
+typedef struct {
+  int type;
+  bool value;
+} TeleopButton;
+
+/** Complete teleop device state */
+typedef struct {
+  std::vector<TeleopAxis> axes;
+  std::vector<TeleopButton> buttons;
+} TeleopState;
+
+
+
+
+//=============================================================================
+} //namespace
+//=============================================================================
 
 
 

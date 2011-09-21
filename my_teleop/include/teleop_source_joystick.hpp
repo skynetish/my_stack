@@ -29,6 +29,14 @@
 
 
 //=============================================================================
+#ifndef INCLUDE_TELEOP_SOURCE_JOYSTICK_HPP
+#define INCLUDE_TELEOP_SOURCE_JOYSTICK_HPP
+//=============================================================================
+
+
+
+
+//=============================================================================
 //Includes
 //=============================================================================
 #include <teleop_common.hpp>
@@ -46,99 +54,34 @@ namespace teleop {
 
 
 //=============================================================================
-//Method definitions
+//Classes
 //=============================================================================
-TeleopSource::TeleopSource(TeleopSourceCallback callback)
-  : mCallback(callback) {
-}
-//=============================================================================
-TeleopSource::~TeleopSource() {
-  stop(true);
-}
-//=============================================================================
-bool TeleopSource::start(bool blocking) {
 
-  //Check if already running
-  if (isRunning()) {
-    return true;
-  }
+/**
+ * This class implements a joystick teleop source.
+ */
+class TeleopSourceJoystick : public TeleopSource
+{
 
-  //Create thread which executes loop method
-  mThread = &(boost::thread(&TeleopSource::loop, this));
+private:
 
-  //If blocking wait for thread to finish
-  if (blocking) {
-    mThread->join();
-  }
+  /**
+   * Override listen from parent class.
+   */
+bool listen(TeleopState* teleop);
 
-  //Return result
-  return true;
-}
-//=============================================================================
-bool TeleopSource::isRunning() {
-  //Check if thread has same ID as default thread (which is "Not-A-Thread")
-  return (boost::thread::id() != mThread.get_id());
-}
-//=============================================================================
-bool TeleopSource::stop(bool blocking) {
-
-  //Interrupt if running
-  if (isRunning()) {
-    mThread.interrupt();
-
-    //If blocking wait for thread to finish
-    if (blocking) {
-      mThread->join();
-  }
-
-  return true;
-}
-//=============================================================================
-bool TeleopSource::loop() {
-
-  //The latest teleopState
-  TeleopState teleopState;
-
-  //Result to return
-  bool success = true;
-
-  //Loop until interrupted
-  while (!boost::this_thread::interruption_requested()) {
-
-    //Block while listening for actions
-    success = listen(&teleopState);
-
-    //If there were errors, quit
-    if (!success) {
-      break;
-    }
-
-    //Call callback
-    success = mCallback(&teleopState);
-
-    //If there were errors, quit
-    if (!success) {
-      break;
-    }
-
-  }
-
-  //When done, zero all outputs
-  for (int i=0; i<teleopState.axes.size(); i++) {
-    teleopState.axes[i].value = 0.0;
-  }
-  for (int i=0; i<teleopState.buttons.size(); i++) {
-    teleopState.buttons[i].value = false;
-  }
-
-  //Return result
-  return success;
-}
-//=============================================================================
+}; //class
 
 
 
 
 //=============================================================================
 } //namespace
+//=============================================================================
+
+
+
+
+//=============================================================================
+#endif //#ifndef INCLUDE_TELEOP_SOURCE_JOYSTICK_HPP
 //=============================================================================
