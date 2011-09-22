@@ -29,9 +29,17 @@
 
 
 //=============================================================================
-#ifndef INCLUDE_TELEOP_HPP
-#define INCLUDE_TELEOP_HPP
+#ifndef INCLUDE_TELEOP_COMMON_HPP
+#define INCLUDE_TELEOP_COMMON_HPP
 //=============================================================================
+
+
+
+
+//=============================================================================
+//Includes
+//=============================================================================
+#include <vector>
 
 
 
@@ -48,15 +56,23 @@ namespace teleop {
 //Defines
 //=============================================================================
 
-/** Axis types */
-#define TELEOP_AXIS_TYPE_UNKNOWN          0
+/**@{ Axis range (0=off) */
+#define TELEOP_AXIS_MIN                   -1.0
+#define TELEOP_AXIS_MAX                   1.0
+/**@}*/
+
+/**@{ Axis types */
+#define TELEOP_AXIS_TYPE_UNKNOWN          -1
+
 #define TELEOP_AXIS_TYPE_LIN_X            1
 #define TELEOP_AXIS_TYPE_LIN_Y            2
 #define TELEOP_AXIS_TYPE_LIN_Z            3
 #define TELEOP_AXIS_TYPE_ROT_X            4
 #define TELEOP_AXIS_TYPE_ROT_Y            5
 #define TELEOP_AXIS_TYPE_ROT_Z            6
+
 #define TELEOP_AXIS_TYPE_THROTTLE         7
+/**@}*/
 
 /** Macro to determine axis type name */
 #define TELEOP_AXIS_TYPE_NAME(x) (\
@@ -70,8 +86,15 @@ namespace teleop {
   ((x) == TELEOP_AXIS_TYPE_THROTTLE       ) ? "TELEOP_AXIS_TYPE_THROTTLE"       :\
                                               "TELEOP_AXIS_TYPE_UNDEFINED"      )
 
-/** Button types */
-#define TELEOP_BUTTON_TYPE_UNKNOWN        0
+/**@{ Button range (0=off, 1=on, >1=switch positions) */
+#define TELEOP_BUTTON_MIN                 0
+#define TELEOP_BUTTON_MAX                 255
+/**@}*/
+
+/**@{ Button types */
+#define TELEOP_BUTTON_TYPE_UNKNOWN        -1
+
+#define TELEOP_BUTTON_TYPE_0              0
 #define TELEOP_BUTTON_TYPE_1              1
 #define TELEOP_BUTTON_TYPE_2              2
 #define TELEOP_BUTTON_TYPE_3              3
@@ -81,48 +104,66 @@ namespace teleop {
 #define TELEOP_BUTTON_TYPE_7              7
 #define TELEOP_BUTTON_TYPE_8              8
 #define TELEOP_BUTTON_TYPE_9              9
-#define TELEOP_BUTTON_TYPE_A              10
-#define TELEOP_BUTTON_TYPE_B              11
-#define TELEOP_BUTTON_TYPE_C              12
-#define TELEOP_BUTTON_TYPE_X              13
-#define TELEOP_BUTTON_TYPE_Y              14
-#define TELEOP_BUTTON_TYPE_Z              15
-#define TELEOP_BUTTON_TYPE_SELECT         16
-#define TELEOP_BUTTON_TYPE_START          17
-#define TELEOP_BUTTON_TYPE_STOP           18
-#define TELEOP_BUTTON_TYPE_TRIGGER        19
-#define TELEOP_BUTTON_TYPE_KEY_SPACE      50
-#define TELEOP_BUTTON_TYPE_KEY_CTRL       51
-#define TELEOP_BUTTON_TYPE_KEY_SHIFT      52
-#define TELEOP_BUTTON_TYPE_KEY_ALT        53
+
+#define TELEOP_BUTTON_TYPE_A              101
+#define TELEOP_BUTTON_TYPE_B              102
+#define TELEOP_BUTTON_TYPE_C              103
+#define TELEOP_BUTTON_TYPE_X              124
+#define TELEOP_BUTTON_TYPE_Y              125
+#define TELEOP_BUTTON_TYPE_Z              126
+
+#define TELEOP_BUTTON_TYPE_RIGHT          131
+#define TELEOP_BUTTON_TYPE_LEFT           132
+#define TELEOP_BUTTON_TYPE_RIGHT_TOP      133
+#define TELEOP_BUTTON_TYPE_LEFT_TOP       134
+#define TELEOP_BUTTON_TYPE_RIGHT_BOTTOM   135
+#define TELEOP_BUTTON_TYPE_LEFT_BOTTOM    136
+
+#define TELEOP_BUTTON_TYPE_SELECT         141
+#define TELEOP_BUTTON_TYPE_START          142
+#define TELEOP_BUTTON_TYPE_STOP           143
+#define TELEOP_BUTTON_TYPE_TRIGGER        144
+
+#define TELEOP_BUTTON_TYPE_KEY_SPACE      1001
+#define TELEOP_BUTTON_TYPE_KEY_CTRL       1002
+#define TELEOP_BUTTON_TYPE_KEY_SHIFT      1003
+#define TELEOP_BUTTON_TYPE_KEY_ALT        1004
+/**@}*/
 
 /** Macro to determine button type name */
 #define TELEOP_BUTTON_TYPE_NAME(x) (\
-  ((x) == TELEOP_BUTTON_TYPE_UNKNOWN      ) ? "TELEOP_BUTTON_TYPE_UNKNOWN"      :\
-  ((x) == TELEOP_BUTTON_TYPE_1            ) ? "TELEOP_BUTTON_TYPE_1"            :\
-  ((x) == TELEOP_BUTTON_TYPE_2            ) ? "TELEOP_BUTTON_TYPE_2"            :\
-  ((x) == TELEOP_BUTTON_TYPE_3            ) ? "TELEOP_BUTTON_TYPE_3"            :\
-  ((x) == TELEOP_BUTTON_TYPE_4            ) ? "TELEOP_BUTTON_TYPE_4"            :\
-  ((x) == TELEOP_BUTTON_TYPE_5            ) ? "TELEOP_BUTTON_TYPE_5"            :\
-  ((x) == TELEOP_BUTTON_TYPE_6            ) ? "TELEOP_BUTTON_TYPE_6"            :\
-  ((x) == TELEOP_BUTTON_TYPE_7            ) ? "TELEOP_BUTTON_TYPE_7"            :\
-  ((x) == TELEOP_BUTTON_TYPE_8            ) ? "TELEOP_BUTTON_TYPE_8"            :\
-  ((x) == TELEOP_BUTTON_TYPE_9            ) ? "TELEOP_BUTTON_TYPE_9"            :\
-  ((x) == TELEOP_BUTTON_TYPE_A            ) ? "TELEOP_BUTTON_TYPE_A"            :\
-  ((x) == TELEOP_BUTTON_TYPE_B            ) ? "TELEOP_BUTTON_TYPE_B"            :\
-  ((x) == TELEOP_BUTTON_TYPE_C            ) ? "TELEOP_BUTTON_TYPE_C"            :\
-  ((x) == TELEOP_BUTTON_TYPE_X            ) ? "TELEOP_BUTTON_TYPE_X"            :\
-  ((x) == TELEOP_BUTTON_TYPE_Y            ) ? "TELEOP_BUTTON_TYPE_Y"            :\
-  ((x) == TELEOP_BUTTON_TYPE_Z            ) ? "TELEOP_BUTTON_TYPE_Z"            :\
-  ((x) == TELEOP_BUTTON_TYPE_TRIGGER      ) ? "TELEOP_BUTTON_TYPE_TRIGGER"      :\
-  ((x) == TELEOP_BUTTON_TYPE_SELECT       ) ? "TELEOP_BUTTON_TYPE_SELECT"       :\
-  ((x) == TELEOP_BUTTON_TYPE_START        ) ? "TELEOP_BUTTON_TYPE_START"        :\
-  ((x) == TELEOP_BUTTON_TYPE_STOP         ) ? "TELEOP_BUTTON_TYPE_STOP"         :\
-  ((x) == TELEOP_BUTTON_TYPE_KEY_SPACE    ) ? "TELEOP_BUTTON_TYPE_KEY_SPACE"    :\
-  ((x) == TELEOP_BUTTON_TYPE_KEY_CTRL     ) ? "TELEOP_BUTTON_TYPE_KEY_CTRL"     :\
-  ((x) == TELEOP_BUTTON_TYPE_KEY_SHIFT    ) ? "TELEOP_BUTTON_TYPE_KEY_SHIFT"    :\
-  ((x) == TELEOP_BUTTON_TYPE_KEY_ALT      ) ? "TELEOP_BUTTON_TYPE_KEY_ALT"      :\
-                                              "TELEOP_BUTTON_TYPE_UNDEFINED"    )
+    ((x) == TELEOP_BUTTON_TYPE_UNKNOWN      ) ? "TELEOP_BUTTON_TYPE_UNKNOWN"      :\
+    ((x) == TELEOP_BUTTON_TYPE_0            ) ? "TELEOP_BUTTON_TYPE_0"            :\
+    ((x) == TELEOP_BUTTON_TYPE_1            ) ? "TELEOP_BUTTON_TYPE_1"            :\
+    ((x) == TELEOP_BUTTON_TYPE_2            ) ? "TELEOP_BUTTON_TYPE_2"            :\
+    ((x) == TELEOP_BUTTON_TYPE_3            ) ? "TELEOP_BUTTON_TYPE_3"            :\
+    ((x) == TELEOP_BUTTON_TYPE_4            ) ? "TELEOP_BUTTON_TYPE_4"            :\
+    ((x) == TELEOP_BUTTON_TYPE_5            ) ? "TELEOP_BUTTON_TYPE_5"            :\
+    ((x) == TELEOP_BUTTON_TYPE_6            ) ? "TELEOP_BUTTON_TYPE_6"            :\
+    ((x) == TELEOP_BUTTON_TYPE_7            ) ? "TELEOP_BUTTON_TYPE_7"            :\
+    ((x) == TELEOP_BUTTON_TYPE_8            ) ? "TELEOP_BUTTON_TYPE_8"            :\
+    ((x) == TELEOP_BUTTON_TYPE_9            ) ? "TELEOP_BUTTON_TYPE_9"            :\
+    ((x) == TELEOP_BUTTON_TYPE_A            ) ? "TELEOP_BUTTON_TYPE_A"            :\
+    ((x) == TELEOP_BUTTON_TYPE_B            ) ? "TELEOP_BUTTON_TYPE_B"            :\
+    ((x) == TELEOP_BUTTON_TYPE_C            ) ? "TELEOP_BUTTON_TYPE_C"            :\
+    ((x) == TELEOP_BUTTON_TYPE_X            ) ? "TELEOP_BUTTON_TYPE_X"            :\
+    ((x) == TELEOP_BUTTON_TYPE_Y            ) ? "TELEOP_BUTTON_TYPE_Y"            :\
+    ((x) == TELEOP_BUTTON_TYPE_Z            ) ? "TELEOP_BUTTON_TYPE_Z"            :\
+    ((x) == TELEOP_BUTTON_TYPE_RIGHT        ) ? "TELEOP_BUTTON_TYPE_RIGHT"        :\
+    ((x) == TELEOP_BUTTON_TYPE_LEFT         ) ? "TELEOP_BUTTON_TYPE_LEFT"         :\
+    ((x) == TELEOP_BUTTON_TYPE_RIGHT_TOP    ) ? "TELEOP_BUTTON_TYPE_RIGHT_TOP"    :\
+    ((x) == TELEOP_BUTTON_TYPE_LEFT_TOP     ) ? "TELEOP_BUTTON_TYPE_LEFT_TOP"     :\
+    ((x) == TELEOP_BUTTON_TYPE_RIGHT_BOTTOM ) ? "TELEOP_BUTTON_TYPE_RIGHT_BOTTOM" :\
+    ((x) == TELEOP_BUTTON_TYPE_LEFT_BOTTOM  ) ? "TELEOP_BUTTON_TYPE_LEFT_BOTTOM"  :\
+    ((x) == TELEOP_BUTTON_TYPE_SELECT       ) ? "TELEOP_BUTTON_TYPE_SELECT"       :\
+    ((x) == TELEOP_BUTTON_TYPE_START        ) ? "TELEOP_BUTTON_TYPE_START"        :\
+    ((x) == TELEOP_BUTTON_TYPE_STOP         ) ? "TELEOP_BUTTON_TYPE_STOP"         :\
+    ((x) == TELEOP_BUTTON_TYPE_TRIGGER      ) ? "TELEOP_BUTTON_TYPE_TRIGGER"      :\
+    ((x) == TELEOP_BUTTON_TYPE_KEY_SPACE    ) ? "TELEOP_BUTTON_TYPE_KEY_SPACE"    :\
+    ((x) == TELEOP_BUTTON_TYPE_KEY_CTRL     ) ? "TELEOP_BUTTON_TYPE_KEY_CTRL"     :\
+    ((x) == TELEOP_BUTTON_TYPE_KEY_SHIFT    ) ? "TELEOP_BUTTON_TYPE_KEY_SHIFT"    :\
+    ((x) == TELEOP_BUTTON_TYPE_KEY_ALT      ) ? "TELEOP_BUTTON_TYPE_KEY_ALT"      :\
+                                                "TELEOP_BUTTON_TYPE_UNDEFINED"    )
 
 
 
@@ -131,16 +172,16 @@ namespace teleop {
 //Structs
 //=============================================================================
 
-/** Teleop device axis */
+/** Teleop device axis entry */
 typedef struct {
   int type;
-  double value;
+  float value;
 } TeleopAxis;
 
-/** Teleop device button */
+/** Teleop device button entry */
 typedef struct {
   int type;
-  bool value;
+  int value;
 } TeleopButton;
 
 /** Complete teleop device state */
@@ -160,5 +201,5 @@ typedef struct {
 
 
 //=============================================================================
-#endif //#ifndef INCLUDE_TELEOP_HPP
+#endif //#ifndef INCLUDE_TELEOP_COMMON_HPP
 //=============================================================================

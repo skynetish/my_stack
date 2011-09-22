@@ -53,22 +53,28 @@ TeleopSource::TeleopSource(TeleopSourceCallback callback)
 }
 //=============================================================================
 TeleopSource::~TeleopSource() {
+  //Stop listening thread and block until it finishes
   stop(true);
 }
 //=============================================================================
 bool TeleopSource::start(bool blocking) {
 
-  //Check if already running
+  //Check if running
   if (isRunning()) {
     return true;
   }
 
-  //Create thread which executes loop method
-  mThread = &(boost::thread(&TeleopSource::loop, this));
+  //Prepare to listen
+  if (!prepareToListen()) {
+    return false;
+  }
+
+  //Create thread which executes listen loop
+  mThread = boost::thread(&TeleopSource::listenLoop, this);
 
   //If blocking wait for thread to finish
   if (blocking) {
-    mThread->join();
+    mThread.join();
   }
 
   //Return result
@@ -82,19 +88,29 @@ bool TeleopSource::isRunning() {
 //=============================================================================
 bool TeleopSource::stop(bool blocking) {
 
-  //Interrupt if running
-  if (isRunning()) {
-    mThread.interrupt();
-
-    //If blocking wait for thread to finish
-    if (blocking) {
-      mThread->join();
+  //Check if running
+  if (!isRunning()) {
+    return true;
   }
 
+  //Interrupt
+  mThread.interrupt();
+
+  //If blocking wait for thread to finish
+  if (blocking) {
+    mThread.join();
+  }
+
+  //Done listening
+  if (!doneListening()) {
+    return false;
+  }
+
+  //Return result
   return true;
 }
 //=============================================================================
-bool TeleopSource::loop() {
+void TeleopSource::listenLoop() {
 
   //The latest teleopState
   TeleopState teleopState;
@@ -128,11 +144,8 @@ bool TeleopSource::loop() {
     teleopState.axes[i].value = 0.0;
   }
   for (int i=0; i<teleopState.buttons.size(); i++) {
-    teleopState.buttons[i].value = false;
+    teleopState.buttons[i].value = 0;
   }
-
-  //Return result
-  return success;
 }
 //=============================================================================
 

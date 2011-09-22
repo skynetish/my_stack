@@ -24,157 +24,144 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <ros/ros.h>
-#include <unistd.h>
+
+
+
+
+//=============================================================================
+//Includes
+//=============================================================================
+#include <teleop_common.hpp>
+#include <teleop_source.hpp>
+#include <teleop_source_keyboard.hpp>
 #include <cstdio>
-#include <signal.h>
+#include <unistd.h>
 #include <termios.h>
-#include <geometry_msgs/Twist.h>
 
 
-#define KEYCODE_UP              0x41
-#define KEYCODE_DOWN            0x42
-#define KEYCODE_RIGHT           0x43
-#define KEYCODE_LEFT            0x44
-#define KEYCODE_SPACE           0x20
-
-#define PARAM_KEY_TOPIC         "topic"
-#define PARAM_KEY_USE_STEPS     "use_steps"
-#define PARAM_KEY_NUM_STEPS     "num_steps"
-
-#define PARAM_DEFAULT_TOPIC     "teleop_source"
-#define PARAM_DEFAULT_USE_STEPS false
-#define PARAM_DEFAULT_NUM_STEPS 10
 
 
-/**
- * ...Use simple read from termios because the proper way to read key events
- * with press/release requires either an X server (which we shouldn't need),
- * or access to the /dev/input/event* files, which normally requires root or
- * at least elevated privileges, which we'd rather not fiddle with.
- */
-class TeleopSourceKeyboard
-{
-public:
-  TeleopSourceKeyboard();
-  int run();
+//=============================================================================
+//Namespace
+//=============================================================================
+namespace teleop {
 
-private:
-  ros::NodeHandle* nh_;
-  ros::Publisher pub_;
-  geometry_msgs::Twist twist_;
-  std::string topic_;
-  bool use_steps_;
-  int num_steps_;
-};
 
-TeleopSourceKeyboard::TeleopSourceKeyboard()
-{
-  //Create node handle using private namespace
-  nh_ = new ros::NodeHandle("~");
 
-  //Read parameters and set default values
-  nh_->param(PARAM_KEY_TOPIC, topic_, std::string(PARAM_DEFAULT_TOPIC));
-  nh_->param(PARAM_KEY_USE_STEPS, use_steps_, PARAM_DEFAULT_USE_STEPS);
-  nh_->param(PARAM_KEY_NUM_STEPS, num_steps_, PARAM_DEFAULT_NUM_STEPS);
 
-  //Advertise parameters for introspection
-  nh_->setParam(PARAM_KEY_TOPIC, topic_);
-  nh_->setParam(PARAM_KEY_USE_STEPS, use_steps_);
-  nh_->setParam(PARAM_KEY_NUM_STEPS, num_steps_);
-
-  //Advertise publisher
-  pub_ = nh_->advertise<geometry_msgs::Twist>(topic_, 1);
-}
-
-int TeleopSourceKeyboard::run()
-{
-  //Print welcome message
-  printf("Use arrow keys to move and space to stop...\n");
-
-  //Loop and wait for key events
-  while(1)
-  {
-    //Read from stdin
-    char c;
-    if(read(STDIN_FILENO, &c, 1) < 0)
-    {
-      printf("Error while reading\n");
-      return 1;
-    }
-
-    //Feedback
-    printf("  read: 0x%02X\n", c);
-
-    //Handle important keys
-    switch(c)
-    {
-      case KEYCODE_LEFT:
-        printf("LEFT\n");
-        twist_.linear.y= 1.0;
-        break;
-      case KEYCODE_RIGHT:
-        printf("RIGHT\n");
-        twist_.linear.y = -1.0;
-        break;
-      case KEYCODE_UP:
-        printf("UP\n");
-        twist_.linear.x = 1.0;
-        break;
-      case KEYCODE_DOWN:
-        printf("DOWN\n");
-        twist_.linear.x = -1.0;
-        break;
-      case KEYCODE_SPACE:
-        printf("SPACE\n");
-        twist_.linear.x = 0.0;
-        twist_.linear.y = 0.0;
-        twist_.linear.z = 0.0;
-        twist_.angular.x = 0.0;
-        twist_.angular.y = 0.0;
-        twist_.angular.z = 0.0;
-        break;
-    }
-
-    //TODO: print result
-    //...
-
-    //Publish result
-    pub_.publish(twist_);
+//=============================================================================
+//Method definitions
+//=============================================================================
+TeleopSourceKeyboard::TeleopSourceKeyboard(TeleopSourceCallback callback,
+                                           int steps)
+  : TeleopSource(callback), mSteps(steps) {
+  //Clamp steps
+  if (STEPS_MIN > mSteps) {
+    mSteps = STEPS_MIN;
+  } else if (STEPS_MAX < mSteps) {
+    mSteps = STEPS_MAX;
   }
 }
+//=============================================================================
+bool TeleopSourceKeyboard::prepareToListen() {
+  //Raw termios settings
+  struct termios rawTermios;
 
-
-struct termios oldTermios, rawTermios;
-
-
-void quit(int sig)
-{
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldTermios);
-  ros::shutdown();
-  exit(0);
-}
-
-
-int main(int argc, char** argv)
-{
   //Update the standard input to use raw mode
-  tcgetattr(STDIN_FILENO, &oldTermios);
-  memcpy(&rawTermios, &oldTermios, sizeof(struct termios));
+  tcgetattr(STDIN_FILENO, &mOldTermios);
+  memcpy(&rawTermios, &mOldTermios, sizeof(struct termios));
   rawTermios.c_lflag &= ~(ICANON | ECHO);
   tcsetattr(STDIN_FILENO, TCSANOW, &rawTermios);
 
-  //Initialise ROS
-  ros::init(argc, argv, "teleop_source_keyboard");
+  //Print welcome message
+  std::printf("Use arrow keys to move and space to stop...\n");
 
-  //Create teleop
-  TeleopSourceKeyboard teleop;
-
-  //Handle interrupt signal
-  signal(SIGINT,quit);
-
-  //Run teleop and return result
-  int result = teleop.run();
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldTermios);
-  return result;
+  //Return result
+  return true;
 }
+//=============================================================================
+bool TeleopSourceKeyboard::listen(TeleopState* teleopState) {
+
+  //Sanity check
+  if (NULL == teleopState) {
+    return false;
+  }
+
+  //Ensure state has correct number of axes and buttons
+  if (2 != teleopState->axes.size()) {
+    TeleopAxis teleopAxisEmpty = {0, 0.0};
+    teleopState->axes.resize(2, teleopAxisEmpty);
+    teleopState->axes[0].type  = TELEOP_AXIS_TYPE_LIN_X;
+    teleopState->axes[0].value = 0.0;
+    teleopState->axes[1].type  = TELEOP_AXIS_TYPE_LIN_Y;
+    teleopState->axes[1].value = 0.0;
+  }
+  if (0 != teleopState->buttons.size()) {
+    teleopState->buttons.clear();
+  }
+
+  //Read from stdin
+  char c;
+  if(read(STDIN_FILENO, &c, 1) < 0) {
+    return false;
+  }
+
+  //DEBUG
+  printf("  read: 0x%02X\n", c);
+
+  //Handle important keys
+  switch(c) {
+    case KEYCODE_UP:
+      printf("UP\n"); //DEBUG
+      teleopState->axes[0].value += (TELEOP_AXIS_MAX/mSteps);
+      if (teleopState->axes[0].value > TELEOP_AXIS_MAX) {
+        teleopState->axes[0].value = TELEOP_AXIS_MAX;
+      }
+      break;
+    case KEYCODE_DOWN:
+      printf("DOWN\n"); //DEBUG
+      teleopState->axes[0].value -= (TELEOP_AXIS_MAX/mSteps);
+      if (teleopState->axes[0].value < TELEOP_AXIS_MIN) {
+        teleopState->axes[0].value = TELEOP_AXIS_MIN;
+      }
+      break;
+    case KEYCODE_LEFT:
+      printf("LEFT\n"); //DEBUG
+      teleopState->axes[1].value -= (TELEOP_AXIS_MAX/mSteps);
+      if (teleopState->axes[1].value < TELEOP_AXIS_MIN) {
+        teleopState->axes[1].value = TELEOP_AXIS_MIN;
+      }
+      break;
+    case KEYCODE_RIGHT:
+      printf("RIGHT\n"); //DEBUG
+      teleopState->axes[1].value += (TELEOP_AXIS_MAX/mSteps);
+      if (teleopState->axes[1].value > TELEOP_AXIS_MAX) {
+        teleopState->axes[1].value = TELEOP_AXIS_MAX;
+      }
+      break;
+    case KEYCODE_SPACE:
+      printf("SPACE\n"); //DEBUG
+      teleopState->axes[0].value = 0.0;
+      teleopState->axes[1].value = 0.0;
+      break;
+  }
+
+  //Return result
+  return true;
+}
+//=============================================================================
+bool TeleopSourceKeyboard::doneListening() {
+  //Restore stdin to old values
+  tcsetattr(STDIN_FILENO, TCSANOW, &mOldTermios);
+
+  //Return result
+  return true;
+}
+//=============================================================================
+
+
+
+
+//=============================================================================
+} //namespace
+//=============================================================================

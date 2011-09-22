@@ -29,18 +29,11 @@
 
 
 //=============================================================================
-#ifndef INCLUDE_TELEOP_SOURCE_JOYSTICK_HPP
-#define INCLUDE_TELEOP_SOURCE_JOYSTICK_HPP
-//=============================================================================
-
-
-
-
-//=============================================================================
 //Includes
 //=============================================================================
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
+#include <teleop_source_joystick.hpp>
 
 
 
@@ -54,52 +47,39 @@ namespace teleop {
 
 
 //=============================================================================
-//Classes
+//Method definitions
 //=============================================================================
+TeleopSourceJoystick::TeleopSourceJoystick(TeleopSourceCallback callback)
+  : TeleopSource(callback) {
+}
+//=============================================================================
+bool TeleopSourceJoystick::prepareToListen() {
+  //Return result
+  return true;
+}
+//=============================================================================
+bool TeleopSourceJoystick::listen(TeleopState* teleopState) {
 
-/**
- * This class implements a joystick teleop source.
- */
-class TeleopSourceJoystick : public TeleopSource {
+  //Sanity check
+  if (NULL == teleopState) {
+    return false;
+  }
 
-public:
+  //TODO
 
-  /**
-   * Constructor.
-   *
-   *   @param callback [in] - callback to call with updated teleop state
-   */
-  TeleopSourceJoystick(TeleopSourceCallback callback);
-
-private:
-
-  /**
-   * Override virtual method from parent.
-   */
-  bool prepareToListen();
-
-  /**
-   * Override virtual method from parent.
-   */
-  bool listen(TeleopState* teleop);
-
-  /**
-   * Override virtual method from parent.
-   */
-  bool doneListening();
-
-}; //class
+  //Return result
+  return true;
+}
+//=============================================================================
+bool TeleopSourceJoystick::doneListening() {
+  //Return result
+  return true;
+}
+//=============================================================================
 
 
 
 
 //=============================================================================
 } //namespace
-//=============================================================================
-
-
-
-
-//=============================================================================
-#endif //#ifndef INCLUDE_TELEOP_SOURCE_JOYSTICK_HPP
 //=============================================================================

@@ -39,6 +39,7 @@
 //=============================================================================
 //Includes
 //=============================================================================
+#include <boost/thread.hpp>
 #include <teleop_common.hpp>
 
 
@@ -73,25 +74,19 @@ typedef bool (*TeleopSourceCallback)(TeleopState* teleopState);
 
 /**
  * This class provides a framework for generic handling of tele-operation
- * sources.  The start() method starts a listening loop in a separate thread.
- * The start method can optionally be blocking, in which case the listening
- * thread is joined before start returns.
- *
- * The pure virtual listen() method will be called in each iteration of the
- * listening loop.  This method must be implemented by a sub-class (i.e. a
- * teleop source).  The method should block until one or more teleop events
- * are detected.  Detected events should be used to update the current teleop
- * state.
- *
- * Once the state has been updated, the new state is passed into the should then be passed to the given callback.
+ * sources.  The start() and stop() methods start and stop a listening loop
+ * which runs in a separate thread.  This loop listens for teleop device
+ * events and reports them using the provided callback.  Sub-classes
+ * for various teleop sources must implement the given pure virtual methods.
  */
-class TeleopSource
-{
+class TeleopSource {
 
 public:
 
   /**
    * Constructor.
+   *
+   *   @param callback [in] - callback to call with updated teleop state
    */
   TeleopSource(TeleopSourceCallback callback);
 
@@ -136,6 +131,18 @@ private:
   boost::thread mThread;
 
   /**
+   * Executes main listen loop.
+   */
+  void listenLoop();
+
+  /**
+   * Prepare to listen (open files, etc.).
+   *
+   *   @return true on success
+   */
+  virtual bool prepareToListen() = 0;
+
+  /**
    * Blocks while listening for teleop source device events.  When events occur,
    * updates the teleop output status via the teleop parameter and returns.
    *
@@ -146,11 +153,11 @@ private:
   virtual bool listen(TeleopState* teleopState) = 0;
 
   /**
-   * Executes main listen loop.
+   * Done listening (close files, etc.).
    *
    *   @return true on success
    */
-  bool loop();
+  virtual bool doneListening() = 0;
 
 }; //class
 

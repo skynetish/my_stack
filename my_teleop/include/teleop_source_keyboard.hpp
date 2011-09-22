@@ -41,6 +41,7 @@
 //=============================================================================
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
+#include <termios.h>
 
 
 
@@ -58,17 +59,68 @@ namespace teleop {
 //=============================================================================
 
 /**
- * This class implements a keyboard teleop source.
+ * This class implements a keyboard teleop source.  The arrow keys are used as
+ * linear X and linear Y axes, and the space bar acts as a stop button.  The
+ * key presses are detected by reading raw standard input using termios.  If
+ * this class is used, other uses of standard input from within the same
+ * process must be handled carefully.
+ *
+ * An alternative could be to detect low-level key press and release events,
+ * but this would probably require either access to the X server (which we
+ * shouldn't need for a keyboard teleop device), or access to linux inputs in
+ * the /dev/input/event* files (which requires elevated privileges).
  */
-class TeleopSourceKeyboard : public TeleopSource
-{
+class TeleopSourceKeyboard : public TeleopSource {
+
+public:
+
+  /** Default number of steps to reach the maximum level for each axis */
+  static const int STEPS_DEFAULT = 5;
+
+  /** Minimum number of steps allowed */
+  static const int STEPS_MIN = 1;
+
+  /** Maximum number of steps allowed */
+  static const int STEPS_MAX = 10;
+
+  /**
+   * Constructor.
+   *
+   *   @param callback [in] - callback to call with updated teleop state
+   *   @param steps [in] - number of steps needed to reach max value for each axis
+   */
+  TeleopSourceKeyboard(TeleopSourceCallback callback, int steps=STEPS_DEFAULT);
 
 private:
 
+  /**@{ Keycodes */
+  static const int KEYCODE_SPACE = 0x20;
+  static const int KEYCODE_UP    = 0x41;
+  static const int KEYCODE_DOWN  = 0x42;
+  static const int KEYCODE_RIGHT = 0x43;
+  static const int KEYCODE_LEFT  = 0x44;
+  /**@}*/
+
+  /** Number of steps needed to reach max value for each axis */
+  int mSteps;
+
+  /** Old termios settings */
+  struct termios mOldTermios;
+
   /**
-   * Override listen from parent class.
+   * Override virtual method from parent.
+   */
+  bool prepareToListen();
+
+  /**
+   * Override virtual method from parent.
    */
   bool listen(TeleopState* teleop);
+
+  /**
+   * Override virtual method from parent.
+   */
+  bool doneListening();
 
 }; //class
 

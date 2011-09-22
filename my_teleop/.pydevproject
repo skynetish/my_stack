@@ -34,6 +34,7 @@
 <path>/opt/ros/diamondback/stacks/ros_comm/tools/roslaunch/src</path>
 <path>/opt/ros/diamondback/ros/tools/rosclean/src</path>
 <path>/opt/ros/diamondback/stacks/ros_comm/tools/rosgraph/src</path>
+<path>/opt/ros/diamondback/stacks/ros_comm/tools/rosparam/src</path>
 <path>/opt/ros/diamondback/stacks/ros_comm/tools/rosmaster/src</path>
 <path>/opt/ros/diamondback/ros/tools/rosunit/src</path>
 <path>/opt/ros/diamondback/ros/core/mk</path>
