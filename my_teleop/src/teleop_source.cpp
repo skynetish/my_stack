@@ -33,6 +33,7 @@
 //=============================================================================
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
+#include <cstdio>
 
 
 
@@ -58,7 +59,6 @@ TeleopSource::~TeleopSource() {
 }
 //=============================================================================
 bool TeleopSource::start(bool blocking) {
-
   //Check if running
   if (isRunning()) {
     return true;
@@ -66,6 +66,7 @@ bool TeleopSource::start(bool blocking) {
 
   //Prepare to listen
   if (!prepareToListen()) {
+    printf("TeleopSource::start: error in prepareToListen()\n");
     return false;
   }
 
@@ -87,7 +88,6 @@ bool TeleopSource::isRunning() {
 }
 //=============================================================================
 bool TeleopSource::stop(bool blocking) {
-
   //Check if running
   if (!isRunning()) {
     return true;
@@ -103,6 +103,7 @@ bool TeleopSource::stop(bool blocking) {
 
   //Done listening
   if (!doneListening()) {
+    printf("TeleopSource::stop: error in doneListening()\n");
     return false;
   }
 
@@ -111,39 +112,46 @@ bool TeleopSource::stop(bool blocking) {
 }
 //=============================================================================
 void TeleopSource::listenLoop() {
-
-  //The latest teleopState
-  TeleopState teleopState;
-
-  //Result to return
-  bool success = true;
+  TeleopState teleopState;  //latest teleop state
+  int listenResult;         //listen result
+  bool success = true;      //return value
 
   //Loop until interrupted
   while (!boost::this_thread::interruption_requested()) {
 
-    //Block while listening for actions
-    success = listen(&teleopState);
+    //Listen for events
+    listenResult = listen(TIMEOUT_SECONDS, &teleopState);
 
-    //If there were errors, quit
-    if (!success) {
-      break;
+    //Deal with result
+    switch (listenResult) {
+      case LISTEN_ERROR:
+        //Error
+        printf("TeleopSource::listenLoop: error in listen()\n");
+        success = false;
+        break;
+      case LISTEN_STATE_UNCHANGED:
+        //Do nothing this time around
+        break;
+      case LISTEN_STATE_CHANGED:
+        //Call callback
+        success = mCallback(&teleopState);
+        if (!success) {
+          printf("TeleopSource::listenLoop: error in callback\n");
+        }
+        break;
+      default:
+        //Invalid result
+        printf("TeleopSource::listenLoop: invalid result from listen() (%d)\n", listenResult);
+        success = false;
+        break;
     }
-
-    //Call callback
-    success = mCallback(&teleopState);
-
-    //If there were errors, quit
-    if (!success) {
-      break;
-    }
-
   }
 
   //When done, zero all outputs
-  for (int i=0; i<teleopState.axes.size(); i++) {
+  for (int i=0; i<(int)teleopState.axes.size(); i++) {
     teleopState.axes[i].value = 0.0;
   }
-  for (int i=0; i<teleopState.buttons.size(); i++) {
+  for (int i=0; i<(int)teleopState.buttons.size(); i++) {
     teleopState.buttons[i].value = 0;
   }
 }

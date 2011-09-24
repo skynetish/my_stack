@@ -83,6 +83,12 @@ class TeleopSource {
 
 public:
 
+  /**@{ Return values for listen method */
+  static const int LISTEN_STATE_UNCHANGED = 1;
+  static const int LISTEN_ERROR = -1;
+  static const int LISTEN_STATE_CHANGED = 0;
+  /**@}*/
+
   /**
    * Constructor.
    *
@@ -130,6 +136,9 @@ private:
   /** Listening thread */
   boost::thread mThread;
 
+  /** Timeout in seconds for listen (check for interruption this often) */
+  static const int TIMEOUT_SECONDS = 1;
+
   /**
    * Executes main listen loop.
    */
@@ -143,14 +152,15 @@ private:
   virtual bool prepareToListen() = 0;
 
   /**
-   * Blocks while listening for teleop source device events.  When events occur,
-   * updates the teleop output status via the teleop parameter and returns.
+   * Blocks until teleop source device events detected or the given timeout is
+   * reached.  When events occur, updates the teleop state.
    *
+   *   @param teleop [in] - timeout value in seconds
    *   @param teleop [in/out] - the current teleop output, to be updated
    *
-   *   @return true on success
+   *   @return -1 on error, 0 on timeout or no change to state, 1 on success
    */
-  virtual bool listen(TeleopState* teleopState) = 0;
+  virtual int listen(int timeoutSeconds, TeleopState* teleop) = 0;
 
   /**
    * Done listening (close files, etc.).

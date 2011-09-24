@@ -58,7 +58,7 @@ namespace teleop {
 //=============================================================================
 
 /**
- * This class implements a joystick teleop source.
+ * This class implements a joystick teleop source.  TODO
  */
 class TeleopSourceJoystick : public TeleopSource {
 
@@ -81,7 +81,7 @@ private:
   /**
    * Override virtual method from parent.
    */
-  bool listen(TeleopState* teleop);
+  int listen(int timeoutSeconds, TeleopState* teleop);
 
   /**
    * Override virtual method from parent.

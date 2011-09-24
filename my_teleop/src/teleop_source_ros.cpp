@@ -31,7 +31,6 @@
 //=============================================================================
 //Includes
 //=============================================================================
-#include <cstdio>
 #include <signal.h>
 #include <ros/ros.h>
 #include <my_teleop/State.h>
@@ -70,6 +69,8 @@ ros::Publisher* gPublisher = NULL;
 teleop::TeleopSource* gTeleopSource = NULL;
 
 
+
+
 //=============================================================================
 //Function prototypes
 //=============================================================================
@@ -82,9 +83,11 @@ teleop::TeleopSource* gTeleopSource = NULL;
 void quit(int sig);
 
 /**
- * Teleop source callback for receiving teleop state
+ * Callback used to report an updated teleop state.
  *
- *   @param teleopState - latest teleop state
+ *   @param teleopState [in] - The latest teleop state
+ *
+ *   @return true on success
  */
 bool teleopSourceCallback(teleop::TeleopState* teleopState);
 
@@ -92,6 +95,8 @@ bool teleopSourceCallback(teleop::TeleopState* teleopState);
  * Utility function for creating appropriate teleop source
  *
  *   @param teleopType - string containing teleop type
+ *
+ *   @return teleop source or NULL on error
  */
 teleop::TeleopSource* teleopSourceFactory(std::string teleopType);
 
@@ -102,24 +107,30 @@ teleop::TeleopSource* teleopSourceFactory(std::string teleopType);
 //Function definitions
 //=============================================================================
 void quit(int sig) {
-  //Stop the teleop source
+  //Stop and free the teleop source
   if (NULL != gTeleopSource) {
     gTeleopSource->stop(true);
+    delete gTeleopSource;
   }
 
-  //Shutdown ROS to allow us to exit
+  //Shutdown ROS to end spinning
   ros::shutdown();
 }
 //=============================================================================
 bool teleopSourceCallback(teleop::TeleopState* teleopState) {
   //Sanity check publisher and teleopState
   if (NULL == gPublisher || NULL == teleopState) {
+    ROS_ERROR("teleopSourceCallback: NULL publisher or teleopState\n");
     return false;
   }
 
   //Convert from teleop::teleopState to teleop_msgs::State
   my_teleop::State teleopStateMsg;
   //TODO
+
+  //DEBUG
+  printf("X = %f\n", teleopState->axes[0].value);
+  printf("Y = %f\n", teleopState->axes[1].value);
 
   //Publish result
   gPublisher->publish(teleopStateMsg);
@@ -129,13 +140,14 @@ bool teleopSourceCallback(teleop::TeleopState* teleopState) {
 }
 //=============================================================================
 teleop::TeleopSource* teleopSourceFactory(std::string* teleopType) {
-  if (teleopType->compare("keyboard")) {
+  if (0 == teleopType->compare("keyboard")) {
     return new teleop::TeleopSourceKeyboard(&teleopSourceCallback);
-  } else if (teleopType->compare("joystick")) {
+  } else if (0 == teleopType->compare("joystick")) {
     return new teleop::TeleopSourceJoystick(&teleopSourceCallback);
   }
   return NULL;
 }
+//=============================================================================
 
 
 
@@ -174,6 +186,7 @@ int main(int argc, char** argv)
   //Create teleop source of the given type
   gTeleopSource = teleopSourceFactory(&teleopType);
   if (NULL == gTeleopSource) {
+    ROS_ERROR("teleopSourceFactory: NULL teleop source\n");
     return 1;
   }
 

@@ -54,25 +54,17 @@ TeleopSourceJoystick::TeleopSourceJoystick(TeleopSourceCallback callback)
 }
 //=============================================================================
 bool TeleopSourceJoystick::prepareToListen() {
-  //Return result
+  //TODO
   return true;
 }
 //=============================================================================
-bool TeleopSourceJoystick::listen(TeleopState* teleopState) {
-
-  //Sanity check
-  if (NULL == teleopState) {
-    return false;
-  }
-
+int TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* teleopState) {
   //TODO
-
-  //Return result
-  return true;
+  return LISTEN_STATE_UNCHANGED;
 }
 //=============================================================================
 bool TeleopSourceJoystick::doneListening() {
-  //Return result
+  //TODO
   return true;
 }
 //=============================================================================

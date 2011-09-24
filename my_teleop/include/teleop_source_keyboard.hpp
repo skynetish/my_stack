@@ -63,12 +63,12 @@ namespace teleop {
  * linear X and linear Y axes, and the space bar acts as a stop button.  The
  * key presses are detected by reading raw standard input using termios.  If
  * this class is used, other uses of standard input from within the same
- * process must be handled carefully.
+ * process should be handled carefully.
  *
  * An alternative could be to detect low-level key press and release events,
  * but this would probably require either access to the X server (which we
  * shouldn't need for a keyboard teleop device), or access to linux inputs in
- * the /dev/input/event* files (which requires elevated privileges).
+ * the /dev/input/event* files (which normally requires elevated privileges).
  */
 class TeleopSourceKeyboard : public TeleopSource {
 
@@ -104,6 +104,9 @@ private:
   /** Number of steps needed to reach max value for each axis */
   int mSteps;
 
+  /** Size of each step for each axis */
+  float mStepSize;
+
   /** Old termios settings */
   struct termios mOldTermios;
 
@@ -115,7 +118,7 @@ private:
   /**
    * Override virtual method from parent.
    */
-  bool listen(TeleopState* teleop);
+  int listen(int timeoutSeconds, TeleopState* teleop);
 
   /**
    * Override virtual method from parent.
