@@ -258,7 +258,6 @@
 <pathentry include="/opt/ros/diamondback/ros/tools/rospack/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include" kind="inc" path="" system="true"/>
 <pathentry include="/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_teleop/msg_gen/cpp/include" kind="inc" path="" system="true"/>
-<pathentry include="/home/klc/Code/skynetish.com/ros/stacks/my_stack/my_teleop/msg/cpp" kind="inc" path="" system="true"/>
 <pathentry include="/usr/local/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/x86_64-linux-gnu/gcc/x86_64-linux-gnu/4.5.2/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/x86_64-linux-gnu/gcc/x86_64-linux-gnu/4.5.2/include-fixed" kind="inc" path="" system="true"/>

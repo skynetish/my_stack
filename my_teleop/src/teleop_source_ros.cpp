@@ -124,13 +124,23 @@ bool teleopSourceCallback(teleop::TeleopState* teleopState) {
     return false;
   }
 
-  //Convert from teleop::teleopState to teleop_msgs::State
-  my_teleop::State teleopStateMsg;
-  //TODO
-
-  //DEBUG
-  printf("X = %f\n", teleopState->axes[0].value);
-  printf("Y = %f\n", teleopState->axes[1].value);
+  //Convert from teleop::teleopState to my_teleop::State.  Use a static here to
+  //avoid the need to reallocate the state message and its fields every time.
+  static my_teleop::State teleopStateMsg;
+  if (teleopStateMsg.axes.size() != teleopState->axes.size()) {
+    teleopStateMsg.axes.resize(teleopState->axes.size());
+  }
+  if (teleopStateMsg.buttons.size() != teleopState->buttons.size()) {
+    teleopStateMsg.buttons.resize(teleopState->buttons.size());
+  }
+  for (size_t i = 0; i < teleopState->axes.size(); i++) {
+    teleopStateMsg.axes[i].type = teleopState->axes[i].type;
+    teleopStateMsg.axes[i].value = teleopState->axes[i].value;
+  }
+  for (size_t i = 0; i < teleopState->buttons.size(); i++) {
+    teleopStateMsg.buttons[i].type = teleopState->buttons[i].type;
+    teleopStateMsg.buttons[i].value = teleopState->buttons[i].value;
+  }
 
   //Publish result
   gPublisher->publish(teleopStateMsg);
@@ -175,8 +185,8 @@ int main(int argc, char** argv)
   nodeHandle.param(PARAM_KEY_TELEOP_TYPE, teleopType, std::string(PARAM_DEFAULT_TELEOP_TYPE));
 
   //Advertise parameters for introspection
-  nodeHandle.setParam(PARAM_KEY_TOPIC, topic);
-  nodeHandle.setParam(PARAM_KEY_TOPIC, teleopType);
+  nodeHandle.setParam(PARAM_KEY_TOPIC,       topic);
+  nodeHandle.setParam(PARAM_KEY_TELEOP_TYPE, teleopType);
 
   //Advertise publisher with buffer size set to 1 and latching on.  The
   //publisher should basically just always contain the latest teleop state.

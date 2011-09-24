@@ -7,8 +7,6 @@ rosbuild_genmsg()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
-include_directories(msg/cpp)
-
 rosbuild_add_boost_directories()
 
 rosbuild_add_executable(teleop_source_ros

@@ -133,6 +133,13 @@ void TeleopSource::listenLoop() {
         //Do nothing this time around
         break;
       case LISTEN_STATE_CHANGED:
+        //Enforce threshold
+        for (size_t i = 0; i < teleopState.axes.size(); i++) {
+          if (AXIS_THRESHOLD > fabs(teleopState.axes[i].value)) {
+            teleopState.axes[i].value = 0.0;
+          }
+        }
+
         //Call callback
         success = mCallback(&teleopState);
         if (!success) {

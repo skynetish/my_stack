@@ -139,6 +139,9 @@ private:
   /** Timeout in seconds for listen (check for interruption this often) */
   static const int TIMEOUT_SECONDS = 1;
 
+  /** Axis values smaller than this are set to 0.0 (sort of calibration) */
+  static const float AXIS_THRESHOLD = 0.001;
+
   /**
    * Executes main listen loop.
    */

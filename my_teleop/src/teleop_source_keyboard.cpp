@@ -139,24 +139,36 @@ int TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* teleopState) {
   //Handle known keys
   switch(c) {
     case KEYCODE_UP:
+      if (teleopState->axes[0].value >= TELEOP_AXIS_MAX) {
+        return LISTEN_STATE_UNCHANGED;
+      }
       teleopState->axes[0].value += mStepSize;
       if (teleopState->axes[0].value > TELEOP_AXIS_MAX) {
         teleopState->axes[0].value = TELEOP_AXIS_MAX;
       }
       return LISTEN_STATE_CHANGED;
     case KEYCODE_DOWN:
+      if (teleopState->axes[0].value <= TELEOP_AXIS_MIN) {
+        return LISTEN_STATE_UNCHANGED;
+      }
       teleopState->axes[0].value -= mStepSize;
       if (teleopState->axes[0].value < TELEOP_AXIS_MIN) {
         teleopState->axes[0].value = TELEOP_AXIS_MIN;
       }
       return LISTEN_STATE_CHANGED;
     case KEYCODE_LEFT:
+      if (teleopState->axes[1].value <= TELEOP_AXIS_MIN) {
+        return LISTEN_STATE_UNCHANGED;
+      }
       teleopState->axes[1].value -= mStepSize;
       if (teleopState->axes[1].value < TELEOP_AXIS_MIN) {
         teleopState->axes[1].value = TELEOP_AXIS_MIN;
       }
       return LISTEN_STATE_CHANGED;
     case KEYCODE_RIGHT:
+      if (teleopState->axes[1].value >= TELEOP_AXIS_MAX) {
+        return LISTEN_STATE_UNCHANGED;
+      }
       teleopState->axes[1].value += mStepSize;
       if (teleopState->axes[1].value > TELEOP_AXIS_MAX) {
         teleopState->axes[1].value = TELEOP_AXIS_MAX;
