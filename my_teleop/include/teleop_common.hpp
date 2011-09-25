@@ -86,11 +86,6 @@ namespace teleop {
   ((x) == TELEOP_AXIS_TYPE_THROTTLE       ) ? "TELEOP_AXIS_TYPE_THROTTLE"       :\
                                               "TELEOP_AXIS_TYPE_UNDEFINED"      )
 
-/**@{ Button range (0=off, 1=on, >1=switch positions) */
-#define TELEOP_BUTTON_MIN                 0
-#define TELEOP_BUTTON_MAX                 255
-/**@}*/
-
 /**@{ Button types */
 #define TELEOP_BUTTON_TYPE_UNKNOWN        -1
 

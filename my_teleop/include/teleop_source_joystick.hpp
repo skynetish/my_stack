@@ -58,20 +58,48 @@ namespace teleop {
 //=============================================================================
 
 /**
- * This class implements a joystick teleop source.  TODO
+ * This class implements a joystick teleop source.
  */
 class TeleopSourceJoystick : public TeleopSource {
 
 public:
 
   /**
+   * Get default device
+   *
+   *   @return default device
+   */
+  static std::string getDefaultDevice() {
+    return std::string("/dev/input/js0");
+  }
+
+  /**
    * Constructor.
    *
    *   @param callback [in] - callback to call with updated teleop state
+   *   @param device [in] - device file
    */
-  TeleopSourceJoystick(TeleopSourceCallback callback);
+  TeleopSourceJoystick(TeleopSourceCallback callback, std::string device = getDefaultDevice());
 
 private:
+
+  /** Device */
+  std::string mDevice;
+
+  /** File descriptor*/
+  int mFileDescriptor;
+
+  /** Number of axes */
+  uint8_t mNumAxes;
+
+  /** Axis map */
+  uint8_t* mAxisMap;
+
+  /** Number of buttons */
+  uint8_t mNumButtons;
+
+  /** Button map */
+  uint8_t* mButtonMap;
 
   /**
    * Override virtual method from parent.

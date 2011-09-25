@@ -34,10 +34,10 @@
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
 #include <teleop_source_keyboard.hpp>
+#include <termios.h>
 #include <cstdio>
 #include <unistd.h>
 #include <time.h>
-#include <termios.h>
 #include <sys/select.h>
 
 
@@ -130,13 +130,13 @@ int TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* teleopState) {
       return LISTEN_ERROR;
     default:
       //Data available
-      if(read(STDIN_FILENO, &c, 1) <= 0) {
+      if(0 >= read(STDIN_FILENO, &c, 1)) {
         printf("TeleopSourceKeyboard::listen: error in read()\n");
         return LISTEN_ERROR;
       }
   }
 
-  //Handle known keys
+  //Handle known events
   switch(c) {
     case KEYCODE_UP:
       if (teleopState->axes[0].value >= TELEOP_AXIS_MAX) {
