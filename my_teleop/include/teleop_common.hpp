@@ -109,20 +109,11 @@ namespace teleop {
 
 #define TELEOP_BUTTON_TYPE_RIGHT          131
 #define TELEOP_BUTTON_TYPE_LEFT           132
-#define TELEOP_BUTTON_TYPE_RIGHT_TOP      133
-#define TELEOP_BUTTON_TYPE_LEFT_TOP       134
-#define TELEOP_BUTTON_TYPE_RIGHT_BOTTOM   135
-#define TELEOP_BUTTON_TYPE_LEFT_BOTTOM    136
 
 #define TELEOP_BUTTON_TYPE_SELECT         141
 #define TELEOP_BUTTON_TYPE_START          142
 #define TELEOP_BUTTON_TYPE_STOP           143
 #define TELEOP_BUTTON_TYPE_TRIGGER        144
-
-#define TELEOP_BUTTON_TYPE_KEY_SPACE      1001
-#define TELEOP_BUTTON_TYPE_KEY_CTRL       1002
-#define TELEOP_BUTTON_TYPE_KEY_SHIFT      1003
-#define TELEOP_BUTTON_TYPE_KEY_ALT        1004
 /**@}*/
 
 /** Macro to determine button type name */
@@ -146,18 +137,9 @@ namespace teleop {
     ((x) == TELEOP_BUTTON_TYPE_Z            ) ? "TELEOP_BUTTON_TYPE_Z"            :\
     ((x) == TELEOP_BUTTON_TYPE_RIGHT        ) ? "TELEOP_BUTTON_TYPE_RIGHT"        :\
     ((x) == TELEOP_BUTTON_TYPE_LEFT         ) ? "TELEOP_BUTTON_TYPE_LEFT"         :\
-    ((x) == TELEOP_BUTTON_TYPE_RIGHT_TOP    ) ? "TELEOP_BUTTON_TYPE_RIGHT_TOP"    :\
-    ((x) == TELEOP_BUTTON_TYPE_LEFT_TOP     ) ? "TELEOP_BUTTON_TYPE_LEFT_TOP"     :\
-    ((x) == TELEOP_BUTTON_TYPE_RIGHT_BOTTOM ) ? "TELEOP_BUTTON_TYPE_RIGHT_BOTTOM" :\
-    ((x) == TELEOP_BUTTON_TYPE_LEFT_BOTTOM  ) ? "TELEOP_BUTTON_TYPE_LEFT_BOTTOM"  :\
     ((x) == TELEOP_BUTTON_TYPE_SELECT       ) ? "TELEOP_BUTTON_TYPE_SELECT"       :\
     ((x) == TELEOP_BUTTON_TYPE_START        ) ? "TELEOP_BUTTON_TYPE_START"        :\
-    ((x) == TELEOP_BUTTON_TYPE_STOP         ) ? "TELEOP_BUTTON_TYPE_STOP"         :\
     ((x) == TELEOP_BUTTON_TYPE_TRIGGER      ) ? "TELEOP_BUTTON_TYPE_TRIGGER"      :\
-    ((x) == TELEOP_BUTTON_TYPE_KEY_SPACE    ) ? "TELEOP_BUTTON_TYPE_KEY_SPACE"    :\
-    ((x) == TELEOP_BUTTON_TYPE_KEY_CTRL     ) ? "TELEOP_BUTTON_TYPE_KEY_CTRL"     :\
-    ((x) == TELEOP_BUTTON_TYPE_KEY_SHIFT    ) ? "TELEOP_BUTTON_TYPE_KEY_SHIFT"    :\
-    ((x) == TELEOP_BUTTON_TYPE_KEY_ALT      ) ? "TELEOP_BUTTON_TYPE_KEY_ALT"      :\
                                                 "TELEOP_BUTTON_TYPE_UNDEFINED"    )
 
 

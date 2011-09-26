@@ -158,10 +158,11 @@ private:
    * Blocks until teleop source device events detected or the given timeout is
    * reached.  When events occur, updates the teleop state.
    *
-   *   @param teleop [in] - timeout value in seconds
+   *   @param timeoutSeconds [in] - timeout value in seconds
    *   @param teleop [in/out] - the current teleop output, to be updated
    *
-   *   @return -1 on error, 0 on timeout or no change to state, 1 on success
+   *   @return LISTEN_ERROR on error, LISTEN_STATE_UNCHANGED on timeout or no
+   *           change to state, LISTEN_STATE_CHANGED if state updated
    */
   virtual int listen(int timeoutSeconds, TeleopState* teleop) = 0;
 

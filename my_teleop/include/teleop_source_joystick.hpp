@@ -41,6 +41,7 @@
 //=============================================================================
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
+#include <linux/joystick.h>
 
 
 
@@ -65,21 +66,19 @@ class TeleopSourceJoystick : public TeleopSource {
 public:
 
   /**
-   * Get default device
-   *
-   *   @return default device
-   */
-  static std::string getDefaultDevice() {
-    return std::string("/dev/input/js0");
-  }
-
-  /**
    * Constructor.
    *
    *   @param callback [in] - callback to call with updated teleop state
    *   @param device [in] - device file
    */
   TeleopSourceJoystick(TeleopSourceCallback callback, std::string device = getDefaultDevice());
+
+  /**
+   * Get default device
+   *
+   *   @return default device
+   */
+  static std::string getDefaultDevice();
 
 private:
 
@@ -93,13 +92,60 @@ private:
   uint8_t mNumAxes;
 
   /** Axis map */
-  uint8_t* mAxisMap;
+  uint8_t mAxisMap[ABS_CNT];
 
   /** Number of buttons */
   uint8_t mNumButtons;
 
   /** Button map */
-  uint8_t* mButtonMap;
+  uint16_t mButtonMap[KEY_MAX - BTN_MISC + 1];
+
+  /**
+   * Convert axis event value (from joystick) to teleop value ([-1.0,1.0]).
+   *
+   *   @param value [in] - event axis value to convert
+   *
+   *   @return teleop axis value
+   */
+  static float axisEventValueToTeleopValue(int16_t value);
+
+  /**
+   * Convert button event value (from joystick) to teleop value.
+   *
+   *   @param value [in] - event button value to convert
+   *
+   *   @return teleop button value
+   */
+  static int buttonEventValueToTeleopValue(int16_t value);
+
+  /**
+   * Convert axis event type (from joystick) to teleop axis type.
+   *
+   *   @param type [in] - event axis type to convert
+   *
+   *   @return teleop axis type
+   */
+  static int axisEventTypeToTeleopType(uint8_t type);
+
+  /**
+   * Convert button event type (from joystick) to teleop button type.
+   *
+   *   @param type [in] - event button type to convert
+   *
+   *   @return teleop button type
+   */
+  static int buttonEventTypeToTeleopType(uint16_t type);
+
+  /**
+   * Internal method for handling each event.
+   *
+   *   @param event [in] - event to handle
+   *   @param teleop [in/out] - the current teleop output, to be updated
+   *
+   *   @return LISTEN_ERROR on error, LISTEN_STATE_UNCHANGED on timeout or no
+   *           change to state, LISTEN_STATE_CHANGED if state updated
+   */
+  int handleEvent(js_event* event, TeleopState* teleopState);
 
   /**
    * Override virtual method from parent.
