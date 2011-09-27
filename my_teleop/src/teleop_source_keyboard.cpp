@@ -119,7 +119,7 @@ int TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* teleopState) {
 
   //Use select to see if anything shows up before timeout
   char c;
-  int result = select(1, &fileDescriptorSet, NULL, NULL, &timeout);
+  int result = select(FD_SETSIZE, &fileDescriptorSet, NULL, NULL, &timeout);
   switch (result) {
     case 0:
       //Timeout

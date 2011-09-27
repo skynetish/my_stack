@@ -97,6 +97,8 @@ bool TeleopSourceJoystick::prepareToListen() {
   }
   printf("Device file:       %s\n", mDevice.c_str());
   printf("Joystick type:     %s\n", name);
+  printf("Num axes:          %u\n", mNumAxes);
+  printf("Num buttons:       %u\n", mNumButtons);
 
   //Return success
   return true;
@@ -136,7 +138,7 @@ int TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* teleopState) {
   timeout.tv_usec = 0;
 
   //Use select to see if anything shows up before timeout
-  int result = select(1, &fileDescriptorSet, NULL, NULL, &timeout);
+  int result = select(FD_SETSIZE, &fileDescriptorSet, NULL, NULL, &timeout);
   if (0 == result) {
     //Timeout
     return LISTEN_STATE_UNCHANGED;
@@ -196,8 +198,8 @@ int TeleopSourceJoystick::handleEvent(js_event* event, TeleopState* teleopState)
   //Handle known events
   switch(event->type)
   {
-    case JS_EVENT_AXIS:
     case JS_EVENT_AXIS | JS_EVENT_INIT:
+    case JS_EVENT_AXIS:
       //Event number shouldn't be bigger than the vector
       if(event->number >= teleopState->axes.size()) {
         return LISTEN_ERROR;
@@ -206,8 +208,8 @@ int TeleopSourceJoystick::handleEvent(js_event* event, TeleopState* teleopState)
       //Set value for this event and signal update
       teleopState->axes[event->number].value = axisEventValueToTeleopValue(event->value);
       return LISTEN_STATE_CHANGED;
-    case JS_EVENT_BUTTON:
     case JS_EVENT_BUTTON | JS_EVENT_INIT:
+    case JS_EVENT_BUTTON:
       //Event number shouldn't be bigger than the vector
       if(event->number >= teleopState->buttons.size()) {
         return LISTEN_ERROR;

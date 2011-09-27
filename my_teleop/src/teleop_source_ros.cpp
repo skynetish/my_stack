@@ -196,15 +196,18 @@ int main(int argc, char** argv)
   //Create teleop source of the given type
   gTeleopSource = teleopSourceFactory(&teleopType);
   if (NULL == gTeleopSource) {
-    ROS_ERROR("teleopSourceFactory: NULL teleop source\n");
+    ROS_ERROR("NULL teleop source\n");
     return 1;
   }
 
   //Start teleop source in non-blocking mode so we can spin for ROS events
-  gTeleopSource->start(false);
-
-  //Spin until we're done
-  ros::spin();
+  if (gTeleopSource->start(false)) {
+    //Spin until we're done
+    ros::spin();
+  } else {
+    ROS_ERROR("Error starting teleop source\n");
+    return 1;
+  }
 
   return 0;
 }
