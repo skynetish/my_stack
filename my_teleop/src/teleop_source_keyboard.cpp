@@ -34,11 +34,11 @@
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
 #include <teleop_source_keyboard.hpp>
+#include <sys/select.h>
 #include <termios.h>
-#include <cstdio>
 #include <unistd.h>
 #include <time.h>
-#include <sys/select.h>
+#include <cstdio>
 
 
 
@@ -54,18 +54,10 @@ namespace teleop {
 //=============================================================================
 //Method definitions
 //=============================================================================
-TeleopSourceKeyboard::TeleopSourceKeyboard(TeleopSourceCallback callback,
-                                           int steps)
-  : TeleopSource(callback), mSteps(steps) {
-  //Clamp steps
-  if (STEPS_MIN > mSteps) {
-    mSteps = STEPS_MIN;
-  } else if (STEPS_MAX < mSteps) {
-    mSteps = STEPS_MAX;
-  }
-
-  //Compute step size
-  mStepSize = (float)(TELEOP_AXIS_MAX - TELEOP_AXIS_MIN)/(2*mSteps);
+TeleopSourceKeyboard::TeleopSourceKeyboard(TeleopSourceCallback callback)
+  : TeleopSource(callback) {
+  //Set step size using setter in order to update both steps and step size
+  setSteps(STEPS_DEFAULT);
 }
 //=============================================================================
 bool TeleopSourceKeyboard::prepareToListen() {
@@ -87,17 +79,16 @@ bool TeleopSourceKeyboard::prepareToListen() {
   return true;
 }
 //=============================================================================
-int TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* teleopState) {
+ListenResult TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* const teleopState) {
   //Sanity check
   if (NULL == teleopState) {
     printf("TeleopSourceKeyboard::listen: NULL teleop state\n");
-    return LISTEN_ERROR;
+    return LISTEN_RESULT_ERROR;
   }
 
-  //Ensure state has correct number of axes and buttons
+  //Ensure state has correct number and types of axes and buttons
   if (2 != teleopState->axes.size()) {
-    TeleopAxis teleopAxisEmpty = {0, 0.0};
-    teleopState->axes.resize(2, teleopAxisEmpty);
+    teleopState->axes.resize(2);
     teleopState->axes[0].type  = TELEOP_AXIS_TYPE_LIN_X;
     teleopState->axes[0].value = 0.0;
     teleopState->axes[1].type  = TELEOP_AXIS_TYPE_LIN_Y;
@@ -107,7 +98,7 @@ int TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* teleopState) {
     teleopState->buttons.clear();
   }
 
-  //Initialise a file descriptor set with stdin for select
+  //Initialise a file descriptor set for select
   fd_set fileDescriptorSet;
   FD_ZERO (&fileDescriptorSet);
   FD_SET (STDIN_FILENO, &fileDescriptorSet);
@@ -118,70 +109,25 @@ int TeleopSourceKeyboard::listen(int timeoutSeconds, TeleopState* teleopState) {
   timeout.tv_usec = 0;
 
   //Use select to see if anything shows up before timeout
-  char c;
   int result = select(FD_SETSIZE, &fileDescriptorSet, NULL, NULL, &timeout);
-  switch (result) {
-    case 0:
-      //Timeout
-      return LISTEN_STATE_UNCHANGED;
-    case -1:
-      //Error
-      printf("TeleopSourceKeyboard::listen: error in select() (%d)\n", errno);
-      return LISTEN_ERROR;
-    default:
-      //Data available
-      if(0 >= read(STDIN_FILENO, &c, 1)) {
-        printf("TeleopSourceKeyboard::listen: error in read()\n");
-        return LISTEN_ERROR;
-      }
+  if (0 == result) {
+    //Timeout
+    return LISTEN_RESULT_UNCHANGED;
+  } else if (-1 == result) {
+    //Error
+    printf("TeleopSourceKeyboard::listen: error in select() (%d)\n", errno);
+    return LISTEN_RESULT_ERROR;
   }
 
-  //Handle known events
-  switch(c) {
-    case KEYCODE_UP:
-      if (teleopState->axes[0].value >= TELEOP_AXIS_MAX) {
-        return LISTEN_STATE_UNCHANGED;
-      }
-      teleopState->axes[0].value += mStepSize;
-      if (teleopState->axes[0].value > TELEOP_AXIS_MAX) {
-        teleopState->axes[0].value = TELEOP_AXIS_MAX;
-      }
-      return LISTEN_STATE_CHANGED;
-    case KEYCODE_DOWN:
-      if (teleopState->axes[0].value <= TELEOP_AXIS_MIN) {
-        return LISTEN_STATE_UNCHANGED;
-      }
-      teleopState->axes[0].value -= mStepSize;
-      if (teleopState->axes[0].value < TELEOP_AXIS_MIN) {
-        teleopState->axes[0].value = TELEOP_AXIS_MIN;
-      }
-      return LISTEN_STATE_CHANGED;
-    case KEYCODE_LEFT:
-      if (teleopState->axes[1].value <= TELEOP_AXIS_MIN) {
-        return LISTEN_STATE_UNCHANGED;
-      }
-      teleopState->axes[1].value -= mStepSize;
-      if (teleopState->axes[1].value < TELEOP_AXIS_MIN) {
-        teleopState->axes[1].value = TELEOP_AXIS_MIN;
-      }
-      return LISTEN_STATE_CHANGED;
-    case KEYCODE_RIGHT:
-      if (teleopState->axes[1].value >= TELEOP_AXIS_MAX) {
-        return LISTEN_STATE_UNCHANGED;
-      }
-      teleopState->axes[1].value += mStepSize;
-      if (teleopState->axes[1].value > TELEOP_AXIS_MAX) {
-        teleopState->axes[1].value = TELEOP_AXIS_MAX;
-      }
-      return LISTEN_STATE_CHANGED;
-    case KEYCODE_SPACE:
-      teleopState->axes[0].value = 0.0;
-      teleopState->axes[1].value = 0.0;
-      return LISTEN_STATE_CHANGED;
+  //Data available, read one event
+  char c;
+  if(0 >= read(STDIN_FILENO, &c, 1)) {
+    printf("TeleopSourceKeyboard::listen: error in read()\n");
+    return LISTEN_RESULT_ERROR;
   }
 
-  //Return no change
-  return LISTEN_STATE_UNCHANGED;
+  //Process event and return result
+  return handleEvent(c, teleopState);
 }
 //=============================================================================
 bool TeleopSourceKeyboard::doneListening() {
@@ -190,6 +136,73 @@ bool TeleopSourceKeyboard::doneListening() {
 
   //Return result
   return true;
+}
+//=============================================================================
+ListenResult TeleopSourceKeyboard::handleEvent(char c, TeleopState* const teleopState) {
+  //Handle known events
+  switch(c) {
+    case KEYCODE_UP:
+      if (teleopState->axes[0].value >= TELEOP_AXIS_MAX) {
+        return LISTEN_RESULT_UNCHANGED;
+      }
+      teleopState->axes[0].value += mStepSize;
+      if (teleopState->axes[0].value > TELEOP_AXIS_MAX) {
+        teleopState->axes[0].value = TELEOP_AXIS_MAX;
+      }
+      return LISTEN_RESULT_CHANGED;
+    case KEYCODE_DOWN:
+      if (teleopState->axes[0].value <= TELEOP_AXIS_MIN) {
+        return LISTEN_RESULT_UNCHANGED;
+      }
+      teleopState->axes[0].value -= mStepSize;
+      if (teleopState->axes[0].value < TELEOP_AXIS_MIN) {
+        teleopState->axes[0].value = TELEOP_AXIS_MIN;
+      }
+      return LISTEN_RESULT_CHANGED;
+    case KEYCODE_RIGHT:
+      if (teleopState->axes[1].value <= TELEOP_AXIS_MIN) {
+        return LISTEN_RESULT_UNCHANGED;
+      }
+      teleopState->axes[1].value -= mStepSize;
+      if (teleopState->axes[1].value < TELEOP_AXIS_MIN) {
+        teleopState->axes[1].value = TELEOP_AXIS_MIN;
+      }
+      return LISTEN_RESULT_CHANGED;
+    case KEYCODE_LEFT:
+      if (teleopState->axes[1].value >= TELEOP_AXIS_MAX) {
+        return LISTEN_RESULT_UNCHANGED;
+      }
+      teleopState->axes[1].value += mStepSize;
+      if (teleopState->axes[1].value > TELEOP_AXIS_MAX) {
+        teleopState->axes[1].value = TELEOP_AXIS_MAX;
+      }
+      return LISTEN_RESULT_CHANGED;
+    case KEYCODE_SPACE:
+      teleopState->axes[0].value = 0.0;
+      teleopState->axes[1].value = 0.0;
+      return LISTEN_RESULT_CHANGED;
+    default:
+      //Return no change
+      return LISTEN_RESULT_UNCHANGED;
+  }
+}
+//=============================================================================
+bool TeleopSourceKeyboard::setSteps(int steps) {
+  if (isRunning()) {
+    printf("TeleopSourceKeyboard::setSteps: cannot be done while thread is running\n");
+    return false;
+  }
+  if (STEPS_MIN > steps || STEPS_MAX < steps) {
+    printf("TeleopSourceKeyboard::setSteps: invalid steps (%d)\n", steps);
+    return false;
+  }
+  mSteps = steps;
+  mStepSize = (float)(TELEOP_AXIS_MAX - TELEOP_AXIS_MIN)/(2*mSteps);
+  return true;
+}
+//=============================================================================
+int TeleopSourceKeyboard::getSteps() {
+  return mSteps;
 }
 //=============================================================================
 

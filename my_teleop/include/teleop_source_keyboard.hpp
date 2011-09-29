@@ -74,22 +74,35 @@ class TeleopSourceKeyboard : public TeleopSource {
 
 public:
 
-  /** Default number of steps to reach the maximum level for each axis */
+  /**@{ Number of steps to reach the maximum level for each axis */
   static const int STEPS_DEFAULT = 5;
-
-  /** Minimum number of steps allowed */
   static const int STEPS_MIN = 1;
-
-  /** Maximum number of steps allowed */
   static const int STEPS_MAX = 10;
+  /**@}*/
 
   /**
    * Constructor.
    *
    *   @param callback [in] - callback to call with updated teleop state
-   *   @param steps [in] - number of steps needed to reach max value for each axis
    */
-  TeleopSourceKeyboard(TeleopSourceCallback callback, int steps=STEPS_DEFAULT);
+  TeleopSourceKeyboard(TeleopSourceCallback callback);
+
+  /**
+   * Set the number of steps required to reach the maximum value for all axes.
+   * Should only be called when listening thread is not running.
+   *
+   *   @param steps [in] - number of steps
+   *
+   *   @return true on success
+   */
+  bool setSteps(int steps);
+
+  /**
+   * Get steps.
+   *
+   *   @return steps
+   */
+  int getSteps();
 
 private:
 
@@ -111,6 +124,17 @@ private:
   struct termios mOldTermios;
 
   /**
+   * Handle a given event.
+   *
+   *   @param c [in] - character to handle
+   *   @param teleop [in/out] - the current teleop output, to be updated
+   *
+   *   @return LISTEN_ERROR on error, LISTEN_STATE_UNCHANGED on timeout or no
+   *           change to state, LISTEN_STATE_CHANGED if state updated
+   */
+  ListenResult handleEvent(char c, TeleopState* const teleopState);
+
+  /**
    * Override virtual method from parent.
    */
   bool prepareToListen();
@@ -118,7 +142,7 @@ private:
   /**
    * Override virtual method from parent.
    */
-  int listen(int timeoutSeconds, TeleopState* teleop);
+  ListenResult listen(int timeoutSeconds, TeleopState* const teleop);
 
   /**
    * Override virtual method from parent.

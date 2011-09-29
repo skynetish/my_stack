@@ -33,6 +33,7 @@
 //=============================================================================
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
+#include <boost/thread.hpp>
 #include <cstdio>
 
 
@@ -50,7 +51,12 @@ namespace teleop {
 //Method definitions
 //=============================================================================
 TeleopSource::TeleopSource(TeleopSourceCallback callback)
-  : mCallback(callback) {
+  : mCallback(callback), mListenTimeout(LISTEN_TIMEOUT_DEFAULT) {
+  //Initialise array members
+  for (int i = 0; i < TELEOP_AXIS_TYPE_COUNT; i++) {
+    mAxisDeadZone[i] = AXIS_DEAD_ZONE_DEFAULT;
+    mAxisInverted[i] = false;
+  }
 }
 //=============================================================================
 TeleopSource::~TeleopSource() {
@@ -59,19 +65,23 @@ TeleopSource::~TeleopSource() {
 }
 //=============================================================================
 bool TeleopSource::start(bool blocking) {
+  //Lock changes to thread state
+  boost::unique_lock<boost::recursive_mutex> mutexLock(mMutex);
+
   //Check if running
-  if (isRunning()) {
-    return true;
+  if (!isRunning()) {
+    //Prepare to listen
+    if (!prepareToListen()) {
+      printf("TeleopSource::start: error in prepareToListen()\n");
+      return false;
+    }
+
+    //Create thread which executes listen loop
+    mThread = boost::thread(&TeleopSource::listenLoop, this);
   }
 
-  //Prepare to listen
-  if (!prepareToListen()) {
-    printf("TeleopSource::start: error in prepareToListen()\n");
-    return false;
-  }
-
-  //Create thread which executes listen loop
-  mThread = boost::thread(&TeleopSource::listenLoop, this);
+  //Unlock changes to thread state so we can safely block
+  mutexLock.unlock();
 
   //If blocking wait for thread to finish
   if (blocking) {
@@ -82,12 +92,10 @@ bool TeleopSource::start(bool blocking) {
   return true;
 }
 //=============================================================================
-bool TeleopSource::isRunning() {
-  //Check if thread has same ID as default thread (which is "Not-A-Thread")
-  return (boost::thread::id() != mThread.get_id());
-}
-//=============================================================================
 bool TeleopSource::stop(bool blocking) {
+  //Lock changes to thread state
+  boost::unique_lock<boost::recursive_mutex> mutexLock(mMutex);
+
   //Check if running
   if (!isRunning()) {
     return true;
@@ -95,6 +103,9 @@ bool TeleopSource::stop(bool blocking) {
 
   //Interrupt
   mThread.interrupt();
+
+  //Unlock changes to thread state so we can safely block
+  mutexLock.unlock();
 
   //If blocking wait for thread to finish
   if (blocking) {
@@ -111,31 +122,42 @@ bool TeleopSource::stop(bool blocking) {
   return true;
 }
 //=============================================================================
+bool TeleopSource::isRunning() {
+  //Lock changes to thread state
+  boost::unique_lock<boost::recursive_mutex> mutexLock(mMutex);
+
+  //Check if thread has same ID as default thread (which is "Not-A-Thread")
+  return (boost::thread::id() != mThread.get_id());
+}
+//=============================================================================
 void TeleopSource::listenLoop() {
   TeleopState teleopState;  //latest teleop state
   int listenResult;         //listen result
   bool success = true;      //return value
 
   //Loop until interrupted
-  while (!boost::this_thread::interruption_requested()) {
+  while (success && !boost::this_thread::interruption_requested()) {
 
     //Listen for events
-    listenResult = listen(TIMEOUT_SECONDS, &teleopState);
+    listenResult = listen(mListenTimeout, &teleopState);
 
     //Deal with result
     switch (listenResult) {
-      case LISTEN_ERROR:
+      case LISTEN_RESULT_ERROR:
         //Error
         printf("TeleopSource::listenLoop: error in listen()\n");
         success = false;
         break;
-      case LISTEN_STATE_UNCHANGED:
+      case LISTEN_RESULT_UNCHANGED:
         //Do nothing this time around
         break;
-      case LISTEN_STATE_CHANGED:
-        //Enforce threshold
+      case LISTEN_RESULT_CHANGED:
+        //Enforce axis inversion and dead zone
         for (size_t i = 0; i < teleopState.axes.size(); i++) {
-          if (AXIS_THRESHOLD > fabs(teleopState.axes[i].value)) {
+          if (mAxisInverted[teleopState.axes[i].type]) {
+            teleopState.axes[i].value *= -1.0;
+          }
+          if (mAxisDeadZone[teleopState.axes[i].type] > fabs(teleopState.axes[i].value)) {
             teleopState.axes[i].value = 0.0;
           }
         }
@@ -161,6 +183,80 @@ void TeleopSource::listenLoop() {
   for (int i=0; i<(int)teleopState.buttons.size(); i++) {
     teleopState.buttons[i].value = 0;
   }
+}
+//=============================================================================
+bool TeleopSource::setListenTimeout(int listenTimeout) {
+  if (isRunning()) {
+    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
+    return false;
+  }
+  if (LISTEN_TIMEOUT_MIN > listenTimeout || LISTEN_TIMEOUT_MAX < listenTimeout) {
+    printf("TeleopSource::setListenTimeout: invalid listen timeout (%d)\n", listenTimeout);
+    return false;
+  }
+  mListenTimeout = listenTimeout;
+  return true;
+}
+//=============================================================================
+int TeleopSource::getListenTimeout() {
+  return mListenTimeout;
+}
+//=============================================================================
+bool TeleopSource::setAxisDeadZoneForAllAxes(float axisDeadZone) {
+  if (isRunning()) {
+    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
+    return false;
+  }
+  if (AXIS_DEAD_ZONE_MIN > axisDeadZone || AXIS_DEAD_ZONE_MAX < axisDeadZone) {
+    printf("TeleopSource::setAxisDeadZoneForAllAxes: invalid axis dead zone (%f)\n", axisDeadZone);
+    return false;
+  }
+  for (int i = 0; i < TELEOP_AXIS_TYPE_COUNT; i++) {
+    mAxisDeadZone[i] = axisDeadZone;
+  }
+  return true;
+}
+//=============================================================================
+bool TeleopSource::setAxisDeadZone(float axisDeadZone, TeleopAxisType axisType) {
+  if (isRunning()) {
+    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
+    return false;
+  }
+  if (AXIS_DEAD_ZONE_MIN > axisDeadZone || AXIS_DEAD_ZONE_MAX < axisDeadZone) {
+    printf("TeleopSource::setAxisDeadZone: invalid axis dead zone (%f)\n", axisDeadZone);
+    return false;
+  }
+  mAxisDeadZone[axisType] = axisDeadZone;
+  return true;
+}
+//=============================================================================
+float TeleopSource::getAxisDeadZone(TeleopAxisType axisType) {
+  return mAxisDeadZone[axisType];
+}
+//=============================================================================
+bool TeleopSource::setAxisInvertedForAllAxes(bool axisInverted) {
+  if (isRunning()) {
+    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
+    return false;
+  }
+  for (int i = 0; i < TELEOP_AXIS_TYPE_COUNT; i++) {
+    mAxisInverted[i] = axisInverted;
+  }
+  return true;
+}
+//=============================================================================
+bool TeleopSource::setAxisInverted(bool axisInverted,
+                                   TeleopAxisType axisType) {
+  if (isRunning()) {
+    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
+    return false;
+  }
+  mAxisInverted[axisType] = axisInverted;
+  return true;
+}
+//=============================================================================
+bool TeleopSource::getAxisInverted(TeleopAxisType axisType) {
+  return mAxisInverted[axisType];
 }
 //=============================================================================
 

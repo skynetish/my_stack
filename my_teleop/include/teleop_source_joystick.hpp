@@ -42,6 +42,7 @@
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
 #include <linux/joystick.h>
+#include <stdint.h>
 
 
 
@@ -66,7 +67,7 @@ class TeleopSourceJoystick : public TeleopSource {
 public:
 
   /**
-   * Constructor.
+   * Constructor
    *
    *   @param callback [in] - callback to call with updated teleop state
    *   @param device [in] - device file
@@ -91,53 +92,53 @@ private:
   /** Number of axes */
   uint8_t mNumAxes;
 
-  /** Axis map */
+  /** Axis type map from driver */
   uint8_t mAxisMap[ABS_CNT];
 
   /** Number of buttons */
   uint8_t mNumButtons;
 
-  /** Button map */
+  /** Button type map from driver */
   uint16_t mButtonMap[KEY_MAX - BTN_MISC + 1];
 
   /**
    * Convert axis event value (from joystick) to teleop value ([-1.0,1.0]).
    *
-   *   @param value [in] - event axis value to convert
+   *   @param axisValue [in] - event axis value to convert
    *
    *   @return teleop axis value
    */
-  static float axisEventValueToTeleopValue(int16_t value);
+  static float axisEventValueToTeleopValue(int16_t axisValue);
 
   /**
    * Convert button event value (from joystick) to teleop value.
    *
-   *   @param value [in] - event button value to convert
+   *   @param buttonValue [in] - event button value to convert
    *
    *   @return teleop button value
    */
-  static int buttonEventValueToTeleopValue(int16_t value);
+  static int buttonEventValueToTeleopValue(int16_t buttonValue);
 
   /**
    * Convert axis event type (from joystick) to teleop axis type.
    *
-   *   @param type [in] - event axis type to convert
+   *   @param axisType [in] - event axis type to convert
    *
    *   @return teleop axis type
    */
-  static int axisEventTypeToTeleopType(uint8_t type);
+  static TeleopAxisType axisEventTypeToTeleopType(uint8_t axisType);
 
   /**
    * Convert button event type (from joystick) to teleop button type.
    *
-   *   @param type [in] - event button type to convert
+   *   @param buttonType [in] - event button type to convert
    *
    *   @return teleop button type
    */
-  static int buttonEventTypeToTeleopType(uint16_t type);
+  static TeleopButtonType buttonEventTypeToTeleopType(uint16_t buttonType);
 
   /**
-   * Internal method for handling each event.
+   * Handle a given event.
    *
    *   @param event [in] - event to handle
    *   @param teleop [in/out] - the current teleop output, to be updated
@@ -145,7 +146,7 @@ private:
    *   @return LISTEN_ERROR on error, LISTEN_STATE_UNCHANGED on timeout or no
    *           change to state, LISTEN_STATE_CHANGED if state updated
    */
-  int handleEvent(js_event* event, TeleopState* teleopState);
+  ListenResult handleEvent(const js_event* const event, TeleopState* const teleopState);
 
   /**
    * Override virtual method from parent.
@@ -155,7 +156,7 @@ private:
   /**
    * Override virtual method from parent.
    */
-  int listen(int timeoutSeconds, TeleopState* teleop);
+  ListenResult listen(int timeoutSeconds, TeleopState* const teleop);
 
   /**
    * Override virtual method from parent.

@@ -36,8 +36,10 @@
 #include <teleop_source_joystick.hpp>
 #include <linux/input.h>
 #include <linux/joystick.h>
-#include <cstdio>
 #include <fcntl.h>
+#include <stdint.h>
+#include <cstdio>
+
 
 
 
@@ -97,21 +99,21 @@ bool TeleopSourceJoystick::prepareToListen() {
   }
   printf("Device file:       %s\n", mDevice.c_str());
   printf("Joystick type:     %s\n", name);
-  printf("Num axes:          %u\n", mNumAxes);
+  printf("Num axes:          %u (", mNumAxes);
   printf("Num buttons:       %u\n", mNumButtons);
 
   //Return success
   return true;
 }
 //=============================================================================
-int TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* teleopState) {
+ListenResult TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* const teleopState) {
   //Sanity check
   if (NULL == teleopState) {
     printf("TeleopSourceJoystick::listen: NULL teleop state\n");
-    return LISTEN_ERROR;
+    return LISTEN_RESULT_ERROR;
   }
 
-  //Resize and initialise teleopState axis and button vectors if needed
+  //Ensure state has correct number and types of axes and buttons
   if (mNumAxes != teleopState->axes.size()) {
     teleopState->axes.resize(mNumAxes);
     for (size_t i = 0; i < mNumAxes; i++) {
@@ -127,7 +129,7 @@ int TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* teleopState) {
     }
   }
 
-  //Add file descriptor to file descriptor set
+  //Initialise a file descriptor set for select
   fd_set fileDescriptorSet;
   FD_ZERO (&fileDescriptorSet);
   FD_SET (mFileDescriptor, &fileDescriptorSet);
@@ -141,11 +143,11 @@ int TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* teleopState) {
   int result = select(FD_SETSIZE, &fileDescriptorSet, NULL, NULL, &timeout);
   if (0 == result) {
     //Timeout
-    return LISTEN_STATE_UNCHANGED;
+    return LISTEN_RESULT_UNCHANGED;
   } else if (-1 == result) {
     //Error
     printf("TeleopSourceJoystick::listen: error in select() (%d)\n", errno);
-    return LISTEN_ERROR;
+    return LISTEN_RESULT_ERROR;
   }
 
   //Data available, read and process all events until queue is empty
@@ -153,33 +155,32 @@ int TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* teleopState) {
   js_event event;
   while (true) {
 
-    //Read one event and check result
+    //Read one event (recall that file was opened in non-blocking mode)
     ssize_t numBytes = read(mFileDescriptor, &event, sizeof(js_event));
     if ((-1 == numBytes) && (EAGAIN == errno)) {
       //Queue is empty
       if (stateChanged) {
-        return LISTEN_STATE_CHANGED;
+        return LISTEN_RESULT_CHANGED;
       } else {
-        return LISTEN_STATE_UNCHANGED;
+        return LISTEN_RESULT_UNCHANGED;
       }
     } else if (sizeof(js_event) == numBytes) {
-      //Handle read event
+      //Handle this event
       switch(handleEvent(&event, teleopState)) {
-        case LISTEN_STATE_UNCHANGED:
+        case LISTEN_RESULT_UNCHANGED:
           break;
-        case LISTEN_STATE_CHANGED:
+        case LISTEN_RESULT_CHANGED:
           stateChanged = true;
           break;
-        case LISTEN_ERROR:
+        case LISTEN_RESULT_ERROR:
         default:
-          return LISTEN_ERROR;
+          return LISTEN_RESULT_ERROR;
       }
     } else {
       //Error
-      printf("TeleopSourceJoystick::listen: error in read()\n");
-      return LISTEN_ERROR;
+      printf("TeleopSourceJoystick::listen: invalid number of bytes during read()\n");
+      return LISTEN_RESULT_ERROR;
     }
-
   }
 }
 //=============================================================================
@@ -194,7 +195,7 @@ bool TeleopSourceJoystick::doneListening() {
   return true;
 }
 //=============================================================================
-int TeleopSourceJoystick::handleEvent(js_event* event, TeleopState* teleopState) {
+ListenResult TeleopSourceJoystick::handleEvent(const js_event* const event, TeleopState* const teleopState) {
   //Handle known events
   switch(event->type)
   {
@@ -202,45 +203,64 @@ int TeleopSourceJoystick::handleEvent(js_event* event, TeleopState* teleopState)
     case JS_EVENT_AXIS:
       //Event number shouldn't be bigger than the vector
       if(event->number >= teleopState->axes.size()) {
-        return LISTEN_ERROR;
+        return LISTEN_RESULT_ERROR;
       }
 
       //Set value for this event and signal update
       teleopState->axes[event->number].value = axisEventValueToTeleopValue(event->value);
-      return LISTEN_STATE_CHANGED;
+
+      //By default X and Y axes usually have the wrong directions for our
+      //purposes, so we invert them internally here.  This is separate from the
+      //invert axes which is handled by the TeleopSource class.  This is just
+      //an internal thing done by this sub-class because we know how most
+      //joysticks are calibrated, and this should save most users some work
+      //most of the time.
+      if (TELEOP_AXIS_TYPE_LIN_X == teleopState->axes[event->number].type
+          || TELEOP_AXIS_TYPE_LIN_Y == teleopState->axes[event->number].type) {
+        teleopState->axes[event->number].value *= -1.0;
+      }
+
+      return LISTEN_RESULT_CHANGED;
+
     case JS_EVENT_BUTTON | JS_EVENT_INIT:
     case JS_EVENT_BUTTON:
       //Event number shouldn't be bigger than the vector
       if(event->number >= teleopState->buttons.size()) {
-        return LISTEN_ERROR;
+        return LISTEN_RESULT_ERROR;
       }
 
       //Set value for this event and signal update
       teleopState->buttons[event->number].value = buttonEventValueToTeleopValue(event->value);
-      return LISTEN_STATE_CHANGED;
-  }
 
-  //Return no change
-  return LISTEN_STATE_UNCHANGED;
+      return LISTEN_RESULT_CHANGED;
+
+    default:
+      //Return no change
+      return LISTEN_RESULT_UNCHANGED;
+  }
 }
 //=============================================================================
 std::string TeleopSourceJoystick::getDefaultDevice() {
   return std::string("/dev/input/js0");
 }
 //=============================================================================
-float TeleopSourceJoystick::axisEventValueToTeleopValue(int16_t value) {
-  return (float)(value)/32767.0;
+float TeleopSourceJoystick::axisEventValueToTeleopValue(int16_t axisValue) {
+  return (float)(axisValue)/32767.0;
 }
 //=============================================================================
-int TeleopSourceJoystick::buttonEventValueToTeleopValue(int16_t value) {
-  return (int)(value);
+int TeleopSourceJoystick::buttonEventValueToTeleopValue(int16_t buttonValue) {
+  return buttonValue;
 }
 //=============================================================================
-int TeleopSourceJoystick::axisEventTypeToTeleopType(uint8_t type) {
-  switch (type) {
-    case ABS_X:         return TELEOP_AXIS_TYPE_LIN_X;
-    case ABS_Y:         return TELEOP_AXIS_TYPE_LIN_Y;
-    case ABS_Z:         return TELEOP_AXIS_TYPE_LIN_Y;
+TeleopAxisType TeleopSourceJoystick::axisEventTypeToTeleopType(uint8_t axisType) {
+  switch (axisType) {
+    //Most joysticks use left-right as X and up down as Y (joystick-space).  We
+    //want to use the 6D space with X forward, Y to the left, and Z up.  So we
+    //switch X and Y here.
+    case ABS_X:         return TELEOP_AXIS_TYPE_LIN_Y;
+    case ABS_Y:         return TELEOP_AXIS_TYPE_LIN_X;
+
+    case ABS_Z:         return TELEOP_AXIS_TYPE_LIN_Z;
     case ABS_RX:        return TELEOP_AXIS_TYPE_ROT_X;
     case ABS_RY:        return TELEOP_AXIS_TYPE_ROT_Y;
     case ABS_RZ:        return TELEOP_AXIS_TYPE_ROT_Z;
@@ -252,8 +272,8 @@ int TeleopSourceJoystick::axisEventTypeToTeleopType(uint8_t type) {
   return TELEOP_AXIS_TYPE_UNKNOWN;
 }
 //=============================================================================
-int TeleopSourceJoystick::buttonEventTypeToTeleopType(uint16_t type) {
-  switch (type) {
+TeleopButtonType TeleopSourceJoystick::buttonEventTypeToTeleopType(uint16_t buttonType) {
+  switch (buttonType) {
     case BTN_0:         return TELEOP_BUTTON_TYPE_0;
     case BTN_1:         return TELEOP_BUTTON_TYPE_1;
     case BTN_2:         return TELEOP_BUTTON_TYPE_2;

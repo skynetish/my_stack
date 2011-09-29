@@ -107,14 +107,21 @@ teleop::TeleopSource* teleopSourceFactory(std::string teleopType);
 //Function definitions
 //=============================================================================
 void quit(int sig) {
-  //Stop and free the teleop source
-  if (NULL != gTeleopSource) {
-    gTeleopSource->stop(true);
-    delete gTeleopSource;
-  }
+  static bool quitting = false;
 
-  //Shutdown ROS to end spinning
-  ros::shutdown();
+  //Make sure this only gets done once
+  if (!quitting) {
+    quitting = true;
+
+    //Stop and free the teleop source
+    if (NULL != gTeleopSource) {
+      gTeleopSource->stop(true);
+      delete gTeleopSource;
+    }
+
+    //Shutdown ROS to end spinning
+    ros::shutdown();
+  }
 }
 //=============================================================================
 bool teleopSourceCallback(teleop::TeleopState* teleopState) {
