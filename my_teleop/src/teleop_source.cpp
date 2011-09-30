@@ -65,7 +65,13 @@ TeleopSource::~TeleopSource() {
 }
 //=============================================================================
 bool TeleopSource::start() {
-  //Lock access to thread state
+  //Sanity check callback here (rather than throwing a constructor exception)
+  if (NULL == mCallback) {
+    printf("TeleopSource::start: invalid callback\n");
+    return false;
+  }
+
+  //Lock access to thread state to avoid creating multiple listening threads
   boost::lock_guard<boost::recursive_mutex> threadLock(mThreadMutex);
 
   //Check if running
@@ -90,7 +96,7 @@ bool TeleopSource::stop() {
     return true;
   }
 
-  //Interrupt
+  //Interrupt (no need to use mutex, multiple interrupts are fine)
   mThread.interrupt();
 
   //Wait for thread to finish
@@ -107,7 +113,7 @@ bool TeleopSource::stop() {
 }
 //=============================================================================
 bool TeleopSource::isRunning() {
-  //Lock access to thread state
+  //Lock access to thread state to avoid creating multiple listening threads
   boost::lock_guard<boost::recursive_mutex> threadLock(mThreadMutex);
 
   //Check if thread has same ID as default thread (which is "Not-A-Thread")
@@ -117,10 +123,10 @@ bool TeleopSource::isRunning() {
 void TeleopSource::listenLoop() {
   TeleopState teleopState;  //latest teleop state
   int listenResult;         //listen result
-  bool success = true;      //signal errors
+  bool error = false;       //recall errors
 
   //Loop until interrupted or error occurs
-  while (success && !boost::this_thread::interruption_requested()) {
+  while (!error && !boost::this_thread::interruption_requested()) {
 
     //Lock access to listen timeout
     boost::unique_lock<boost::mutex> listenTimeoutLock(mListenTimeoutMutex);
@@ -128,7 +134,7 @@ void TeleopSource::listenLoop() {
     //Listen for events
     listenResult = listen(mListenTimeout, &teleopState);
 
-    //Release changes to listen timeout
+    //Unlock access to listen timeout
     listenTimeoutLock.unlock();
 
     //Deal with result
@@ -136,7 +142,7 @@ void TeleopSource::listenLoop() {
       case LISTEN_RESULT_ERROR:
         //Error
         printf("TeleopSource::listenLoop: error in listen()\n");
-        success = false;
+        error = true;
         break;
       case LISTEN_RESULT_UNCHANGED:
         //Do nothing this time around
@@ -162,16 +168,13 @@ void TeleopSource::listenLoop() {
         axisDeadZoneLock.unlock();
 
         //Call callback
-        success = mCallback(&teleopState, false);
-        if (!success) {
-          printf("TeleopSource::listenLoop: error in callback\n");
-        }
+        mCallback(&teleopState, false, false);
         break;
       }
       default:
         //Invalid result
         printf("TeleopSource::listenLoop: invalid result from listen() (%d)\n", listenResult);
-        success = false;
+        error = true;
         break;
     }
   }
@@ -184,10 +187,8 @@ void TeleopSource::listenLoop() {
     teleopState.buttons[i].value = 0;
   }
 
-  //On error, call the callback one more time with the latest state
-  if (!success) {
-    mCallback(&teleopState, true);
-  }
+  //On termination call the callback one more time with the latest status
+  mCallback(&teleopState, true, error);
 }
 //=============================================================================
 bool TeleopSource::setListenTimeout(int listenTimeout) {

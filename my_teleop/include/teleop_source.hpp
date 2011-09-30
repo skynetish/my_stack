@@ -70,11 +70,10 @@ typedef enum {
  * thread.  This is called from the teleop source listening thread.
  *
  *   @param teleopState [in] - the latest teleop state
- *   @param error [in] - true if thread is stopping because of an error
- *
- *   @return true on success
+ *   @param stopping [in] - true if thread is stopping
+ *   @param error [in] - true if there were errors
  */
-typedef bool (*TeleopSourceCallback)(TeleopState* teleopState, bool error);
+typedef void (*TeleopSourceCallback)(TeleopState* teleopState, bool stopping, bool error);
 
 
 
@@ -89,20 +88,21 @@ typedef bool (*TeleopSourceCallback)(TeleopState* teleopState, bool error);
  * which runs in a separate thread.  This loop listens for teleop device events
  * and reports them using the provided callback.
  *
- * Sub-classes for each teleop source must implement the given pure virtual
- * methods to perform the actual listening, as well as related preparation and
- * cleanup.
+ * Sub-classes for each teleop source type must implement the given pure
+ * virtual methods to perform the actual listening, as well as related
+ * preparation and cleanup.
  *
  * The class is non-copyable as a precaution, since many teleop sources will
  * use members or resources which are difficult to share.  This could be
  * delegated to the individual sub-classes, but it's safer to do it here,
- * especially since copying a teleop source is not very useful at this point.
+ * especially since copying a teleop source is probably not very useful in most
+ * situations.
  */
 class TeleopSource : boost::noncopyable {
 
 public:
 
-  /**@{ Default listen timeout in seconds - check for interruption this often */
+  /**@{ Listen timeout in seconds - check for interruption this often */
   static const int LISTEN_TIMEOUT_DEFAULT = 1;
   static const int LISTEN_TIMEOUT_MIN = 0;
   static const int LISTEN_TIMEOUT_MAX = 3600;
@@ -117,7 +117,7 @@ public:
   /**
    * Constructor.
    *
-   *   @param callback [in] - callback to call with updated teleop state
+   *   @param callback [in] - callback to use to report status
    */
   TeleopSource(TeleopSourceCallback callback);
 
@@ -134,7 +134,7 @@ public:
   bool start();
 
   /**
-   * Stop listening thread which reports teleop device activity.
+   * Stop listening thread.
    *
    *   @return true on success
    */
@@ -224,19 +224,19 @@ private:
   /** Callback */
   TeleopSourceCallback mCallback;
 
-  /** Timeout in seconds for listen (check for interruption this often) */
+  /** Listen timeout in seconds - check for interruption this often */
   int mListenTimeout;
 
-  /** Axis dead zones */
+  /** Axis dead zones - values smaller than this are set to 0.0 */
   float mAxisDeadZone[TELEOP_AXIS_TYPE_COUNT];
 
-  /** Axis inverted statuses */
+  /** Axis inverted statuses - true means axis values should be inverted */
   bool mAxisInverted[TELEOP_AXIS_TYPE_COUNT];
 
   /** Listening thread */
   boost::thread mThread;
 
-  /** Mutex for protecting changes to thread running status */
+  /** Mutex to avoid creating multiple listening threads */
   boost::recursive_mutex mThreadMutex;
 
   /** Mutex for protecting listen timeout */

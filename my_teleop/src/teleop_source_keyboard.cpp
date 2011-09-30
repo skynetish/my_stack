@@ -184,10 +184,10 @@ ListenResult TeleopSourceKeyboard::handleEvent(char c, TeleopState* const teleop
       teleopState->axes[0].value = 0.0;
       teleopState->axes[1].value = 0.0;
       return LISTEN_RESULT_CHANGED;
-    default:
-      //Return no change
-      return LISTEN_RESULT_UNCHANGED;
   }
+
+  //If we get here return no change
+  return LISTEN_RESULT_UNCHANGED;
 }
 //=============================================================================
 bool TeleopSourceKeyboard::setSteps(int steps) {

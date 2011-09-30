@@ -58,6 +58,7 @@ TeleopSourceJoystick::TeleopSourceJoystick(TeleopSourceCallback callback,
                                            std::string device)
   : TeleopSource(callback), mDevice(device), mFileDescriptor(-1),
     mNumAxes(0), mNumButtons(0) {
+  //Initialise array members
   for (int i = 0; i < ABS_CNT; i++) {
     mAxisMap[i] = ABS_MISC;
   }
@@ -67,7 +68,7 @@ TeleopSourceJoystick::TeleopSourceJoystick(TeleopSourceCallback callback,
 }
 //=============================================================================
 bool TeleopSourceJoystick::prepareToListen() {
-  //Open device in non-block mode
+  //Open device in non-blocking mode
   mFileDescriptor = open(mDevice.c_str(), O_RDONLY | O_NONBLOCK);
   if (-1 == mFileDescriptor) {
     printf("TeleopSourceJoystick::prepareToListen: error opening device\n");
@@ -117,14 +118,14 @@ ListenResult TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* const
   if (mNumAxes != teleopState->axes.size()) {
     teleopState->axes.resize(mNumAxes);
     for (size_t i = 0; i < mNumAxes; i++) {
-      teleopState->axes[i].type = axisEventTypeToTeleopType(mAxisMap[i]);
+      teleopState->axes[i].type = axisDriverTypeToTeleopType(mAxisMap[i]);
       teleopState->axes[i].value = 0.0;
     }
   }
   if (mNumButtons != teleopState->buttons.size()) {
     teleopState->buttons.resize(mNumButtons);
     for (size_t i = 0; i < mNumButtons; i++) {
-      teleopState->buttons[i].type = buttonEventTypeToTeleopType(mButtonMap[i]);
+      teleopState->buttons[i].type = buttonDriverTypeToTeleopType(mButtonMap[i]);
       teleopState->buttons[i].value = 0;
     }
   }
@@ -209,7 +210,7 @@ ListenResult TeleopSourceJoystick::handleEvent(const js_event* const event, Tele
       }
 
       //Set value for this event and signal update
-      teleopState->axes[event->number].value = axisEventValueToTeleopValue(event->value);
+      teleopState->axes[event->number].value = axisDriverValueToTeleopValue(event->value);
 
       //By default X and Y axes usually have the wrong directions for our
       //purposes, so we invert them internally here.  This is separate from the
@@ -234,7 +235,7 @@ ListenResult TeleopSourceJoystick::handleEvent(const js_event* const event, Tele
       }
 
       //Set value for this event and signal update
-      teleopState->buttons[event->number].value = buttonEventValueToTeleopValue(event->value);
+      teleopState->buttons[event->number].value = buttonDriverValueToTeleopValue(event->value);
 
       return LISTEN_RESULT_CHANGED;
   }
@@ -247,15 +248,15 @@ std::string TeleopSourceJoystick::getDefaultDevice() {
   return std::string("/dev/input/js0");
 }
 //=============================================================================
-float TeleopSourceJoystick::axisEventValueToTeleopValue(int16_t axisValue) {
+float TeleopSourceJoystick::axisDriverValueToTeleopValue(int16_t axisValue) {
   return (float)(axisValue)/32767.0;
 }
 //=============================================================================
-int TeleopSourceJoystick::buttonEventValueToTeleopValue(int16_t buttonValue) {
-  return buttonValue;
+int TeleopSourceJoystick::buttonDriverValueToTeleopValue(int16_t buttonValue) {
+  return (int)buttonValue;
 }
 //=============================================================================
-TeleopAxisType TeleopSourceJoystick::axisEventTypeToTeleopType(uint8_t axisType) {
+TeleopAxisType TeleopSourceJoystick::axisDriverTypeToTeleopType(uint8_t axisType) {
   switch (axisType) {
     //Most joysticks use left-right as X and up down as Y (joystick-space).  We
     //want to use the 6D space with X forward, Y to the left, and Z up.  So we
@@ -275,7 +276,7 @@ TeleopAxisType TeleopSourceJoystick::axisEventTypeToTeleopType(uint8_t axisType)
   return TELEOP_AXIS_TYPE_UNKNOWN;
 }
 //=============================================================================
-TeleopButtonType TeleopSourceJoystick::buttonEventTypeToTeleopType(uint16_t buttonType) {
+TeleopButtonType TeleopSourceJoystick::buttonDriverTypeToTeleopType(uint16_t buttonType) {
   switch (buttonType) {
     case BTN_0:         return TELEOP_BUTTON_TYPE_0;
     case BTN_1:         return TELEOP_BUTTON_TYPE_1;

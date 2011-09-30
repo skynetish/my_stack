@@ -83,7 +83,7 @@ public:
   /**
    * Constructor.
    *
-   *   @param callback [in] - callback to call with updated teleop state
+   *   @param callback [in] - callback to use to report status
    */
   TeleopSourceKeyboard(TeleopSourceCallback callback);
 

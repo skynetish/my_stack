@@ -31,13 +31,13 @@
 //=============================================================================
 //Includes
 //=============================================================================
-#include <signal.h>
-#include <ros/ros.h>
-#include <my_teleop/State.h>
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
 #include <teleop_source_keyboard.hpp>
 #include <teleop_source_joystick.hpp>
+#include <ros/ros.h>
+#include <my_teleop/State.h>
+#include <signal.h>
 
 
 
@@ -87,11 +87,10 @@ void quit(int sig);
  * thread.  This is called from the teleop source listening thread.
  *
  *   @param teleopState [in] - the latest teleop state
- *   @param error [in] - true if thread is stopping because of an error
- *
- *   @return true on success
+ *   @param stopping [in] - true if thread is stopping
+ *   @param error [in] - true if there were errors
  */
-bool teleopSourceCallback(teleop::TeleopState* teleopState, bool error);
+void teleopSourceCallback(teleop::TeleopState* teleopState, bool stopping, bool error);
 
 /**
  * Utility function for creating appropriate teleop source
@@ -126,11 +125,12 @@ void quit(int sig) {
   }
 }
 //=============================================================================
-bool teleopSourceCallback(teleop::TeleopState* teleopState, bool error) {
+void teleopSourceCallback(teleop::TeleopState* teleopState, bool stopping, bool error) {
   //Sanity check publisher and teleopState
   if (NULL == gPublisher || NULL == teleopState) {
     ROS_ERROR("teleopSourceCallback: NULL publisher or teleopState\n");
-    return false;
+    quit(0);
+    return;
   }
 
   //Convert from teleop::teleopState to my_teleop::State.  Use a static here to
@@ -154,17 +154,17 @@ bool teleopSourceCallback(teleop::TeleopState* teleopState, bool error) {
   //Publish result
   gPublisher->publish(teleopStateMsg);
 
-  //On error, quit.  Do this after publishing, since the teleop source should
-  //zero its output on error and we want this to happen.
-  if (error) {
-    quit(-1);
+  //If stopping or error, quit.  Do this after publishing, since the teleop
+  //source should zero its output on error and we want to publish this.
+  if (error || stopping) {
+    quit(0);
   }
-
-  //Return result
-  return true;
 }
 //=============================================================================
 teleop::TeleopSource* teleopSourceFactory(std::string* teleopType) {
+  if (NULL == teleopType) {
+    return NULL;
+  }
   if (0 == teleopType->compare("keyboard")) {
     return new teleop::TeleopSourceKeyboard(&teleopSourceCallback);
   } else if (0 == teleopType->compare("joystick")) {

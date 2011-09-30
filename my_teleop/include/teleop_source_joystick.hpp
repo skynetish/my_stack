@@ -69,7 +69,7 @@ public:
   /**
    * Constructor
    *
-   *   @param callback [in] - callback to call with updated teleop state
+   *   @param callback [in] - callback to use to report status
    *   @param device [in] - device file
    */
   TeleopSourceJoystick(TeleopSourceCallback callback, std::string device = getDefaultDevice());
@@ -89,53 +89,53 @@ private:
   /** File descriptor*/
   int mFileDescriptor;
 
-  /** Number of axes */
+  /** Number of axes from driver */
   uint8_t mNumAxes;
 
   /** Axis type map from driver */
   uint8_t mAxisMap[ABS_CNT];
 
-  /** Number of buttons */
+  /** Number of buttons from driver */
   uint8_t mNumButtons;
 
   /** Button type map from driver */
   uint16_t mButtonMap[KEY_MAX - BTN_MISC + 1];
 
   /**
-   * Convert axis event value (from joystick) to teleop value ([-1.0,1.0]).
+   * Convert driver axis value to teleop axis value.
    *
-   *   @param axisValue [in] - event axis value to convert
+   *   @param axisValue [in] - driver axis value to convert
    *
    *   @return teleop axis value
    */
-  static float axisEventValueToTeleopValue(int16_t axisValue);
+  static float axisDriverValueToTeleopValue(int16_t axisValue);
 
   /**
-   * Convert button event value (from joystick) to teleop value.
+   * Convert driver button value to teleop button value.
    *
-   *   @param buttonValue [in] - event button value to convert
+   *   @param buttonValue [in] - driver button value to convert
    *
    *   @return teleop button value
    */
-  static int buttonEventValueToTeleopValue(int16_t buttonValue);
+  static int buttonDriverValueToTeleopValue(int16_t buttonValue);
 
   /**
-   * Convert axis event type (from joystick) to teleop axis type.
+   * Convert driver axis type to teleop axis type.
    *
-   *   @param axisType [in] - event axis type to convert
+   *   @param axisType [in] - driver axis type to convert
    *
    *   @return teleop axis type
    */
-  static TeleopAxisType axisEventTypeToTeleopType(uint8_t axisType);
+  static TeleopAxisType axisDriverTypeToTeleopType(uint8_t axisType);
 
   /**
-   * Convert button event type (from joystick) to teleop button type.
+   * Convert driver button type to teleop button type.
    *
-   *   @param buttonType [in] - event button type to convert
+   *   @param buttonType [in] - driver button type to convert
    *
    *   @return teleop button type
    */
-  static TeleopButtonType buttonEventTypeToTeleopType(uint16_t buttonType);
+  static TeleopButtonType buttonDriverTypeToTeleopType(uint16_t buttonType);
 
   /**
    * Handle a given event.
