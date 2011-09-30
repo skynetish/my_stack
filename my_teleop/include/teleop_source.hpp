@@ -66,14 +66,15 @@ typedef enum {
 } ListenResult;
 
 /**
- * Callback used to report an updated teleop state.  This is called from the
- * teleop source listening thread.
+ * Callback to report an updated teleop state, or an error in the listening
+ * thread.  This is called from the teleop source listening thread.
  *
- *   @param teleopState [in] - The latest teleop state
+ *   @param teleopState [in] - the latest teleop state
+ *   @param error [in] - true if thread is stopping because of an error
  *
  *   @return true on success
  */
-typedef bool (*TeleopSourceCallback)(TeleopState* teleopState);
+typedef bool (*TeleopSourceCallback)(TeleopState* teleopState, bool error);
 
 
 
@@ -86,11 +87,16 @@ typedef bool (*TeleopSourceCallback)(TeleopState* teleopState);
  * This class provides a framework for generic handling of tele-operation
  * sources.  The start() and stop() methods start and stop a listening loop
  * which runs in a separate thread.  This loop listens for teleop device events
- * and reports them using the provided callback.  Sub-classes for each teleop
- * source must implement the given pure virtual methods.
+ * and reports them using the provided callback.
  *
- * The class is non-copyable as a precaution, since some teleop sources may
- * use members or resources which are difficult to share.
+ * Sub-classes for each teleop source must implement the given pure virtual
+ * methods to perform the actual listening, as well as related preparation and
+ * cleanup.
+ *
+ * The class is non-copyable as a precaution, since many teleop sources will
+ * use members or resources which are difficult to share.  This could be
+ * delegated to the individual sub-classes, but it's safer to do it here,
+ * especially since copying a teleop source is not very useful at this point.
  */
 class TeleopSource : boost::noncopyable {
 
@@ -99,7 +105,7 @@ public:
   /**@{ Default listen timeout in seconds - check for interruption this often */
   static const int LISTEN_TIMEOUT_DEFAULT = 1;
   static const int LISTEN_TIMEOUT_MIN = 0;
-  static const int LISTEN_TIMEOUT_MAX = 60;
+  static const int LISTEN_TIMEOUT_MAX = 3600;
   /**@}*/
 
   /**@{ Axis dead zone - values smaller than this are set to 0.0 */
@@ -121,34 +127,28 @@ public:
   ~TeleopSource();
 
   /**
-   * Start listening for teleop device activity.
-   *
-   *   @param blocking [in] - true if should block until thread has stopped
+   * Start listening thread which reports teleop device activity.
    *
    *   @return true on success
    */
-  bool start(bool blocking);
+  bool start();
 
   /**
-   * Stop listening for teleop device activity.
-   *
-   *   @param blocking [in] - true if should block until thread has stopped
+   * Stop listening thread which reports teleop device activity.
    *
    *   @return true on success
    */
-  bool stop(bool blocking);
+  bool stop();
 
   /**
-   * Check if source is running (listening).
+   * Check if listening thread is running.
    *
    *   @return true if running.
    */
   bool isRunning();
 
   /**
-   * Set listen timeout, which determines how often the listening thread checks
-   * for interruption.  Should only be called when listening thread is not
-   * running.
+   * Set listen timeout which specifies how often to check for interruption.
    *
    *   @param listenTimeout [in] - listen timeout in seconds
    *
@@ -164,8 +164,7 @@ public:
   int getListenTimeout();
 
   /**
-   * Set axis dead zone for all axes.  Should only be called when listening
-   * thread is not running.
+   * Set axis dead zone for all axes.
    *
    *   @param deadZone [in] - axis dead zone
    *
@@ -174,50 +173,47 @@ public:
   bool setAxisDeadZoneForAllAxes(float axisDeadZone);
 
   /**
-   * Set axis dead zone.  Should only be called when listening thread is not
-   * running.
+   * Set axis dead zone for a given axis.
    *
-   *   @param deadZone [in] - axis dead zone
-   *   @param axisType [in] - axis type to set
+   *   @param axisDeadZone [in] - axis dead zone
+   *   @param axisType [in] - axis type
    *
    *   @return true on success
    */
   bool setAxisDeadZone(float axisDeadZone, TeleopAxisType axisType);
 
   /**
-   * Get axis dead zone.
+   * Get axis dead zone for a given axis.
    *
-   *   @param axisType [in] - axis type to check
+   *   @param axisType [in] - axis type
    *
    *   @return axis dead zone
    */
   float getAxisDeadZone(TeleopAxisType axisType);
 
   /**
-   * Set axis inverted status for all axes.  Should only be called when
-   * listening thread is not running.
+   * Set axis inverted status for all axes.
    *
-   *   @param inverted [in] - inverted status
+   *   @param axisInverted [in] - axis inverted status
    *
    *   @return true on success
    */
   bool setAxisInvertedForAllAxes(bool axisInverted);
 
   /**
-   * Set axis inverted status.  Should only be called when listening thread is
-   * not running.
+   * Set axis inverted status for a given axis.
    *
    *   @param axisInverted [in] - axis inverted status
-   *   @param axisType [in] - axis type to set
+   *   @param axisType [in] - axis type
    *
    *   @return true on success
    */
   bool setAxisInverted(bool axisInverted, TeleopAxisType axisType);
 
   /**
-   * Get axis inverted.
+   * Get axis inverted status for a given axis.
    *
-   *   @param axisType [in] - axis type to check
+   *   @param axisType [in] - axis type
    *
    *   @return axis inverted
    */
@@ -234,14 +230,23 @@ private:
   /** Axis dead zones */
   float mAxisDeadZone[TELEOP_AXIS_TYPE_COUNT];
 
-  /** Axis inverted */
+  /** Axis inverted statuses */
   bool mAxisInverted[TELEOP_AXIS_TYPE_COUNT];
 
   /** Listening thread */
   boost::thread mThread;
 
   /** Mutex for protecting changes to thread running status */
-  boost::recursive_mutex mMutex;
+  boost::recursive_mutex mThreadMutex;
+
+  /** Mutex for protecting listen timeout */
+  boost::mutex mListenTimeoutMutex;
+
+  /** Mutex for protecting axis dead zone */
+  boost::mutex mAxisDeadZoneMutex;
+
+  /** Mutex for protecting axis inverted */
+  boost::mutex mAxisInvertedMutex;
 
   /**
    * Executes main listen loop (run in separate thread).
@@ -260,10 +265,7 @@ private:
    * reached.  When events occur, updates the teleop state.  The timeout could
    * also be inherited, but the interface is cleaner if sub-classes don't need
    * to worry about inherited members.  Since this method is called from the
-   * listening thread, care should be taken if this method uses members which
-   * can be modified after object creation (e.g. only allow members to be
-   * updated while the listening thread is not running -- isRunning() can be
-   * used to check if the listening thread is running).
+   * listening thread, it must be careful when using modifiable class members.
    *
    *   @param timeoutSeconds [in] - timeout value in seconds
    *   @param teleop [in/out] - the current teleop output, to be updated

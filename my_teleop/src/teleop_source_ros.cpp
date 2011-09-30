@@ -83,13 +83,15 @@ teleop::TeleopSource* gTeleopSource = NULL;
 void quit(int sig);
 
 /**
- * Callback used to report an updated teleop state.
+ * Callback to report an updated teleop state, or an error in the listening
+ * thread.  This is called from the teleop source listening thread.
  *
- *   @param teleopState [in] - The latest teleop state
+ *   @param teleopState [in] - the latest teleop state
+ *   @param error [in] - true if thread is stopping because of an error
  *
  *   @return true on success
  */
-bool teleopSourceCallback(teleop::TeleopState* teleopState);
+bool teleopSourceCallback(teleop::TeleopState* teleopState, bool error);
 
 /**
  * Utility function for creating appropriate teleop source
@@ -115,7 +117,7 @@ void quit(int sig) {
 
     //Stop and free the teleop source
     if (NULL != gTeleopSource) {
-      gTeleopSource->stop(true);
+      gTeleopSource->stop();
       delete gTeleopSource;
     }
 
@@ -124,7 +126,7 @@ void quit(int sig) {
   }
 }
 //=============================================================================
-bool teleopSourceCallback(teleop::TeleopState* teleopState) {
+bool teleopSourceCallback(teleop::TeleopState* teleopState, bool error) {
   //Sanity check publisher and teleopState
   if (NULL == gPublisher || NULL == teleopState) {
     ROS_ERROR("teleopSourceCallback: NULL publisher or teleopState\n");
@@ -151,6 +153,12 @@ bool teleopSourceCallback(teleop::TeleopState* teleopState) {
 
   //Publish result
   gPublisher->publish(teleopStateMsg);
+
+  //On error, quit.  Do this after publishing, since the teleop source should
+  //zero its output on error and we want this to happen.
+  if (error) {
+    quit(-1);
+  }
 
   //Return result
   return true;
@@ -207,8 +215,8 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  //Start teleop source in non-blocking mode so we can spin for ROS events
-  if (gTeleopSource->start(false)) {
+  //Start teleop source
+  if (gTeleopSource->start()) {
     //Spin until we're done
     ros::spin();
   } else {

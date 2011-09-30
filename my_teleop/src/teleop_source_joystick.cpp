@@ -99,7 +99,7 @@ bool TeleopSourceJoystick::prepareToListen() {
   }
   printf("Device file:       %s\n", mDevice.c_str());
   printf("Joystick type:     %s\n", name);
-  printf("Num axes:          %u (", mNumAxes);
+  printf("Num axes:          %u\n", mNumAxes);
   printf("Num buttons:       %u\n", mNumButtons);
 
   //Return success
@@ -200,6 +200,8 @@ ListenResult TeleopSourceJoystick::handleEvent(const js_event* const event, Tele
   switch(event->type)
   {
     case JS_EVENT_AXIS | JS_EVENT_INIT:
+      //Ignore init events, they're often wrong
+      break;
     case JS_EVENT_AXIS:
       //Event number shouldn't be bigger than the vector
       if(event->number >= teleopState->axes.size()) {
@@ -223,6 +225,8 @@ ListenResult TeleopSourceJoystick::handleEvent(const js_event* const event, Tele
       return LISTEN_RESULT_CHANGED;
 
     case JS_EVENT_BUTTON | JS_EVENT_INIT:
+      //Ignore init events, they're often wrong
+      break;
     case JS_EVENT_BUTTON:
       //Event number shouldn't be bigger than the vector
       if(event->number >= teleopState->buttons.size()) {
@@ -233,11 +237,10 @@ ListenResult TeleopSourceJoystick::handleEvent(const js_event* const event, Tele
       teleopState->buttons[event->number].value = buttonEventValueToTeleopValue(event->value);
 
       return LISTEN_RESULT_CHANGED;
-
-    default:
-      //Return no change
-      return LISTEN_RESULT_UNCHANGED;
   }
+
+  //If we get here return no change
+  return LISTEN_RESULT_UNCHANGED;
 }
 //=============================================================================
 std::string TeleopSourceJoystick::getDefaultDevice() {

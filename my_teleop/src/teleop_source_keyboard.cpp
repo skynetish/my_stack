@@ -139,6 +139,9 @@ bool TeleopSourceKeyboard::doneListening() {
 }
 //=============================================================================
 ListenResult TeleopSourceKeyboard::handleEvent(char c, TeleopState* const teleopState) {
+  //Lock access to steps and step size
+  boost::lock_guard<boost::mutex> stepsLock(mStepsMutex);
+
   //Handle known events
   switch(c) {
     case KEYCODE_UP:
@@ -188,20 +191,21 @@ ListenResult TeleopSourceKeyboard::handleEvent(char c, TeleopState* const teleop
 }
 //=============================================================================
 bool TeleopSourceKeyboard::setSteps(int steps) {
-  if (isRunning()) {
-    printf("TeleopSourceKeyboard::setSteps: cannot be done while thread is running\n");
-    return false;
-  }
   if (STEPS_MIN > steps || STEPS_MAX < steps) {
     printf("TeleopSourceKeyboard::setSteps: invalid steps (%d)\n", steps);
     return false;
   }
+
+  //Lock access to steps and step size
+  boost::lock_guard<boost::mutex> stepsLock(mStepsMutex);
   mSteps = steps;
   mStepSize = (float)(TELEOP_AXIS_MAX - TELEOP_AXIS_MIN)/(2*mSteps);
   return true;
 }
 //=============================================================================
 int TeleopSourceKeyboard::getSteps() {
+  //Lock access to steps and step size
+  boost::lock_guard<boost::mutex> stepsLock(mStepsMutex);
   return mSteps;
 }
 //=============================================================================

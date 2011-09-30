@@ -60,13 +60,13 @@ TeleopSource::TeleopSource(TeleopSourceCallback callback)
 }
 //=============================================================================
 TeleopSource::~TeleopSource() {
-  //Stop listening thread and block until it finishes
-  stop(true);
+  //Stop listening thread
+  stop();
 }
 //=============================================================================
-bool TeleopSource::start(bool blocking) {
-  //Lock changes to thread state
-  boost::unique_lock<boost::recursive_mutex> mutexLock(mMutex);
+bool TeleopSource::start() {
+  //Lock access to thread state
+  boost::lock_guard<boost::recursive_mutex> threadLock(mThreadMutex);
 
   //Check if running
   if (!isRunning()) {
@@ -80,22 +80,11 @@ bool TeleopSource::start(bool blocking) {
     mThread = boost::thread(&TeleopSource::listenLoop, this);
   }
 
-  //Unlock changes to thread state so we can safely block
-  mutexLock.unlock();
-
-  //If blocking wait for thread to finish
-  if (blocking) {
-    mThread.join();
-  }
-
   //Return result
   return true;
 }
 //=============================================================================
-bool TeleopSource::stop(bool blocking) {
-  //Lock changes to thread state
-  boost::unique_lock<boost::recursive_mutex> mutexLock(mMutex);
-
+bool TeleopSource::stop() {
   //Check if running
   if (!isRunning()) {
     return true;
@@ -104,13 +93,8 @@ bool TeleopSource::stop(bool blocking) {
   //Interrupt
   mThread.interrupt();
 
-  //Unlock changes to thread state so we can safely block
-  mutexLock.unlock();
-
-  //If blocking wait for thread to finish
-  if (blocking) {
-    mThread.join();
-  }
+  //Wait for thread to finish
+  mThread.join();
 
   //Done listening
   if (!doneListening()) {
@@ -123,8 +107,8 @@ bool TeleopSource::stop(bool blocking) {
 }
 //=============================================================================
 bool TeleopSource::isRunning() {
-  //Lock changes to thread state
-  boost::unique_lock<boost::recursive_mutex> mutexLock(mMutex);
+  //Lock access to thread state
+  boost::lock_guard<boost::recursive_mutex> threadLock(mThreadMutex);
 
   //Check if thread has same ID as default thread (which is "Not-A-Thread")
   return (boost::thread::id() != mThread.get_id());
@@ -133,13 +117,19 @@ bool TeleopSource::isRunning() {
 void TeleopSource::listenLoop() {
   TeleopState teleopState;  //latest teleop state
   int listenResult;         //listen result
-  bool success = true;      //return value
+  bool success = true;      //signal errors
 
-  //Loop until interrupted
+  //Loop until interrupted or error occurs
   while (success && !boost::this_thread::interruption_requested()) {
+
+    //Lock access to listen timeout
+    boost::unique_lock<boost::mutex> listenTimeoutLock(mListenTimeoutMutex);
 
     //Listen for events
     listenResult = listen(mListenTimeout, &teleopState);
+
+    //Release changes to listen timeout
+    listenTimeoutLock.unlock();
 
     //Deal with result
     switch (listenResult) {
@@ -152,6 +142,11 @@ void TeleopSource::listenLoop() {
         //Do nothing this time around
         break;
       case LISTEN_RESULT_CHANGED:
+      {
+        //Lock access to axis inversion and dead zone
+        boost::unique_lock<boost::mutex> axisInvertedLock(mAxisInvertedMutex);
+        boost::unique_lock<boost::mutex> axisDeadZoneLock(mAxisDeadZoneMutex);
+
         //Enforce axis inversion and dead zone
         for (size_t i = 0; i < teleopState.axes.size(); i++) {
           if (mAxisInverted[teleopState.axes[i].type]) {
@@ -162,12 +157,17 @@ void TeleopSource::listenLoop() {
           }
         }
 
+        //Unlock access to axis inversion and dead zone
+        axisInvertedLock.unlock();
+        axisDeadZoneLock.unlock();
+
         //Call callback
-        success = mCallback(&teleopState);
+        success = mCallback(&teleopState, false);
         if (!success) {
           printf("TeleopSource::listenLoop: error in callback\n");
         }
         break;
+      }
       default:
         //Invalid result
         printf("TeleopSource::listenLoop: invalid result from listen() (%d)\n", listenResult);
@@ -183,34 +183,39 @@ void TeleopSource::listenLoop() {
   for (int i=0; i<(int)teleopState.buttons.size(); i++) {
     teleopState.buttons[i].value = 0;
   }
+
+  //On error, call the callback one more time with the latest state
+  if (!success) {
+    mCallback(&teleopState, true);
+  }
 }
 //=============================================================================
 bool TeleopSource::setListenTimeout(int listenTimeout) {
-  if (isRunning()) {
-    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
-    return false;
-  }
   if (LISTEN_TIMEOUT_MIN > listenTimeout || LISTEN_TIMEOUT_MAX < listenTimeout) {
     printf("TeleopSource::setListenTimeout: invalid listen timeout (%d)\n", listenTimeout);
     return false;
   }
+
+  //Lock access to listen timeout
+  boost::lock_guard<boost::mutex> listenTimeoutLock(mListenTimeoutMutex);
   mListenTimeout = listenTimeout;
   return true;
 }
 //=============================================================================
 int TeleopSource::getListenTimeout() {
+  //Lock access to listen timeout
+  boost::lock_guard<boost::mutex> listenTimeoutLock(mListenTimeoutMutex);
   return mListenTimeout;
 }
 //=============================================================================
 bool TeleopSource::setAxisDeadZoneForAllAxes(float axisDeadZone) {
-  if (isRunning()) {
-    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
-    return false;
-  }
   if (AXIS_DEAD_ZONE_MIN > axisDeadZone || AXIS_DEAD_ZONE_MAX < axisDeadZone) {
     printf("TeleopSource::setAxisDeadZoneForAllAxes: invalid axis dead zone (%f)\n", axisDeadZone);
     return false;
   }
+
+  //Lock access to axis dead zone
+  boost::lock_guard<boost::mutex> axisDeadZoneLock(mAxisDeadZoneMutex);
   for (int i = 0; i < TELEOP_AXIS_TYPE_COUNT; i++) {
     mAxisDeadZone[i] = axisDeadZone;
   }
@@ -218,27 +223,26 @@ bool TeleopSource::setAxisDeadZoneForAllAxes(float axisDeadZone) {
 }
 //=============================================================================
 bool TeleopSource::setAxisDeadZone(float axisDeadZone, TeleopAxisType axisType) {
-  if (isRunning()) {
-    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
-    return false;
-  }
   if (AXIS_DEAD_ZONE_MIN > axisDeadZone || AXIS_DEAD_ZONE_MAX < axisDeadZone) {
     printf("TeleopSource::setAxisDeadZone: invalid axis dead zone (%f)\n", axisDeadZone);
     return false;
   }
+
+  //Lock access to axis dead zone
+  boost::lock_guard<boost::mutex> axisDeadZoneLock(mAxisDeadZoneMutex);
   mAxisDeadZone[axisType] = axisDeadZone;
   return true;
 }
 //=============================================================================
 float TeleopSource::getAxisDeadZone(TeleopAxisType axisType) {
+  //Lock access to axis dead zone
+  boost::lock_guard<boost::mutex> axisDeadZoneLock(mAxisDeadZoneMutex);
   return mAxisDeadZone[axisType];
 }
 //=============================================================================
 bool TeleopSource::setAxisInvertedForAllAxes(bool axisInverted) {
-  if (isRunning()) {
-    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
-    return false;
-  }
+  //Lock access to axis inverted
+  boost::lock_guard<boost::mutex> axisInvertedLock(mAxisInvertedMutex);
   for (int i = 0; i < TELEOP_AXIS_TYPE_COUNT; i++) {
     mAxisInverted[i] = axisInverted;
   }
@@ -247,15 +251,15 @@ bool TeleopSource::setAxisInvertedForAllAxes(bool axisInverted) {
 //=============================================================================
 bool TeleopSource::setAxisInverted(bool axisInverted,
                                    TeleopAxisType axisType) {
-  if (isRunning()) {
-    printf("TeleopSource::setListenTimeout: cannot be done while thread is running\n");
-    return false;
-  }
+  //Lock access to axis inverted
+  boost::lock_guard<boost::mutex> axisInvertedLock(mAxisInvertedMutex);
   mAxisInverted[axisType] = axisInverted;
   return true;
 }
 //=============================================================================
 bool TeleopSource::getAxisInverted(TeleopAxisType axisType) {
+  //Lock access to axis inverted
+  boost::lock_guard<boost::mutex> axisInvertedLock(mAxisInvertedMutex);
   return mAxisInverted[axisType];
 }
 //=============================================================================

@@ -89,7 +89,6 @@ public:
 
   /**
    * Set the number of steps required to reach the maximum value for all axes.
-   * Should only be called when listening thread is not running.
    *
    *   @param steps [in] - number of steps
    *
@@ -119,6 +118,9 @@ private:
 
   /** Size of each step for each axis */
   float mStepSize;
+
+  /** Mutex for protecting steps and step size */
+  boost::mutex mStepsMutex;
 
   /** Old termios settings */
   struct termios mOldTermios;

@@ -105,7 +105,7 @@ typedef struct {
   float value;
 } TeleopAxis;
 
-/** Teleop device button (value of 0 is "off", other values are user-defined) */
+/** Teleop device button (value of 0 means off) */
 typedef struct {
   TeleopButtonType type;
   int value;
