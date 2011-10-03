@@ -34,8 +34,9 @@
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
 #include <teleop_source_joystick.hpp>
-#include <linux/input.h>
 #include <linux/joystick.h>
+#include <linux/input.h>
+#include <linux/types.h>
 #include <fcntl.h>
 #include <cstdio>
 
