@@ -44,11 +44,15 @@
     (cl:write-byte (cl:ldb (cl:byte 8 16) unsigned) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 24) unsigned) ostream)
     )
-  (cl:let ((bits (roslisp-utils:encode-single-float-bits (cl:slot-value msg 'value))))
+  (cl:let ((bits (roslisp-utils:encode-double-float-bits (cl:slot-value msg 'value))))
     (cl:write-byte (cl:ldb (cl:byte 8 0) bits) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 8) bits) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 16) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 24) bits) ostream))
+    (cl:write-byte (cl:ldb (cl:byte 8 24) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 32) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 40) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 48) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 56) bits) ostream))
 )
 (cl:defmethod roslisp-msg-protocol:deserialize ((msg <Axis>) istream)
   "Deserializes a message object of type '<Axis>"
@@ -63,7 +67,11 @@
       (cl:setf (cl:ldb (cl:byte 8 8) bits) (cl:read-byte istream))
       (cl:setf (cl:ldb (cl:byte 8 16) bits) (cl:read-byte istream))
       (cl:setf (cl:ldb (cl:byte 8 24) bits) (cl:read-byte istream))
-    (cl:setf (cl:slot-value msg 'value) (roslisp-utils:decode-single-float-bits bits)))
+      (cl:setf (cl:ldb (cl:byte 8 32) bits) (cl:read-byte istream))
+      (cl:setf (cl:ldb (cl:byte 8 40) bits) (cl:read-byte istream))
+      (cl:setf (cl:ldb (cl:byte 8 48) bits) (cl:read-byte istream))
+      (cl:setf (cl:ldb (cl:byte 8 56) bits) (cl:read-byte istream))
+    (cl:setf (cl:slot-value msg 'value) (roslisp-utils:decode-double-float-bits bits)))
   msg
 )
 (cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql '<Axis>)))
@@ -74,20 +82,20 @@
   "my_teleop/Axis")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql '<Axis>)))
   "Returns md5sum for a message object of type '<Axis>"
-  "a62ee37b76558a2a7518a5ca27dbdb05")
+  "ff848a94bb7e24a6adffc2343d23e191")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql 'Axis)))
   "Returns md5sum for a message object of type 'Axis"
-  "a62ee37b76558a2a7518a5ca27dbdb05")
+  "ff848a94bb7e24a6adffc2343d23e191")
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql '<Axis>)))
   "Returns full string definition for message of type '<Axis>"
-  (cl:format cl:nil "int32 type~%float32 value~%~%~%"))
+  (cl:format cl:nil "int32 type~%float64 value~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql 'Axis)))
   "Returns full string definition for message of type 'Axis"
-  (cl:format cl:nil "int32 type~%float32 value~%~%~%"))
+  (cl:format cl:nil "int32 type~%float64 value~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:serialization-length ((msg <Axis>))
   (cl:+ 0
      4
-     4
+     8
 ))
 (cl:defmethod roslisp-msg-protocol:ros-message-to-list ((msg <Axis>))
   "Converts a ROS message object to a list"

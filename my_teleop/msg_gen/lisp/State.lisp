@@ -85,16 +85,16 @@
   "my_teleop/State")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql '<State>)))
   "Returns md5sum for a message object of type '<State>"
-  "169b20224a7dd29b091cc66ab41be2e0")
+  "304c6738485947931c4f56d838c3bdcd")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql 'State)))
   "Returns md5sum for a message object of type 'State"
-  "169b20224a7dd29b091cc66ab41be2e0")
+  "304c6738485947931c4f56d838c3bdcd")
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql '<State>)))
   "Returns full string definition for message of type '<State>"
-  (cl:format cl:nil "Axis[] axes~%Button[] buttons~%~%================================================================================~%MSG: my_teleop/Axis~%int32 type~%float32 value~%~%================================================================================~%MSG: my_teleop/Button~%int32 type~%int32 value~%~%~%"))
+  (cl:format cl:nil "Axis[] axes~%Button[] buttons~%~%================================================================================~%MSG: my_teleop/Axis~%int32 type~%float64 value~%~%================================================================================~%MSG: my_teleop/Button~%int32 type~%int32 value~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql 'State)))
   "Returns full string definition for message of type 'State"
-  (cl:format cl:nil "Axis[] axes~%Button[] buttons~%~%================================================================================~%MSG: my_teleop/Axis~%int32 type~%float32 value~%~%================================================================================~%MSG: my_teleop/Button~%int32 type~%int32 value~%~%~%"))
+  (cl:format cl:nil "Axis[] axes~%Button[] buttons~%~%================================================================================~%MSG: my_teleop/Axis~%int32 type~%float64 value~%~%================================================================================~%MSG: my_teleop/Button~%int32 type~%int32 value~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:serialization-length ((msg <State>))
   (cl:+ 0
      4 (cl:reduce #'cl:+ (cl:slot-value msg 'axes) :key #'(cl:lambda (ele) (cl:declare (cl:ignorable ele)) (cl:+ (roslisp-msg-protocol:serialization-length ele))))

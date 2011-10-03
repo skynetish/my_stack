@@ -33,8 +33,8 @@ struct Axis_ : public ros::Message
   typedef int32_t _type_type;
   int32_t type;
 
-  typedef float _value_type;
-  float value;
+  typedef double _value_type;
+  double value;
 
 
 private:
@@ -45,7 +45,7 @@ public:
   ROS_DEPRECATED const std::string __getDataType() const { return __s_getDataType_(); }
 
 private:
-  static const char* __s_getMD5Sum_() { return "a62ee37b76558a2a7518a5ca27dbdb05"; }
+  static const char* __s_getMD5Sum_() { return "ff848a94bb7e24a6adffc2343d23e191"; }
 public:
   ROS_DEPRECATED static const std::string __s_getMD5Sum() { return __s_getMD5Sum_(); }
 
@@ -53,7 +53,7 @@ public:
 
 private:
   static const char* __s_getMessageDefinition_() { return "int32 type\n\
-float32 value\n\
+float64 value\n\
 \n\
 "; }
 public:
@@ -110,12 +110,12 @@ template<class ContainerAllocator>
 struct MD5Sum< ::my_teleop::Axis_<ContainerAllocator> > {
   static const char* value() 
   {
-    return "a62ee37b76558a2a7518a5ca27dbdb05";
+    return "ff848a94bb7e24a6adffc2343d23e191";
   }
 
   static const char* value(const  ::my_teleop::Axis_<ContainerAllocator> &) { return value(); } 
-  static const uint64_t static_value1 = 0xa62ee37b76558a2aULL;
-  static const uint64_t static_value2 = 0x7518a5ca27dbdb05ULL;
+  static const uint64_t static_value1 = 0xff848a94bb7e24a6ULL;
+  static const uint64_t static_value2 = 0xadffc2343d23e191ULL;
 };
 
 template<class ContainerAllocator>
@@ -133,7 +133,7 @@ struct Definition< ::my_teleop::Axis_<ContainerAllocator> > {
   static const char* value() 
   {
     return "int32 type\n\
-float32 value\n\
+float64 value\n\
 \n\
 ";
   }
@@ -176,7 +176,7 @@ struct Printer< ::my_teleop::Axis_<ContainerAllocator> >
     s << indent << "type: ";
     Printer<int32_t>::stream(s, indent + "  ", v.type);
     s << indent << "value: ";
-    Printer<float>::stream(s, indent + "  ", v.value);
+    Printer<double>::stream(s, indent + "  ", v.value);
   }
 };
 

@@ -55,7 +55,7 @@ public:
   ROS_DEPRECATED const std::string __getDataType() const { return __s_getDataType_(); }
 
 private:
-  static const char* __s_getMD5Sum_() { return "169b20224a7dd29b091cc66ab41be2e0"; }
+  static const char* __s_getMD5Sum_() { return "304c6738485947931c4f56d838c3bdcd"; }
 public:
   ROS_DEPRECATED static const std::string __s_getMD5Sum() { return __s_getMD5Sum_(); }
 
@@ -68,7 +68,7 @@ Button[] buttons\n\
 ================================================================================\n\
 MSG: my_teleop/Axis\n\
 int32 type\n\
-float32 value\n\
+float64 value\n\
 \n\
 ================================================================================\n\
 MSG: my_teleop/Button\n\
@@ -130,12 +130,12 @@ template<class ContainerAllocator>
 struct MD5Sum< ::my_teleop::State_<ContainerAllocator> > {
   static const char* value() 
   {
-    return "169b20224a7dd29b091cc66ab41be2e0";
+    return "304c6738485947931c4f56d838c3bdcd";
   }
 
   static const char* value(const  ::my_teleop::State_<ContainerAllocator> &) { return value(); } 
-  static const uint64_t static_value1 = 0x169b20224a7dd29bULL;
-  static const uint64_t static_value2 = 0x091cc66ab41be2e0ULL;
+  static const uint64_t static_value1 = 0x304c673848594793ULL;
+  static const uint64_t static_value2 = 0x1c4f56d838c3bdcdULL;
 };
 
 template<class ContainerAllocator>
@@ -158,7 +158,7 @@ Button[] buttons\n\
 ================================================================================\n\
 MSG: my_teleop/Axis\n\
 int32 type\n\
-float32 value\n\
+float64 value\n\
 \n\
 ================================================================================\n\
 MSG: my_teleop/Button\n\

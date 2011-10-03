@@ -70,6 +70,9 @@ typedef enum {
   TELEOP_AXIS_TYPE_LAST = TELEOP_AXIS_TYPE_UNKNOWN
 } TeleopAxisType;
 
+/** Axis value (typedef makes it easier to change width) */
+typedef double TeleopAxisValue;
+
 /** Button types (can be used as indices in an array) */
 typedef enum {
   TELEOP_BUTTON_TYPE_FIRST = 0,
@@ -99,16 +102,19 @@ typedef enum {
   TELEOP_BUTTON_TYPE_LAST = TELEOP_BUTTON_TYPE_UNKNOWN
 } TeleopButtonType;
 
+/** Button value type (typedef makes it easier to change signed/width) */
+typedef int TeleopButtonValue;
+
 /** Teleop device axis (value is in [TELEOP_AXIS_MIN, TELEOP_AXIS_MAX]) */
 typedef struct {
   TeleopAxisType type;
-  float value;
+  TeleopAxisValue value;
 } TeleopAxis;
 
 /** Teleop device button (value of 0 means off) */
 typedef struct {
   TeleopButtonType type;
-  int value;
+  TeleopButtonValue value;
 } TeleopButton;
 
 /** Teleop device state */
@@ -125,8 +131,8 @@ typedef struct {
 //=============================================================================
 
 /**@{ Axis range (0=off) */
-const float TELEOP_AXIS_MIN = -1.0;
-const float TELEOP_AXIS_MAX = 1.0;
+const TeleopAxisValue TELEOP_AXIS_MIN = -1.0;
+const TeleopAxisValue TELEOP_AXIS_MAX = 1.0;
 /**@}*/
 
 /** Number of axis types */

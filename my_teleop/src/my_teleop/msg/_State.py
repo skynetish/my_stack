@@ -5,7 +5,7 @@ import struct
 import my_teleop.msg
 
 class State(roslib.message.Message):
-  _md5sum = "169b20224a7dd29b091cc66ab41be2e0"
+  _md5sum = "304c6738485947931c4f56d838c3bdcd"
   _type = "my_teleop/State"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """Axis[] axes
@@ -14,7 +14,7 @@ Button[] buttons
 ================================================================================
 MSG: my_teleop/Axis
 int32 type
-float32 value
+float64 value
 
 ================================================================================
 MSG: my_teleop/Button
@@ -67,7 +67,7 @@ int32 value
       buff.write(_struct_I.pack(length))
       for val1 in self.axes:
         _x = val1
-        buff.write(_struct_if.pack(_x.type, _x.value))
+        buff.write(_struct_id.pack(_x.type, _x.value))
       length = len(self.buttons)
       buff.write(_struct_I.pack(length))
       for val1 in self.buttons:
@@ -92,8 +92,8 @@ int32 value
         val1 = my_teleop.msg.Axis()
         _x = val1
         start = end
-        end += 8
-        (_x.type, _x.value,) = _struct_if.unpack(str[start:end])
+        end += 12
+        (_x.type, _x.value,) = _struct_id.unpack(str[start:end])
         self.axes.append(val1)
       start = end
       end += 4
@@ -124,7 +124,7 @@ int32 value
       buff.write(_struct_I.pack(length))
       for val1 in self.axes:
         _x = val1
-        buff.write(_struct_if.pack(_x.type, _x.value))
+        buff.write(_struct_id.pack(_x.type, _x.value))
       length = len(self.buttons)
       buff.write(_struct_I.pack(length))
       for val1 in self.buttons:
@@ -151,8 +151,8 @@ int32 value
         val1 = my_teleop.msg.Axis()
         _x = val1
         start = end
-        end += 8
-        (_x.type, _x.value,) = _struct_if.unpack(str[start:end])
+        end += 12
+        (_x.type, _x.value,) = _struct_id.unpack(str[start:end])
         self.axes.append(val1)
       start = end
       end += 4
@@ -170,5 +170,5 @@ int32 value
       raise roslib.message.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = roslib.message.struct_I
+_struct_id = struct.Struct("<id")
 _struct_2i = struct.Struct("<2i")
-_struct_if = struct.Struct("<if")

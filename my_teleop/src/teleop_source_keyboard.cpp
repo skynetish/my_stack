@@ -199,7 +199,7 @@ bool TeleopSourceKeyboard::setSteps(int steps) {
   //Lock access to steps and step size
   boost::lock_guard<boost::mutex> stepsLock(mStepsMutex);
   mSteps = steps;
-  mStepSize = (float)(TELEOP_AXIS_MAX - TELEOP_AXIS_MIN)/(2*mSteps);
+  mStepSize = (TeleopAxisValue)(TELEOP_AXIS_MAX - TELEOP_AXIS_MIN)/(2*mSteps);
   return true;
 }
 //=============================================================================

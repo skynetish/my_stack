@@ -1,2 +1,2 @@
 int32 type
-float32 value
+float64 value

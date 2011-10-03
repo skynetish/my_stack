@@ -65,10 +65,18 @@ namespace teleop {
  * this class is used, other uses of standard input from within the same
  * process should be handled carefully.
  *
- * An alternative could be to detect low-level key press and release events,
- * but this would probably require either access to the X server (which we
- * shouldn't need for a keyboard teleop device), or access to linux inputs in
- * the /dev/input/event* files (which normally requires elevated privileges).
+ * The default axis dead zone should normally work fine.  Note that the
+ * keyboard source increments and decrements the previous teleop source output.
+ * For this reason, care should be taken to ensure that the axis dead zone
+ * (which is set via the TeleopSource class) is not greater than the step size.
+ * Otherwise this source will always output zero axis values.
+ *
+ * Currently raw standard input is read and processed to identify key presses.
+ * An alternative approach could be to detect low-level key press and release
+ * events, but this would probably require either access to the X server (which
+ * we shouldn't need for a keyboard teleop device), or access to linux inputs
+ * in the /dev/input/event* files (which normally requires elevated
+ * privileges).
  */
 class TeleopSourceKeyboard : public TeleopSource {
 
@@ -117,7 +125,7 @@ private:
   int mSteps;
 
   /** Size of each step for each axis */
-  float mStepSize;
+  TeleopAxisValue mStepSize;
 
   /** Mutex for protecting steps and step size */
   boost::mutex mStepsMutex;

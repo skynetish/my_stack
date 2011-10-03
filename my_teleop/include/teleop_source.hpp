@@ -109,9 +109,9 @@ public:
   /**@}*/
 
   /**@{ Axis dead zone - values smaller than this are set to 0.0 */
-  static const float AXIS_DEAD_ZONE_DEFAULT = 0.01;
-  static const float AXIS_DEAD_ZONE_MIN = 0.01;
-  static const float AXIS_DEAD_ZONE_MAX = 0.99;
+  static const TeleopAxisValue AXIS_DEAD_ZONE_DEFAULT = 0.01;
+  static const TeleopAxisValue AXIS_DEAD_ZONE_MIN = 0.01;
+  static const TeleopAxisValue AXIS_DEAD_ZONE_MAX = 0.99;
   /**@}*/
 
   /**
@@ -170,7 +170,7 @@ public:
    *
    *   @return true on success
    */
-  bool setAxisDeadZoneForAllAxes(float axisDeadZone);
+  bool setAxisDeadZoneForAllAxes(TeleopAxisValue axisDeadZone);
 
   /**
    * Set axis dead zone for a given axis.
@@ -180,7 +180,7 @@ public:
    *
    *   @return true on success
    */
-  bool setAxisDeadZone(float axisDeadZone, TeleopAxisType axisType);
+  bool setAxisDeadZone(TeleopAxisValue axisDeadZone, TeleopAxisType axisType);
 
   /**
    * Get axis dead zone for a given axis.
@@ -189,7 +189,7 @@ public:
    *
    *   @return axis dead zone
    */
-  float getAxisDeadZone(TeleopAxisType axisType);
+  TeleopAxisValue getAxisDeadZone(TeleopAxisType axisType);
 
   /**
    * Set axis inverted status for all axes.
@@ -228,7 +228,7 @@ private:
   int mListenTimeout;
 
   /** Axis dead zones - values smaller than this are set to 0.0 */
-  float mAxisDeadZone[TELEOP_AXIS_TYPE_COUNT];
+  TeleopAxisValue mAxisDeadZone[TELEOP_AXIS_TYPE_COUNT];
 
   /** Axis inverted statuses - true means axis values should be inverted */
   bool mAxisInverted[TELEOP_AXIS_TYPE_COUNT];

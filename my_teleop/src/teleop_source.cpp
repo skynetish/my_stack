@@ -180,10 +180,10 @@ void TeleopSource::listenLoop() {
   }
 
   //When done, zero all outputs
-  for (int i=0; i<(int)teleopState.axes.size(); i++) {
+  for (size_t i = 0; i < teleopState.axes.size(); i++) {
     teleopState.axes[i].value = 0.0;
   }
-  for (int i=0; i<(int)teleopState.buttons.size(); i++) {
+  for (size_t i = 0; i < teleopState.buttons.size(); i++) {
     teleopState.buttons[i].value = 0;
   }
 
@@ -209,7 +209,7 @@ int TeleopSource::getListenTimeout() {
   return mListenTimeout;
 }
 //=============================================================================
-bool TeleopSource::setAxisDeadZoneForAllAxes(float axisDeadZone) {
+bool TeleopSource::setAxisDeadZoneForAllAxes(TeleopAxisValue axisDeadZone) {
   if (AXIS_DEAD_ZONE_MIN > axisDeadZone || AXIS_DEAD_ZONE_MAX < axisDeadZone) {
     printf("TeleopSource::setAxisDeadZoneForAllAxes: invalid axis dead zone (%f)\n", axisDeadZone);
     return false;
@@ -223,7 +223,7 @@ bool TeleopSource::setAxisDeadZoneForAllAxes(float axisDeadZone) {
   return true;
 }
 //=============================================================================
-bool TeleopSource::setAxisDeadZone(float axisDeadZone, TeleopAxisType axisType) {
+bool TeleopSource::setAxisDeadZone(TeleopAxisValue axisDeadZone, TeleopAxisType axisType) {
   if (AXIS_DEAD_ZONE_MIN > axisDeadZone || AXIS_DEAD_ZONE_MAX < axisDeadZone) {
     printf("TeleopSource::setAxisDeadZone: invalid axis dead zone (%f)\n", axisDeadZone);
     return false;
@@ -235,7 +235,7 @@ bool TeleopSource::setAxisDeadZone(float axisDeadZone, TeleopAxisType axisType) 
   return true;
 }
 //=============================================================================
-float TeleopSource::getAxisDeadZone(TeleopAxisType axisType) {
+TeleopAxisValue TeleopSource::getAxisDeadZone(TeleopAxisType axisType) {
   //Lock access to axis dead zone
   boost::lock_guard<boost::mutex> axisDeadZoneLock(mAxisDeadZoneMutex);
   return mAxisDeadZone[axisType];

@@ -47,13 +47,19 @@
 //=============================================================================
 
 /**@{ Parameter keys */
-#define PARAM_KEY_TOPIC            "topic"
-#define PARAM_KEY_TELEOP_TYPE      "type"
+#define PARAM_KEY_TOPIC                 "topic"
+#define PARAM_KEY_TELEOP_TYPE           "type"
+#define PARAM_KEY_JOYSTICK_DEVICE       "joystick_device"
+#define PARAM_KEY_KEYBOARD_STEPS        "keyboard_steps"
+#define PARAM_KEY_AXIS_DEAD_ZONE        "axis_dead_zone"
 /**@}*/
 
 /**@{ Parameter default values */
-#define PARAM_DEFAULT_TOPIC        "teleop"
-#define PARAM_DEFAULT_TELEOP_TYPE  "keyboard"
+#define PARAM_DEFAULT_TOPIC             "teleop"
+#define PARAM_DEFAULT_TELEOP_TYPE       "keyboard"
+#define PARAM_DEFAULT_JOYSTICK_DEVICE   teleop::TeleopSourceJoystick::getDefaultDevice()
+#define PARAM_DEFAULT_KEYBOARD_STEPS    ((int)teleop::TeleopSourceKeyboard::STEPS_DEFAULT)
+#define PARAM_DEFAULT_AXIS_DEAD_ZONE    ((teleop::TeleopAxisValue)teleop::TeleopSource::AXIS_DEAD_ZONE_DEFAULT)
 /**@}*/
 
 
@@ -96,10 +102,16 @@ void teleopSourceCallback(teleop::TeleopState* teleopState, bool stopping, bool 
  * Utility function for creating appropriate teleop source
  *
  *   @param teleopType - string containing teleop type
+ *   @param deadZone - default dead zone
+ *   @param keyboardSteps - if this is a keyboard, use this many steps
+ *   @param joystickDevice - if this is a joystick, use this device
  *
  *   @return teleop source or NULL on error
  */
-teleop::TeleopSource* teleopSourceFactory(std::string teleopType);
+teleop::TeleopSource* teleopSourceFactory(std::string* teleopType,
+                                          double axisDeadZone,
+                                          int keyboardSteps,
+                                          std::string* joystickDevice);
 
 
 
@@ -161,16 +173,28 @@ void teleopSourceCallback(teleop::TeleopState* teleopState, bool stopping, bool 
   }
 }
 //=============================================================================
-teleop::TeleopSource* teleopSourceFactory(std::string* teleopType) {
+teleop::TeleopSource* teleopSourceFactory(std::string* teleopType,
+                                          double axisDeadZone,
+                                          int keyboardSteps,
+                                          std::string* joystickDevice) {
   if (NULL == teleopType) {
     return NULL;
   }
+  teleop::TeleopSource* teleopSource;
   if (0 == teleopType->compare("keyboard")) {
-    return new teleop::TeleopSourceKeyboard(&teleopSourceCallback);
+    teleop::TeleopSourceKeyboard* teleopSourceKeyboard;
+    teleopSourceKeyboard = new teleop::TeleopSourceKeyboard(&teleopSourceCallback);
+    teleopSourceKeyboard->setSteps(keyboardSteps);
+    teleopSource = teleopSourceKeyboard;
   } else if (0 == teleopType->compare("joystick")) {
-    return new teleop::TeleopSourceJoystick(&teleopSourceCallback);
+    teleop::TeleopSourceJoystick* teleopSourceJoystick;
+    teleopSourceJoystick = new teleop::TeleopSourceJoystick(&teleopSourceCallback, *joystickDevice);
+    teleopSource = teleopSourceJoystick;
+  } else {
+    return NULL;
   }
-  return NULL;
+  teleopSource->setAxisDeadZoneForAllAxes(axisDeadZone);
+  return teleopSource;
 }
 //=============================================================================
 
@@ -194,14 +218,23 @@ int main(int argc, char** argv)
   //Declare parameters
   std::string topic;
   std::string teleopType;
+  std::string joystickDevice;
+  int keyboardSteps;
+  double axisDeadZone;
 
   //Read parameters and set default values
-  nodeHandle.param(PARAM_KEY_TOPIC,       topic,      std::string(PARAM_DEFAULT_TOPIC));
-  nodeHandle.param(PARAM_KEY_TELEOP_TYPE, teleopType, std::string(PARAM_DEFAULT_TELEOP_TYPE));
+  nodeHandle.param(PARAM_KEY_TOPIC,           topic,          std::string(PARAM_DEFAULT_TOPIC));
+  nodeHandle.param(PARAM_KEY_TELEOP_TYPE,     teleopType,     std::string(PARAM_DEFAULT_TELEOP_TYPE));
+  nodeHandle.param(PARAM_KEY_JOYSTICK_DEVICE, joystickDevice, PARAM_DEFAULT_JOYSTICK_DEVICE);
+  nodeHandle.param(PARAM_KEY_KEYBOARD_STEPS,  keyboardSteps,  PARAM_DEFAULT_KEYBOARD_STEPS);
+  nodeHandle.param(PARAM_KEY_AXIS_DEAD_ZONE,       axisDeadZone,   PARAM_DEFAULT_AXIS_DEAD_ZONE);
 
   //Advertise parameters for introspection
-  nodeHandle.setParam(PARAM_KEY_TOPIC,       topic);
-  nodeHandle.setParam(PARAM_KEY_TELEOP_TYPE, teleopType);
+  nodeHandle.setParam(PARAM_KEY_TOPIC,           topic);
+  nodeHandle.setParam(PARAM_KEY_TELEOP_TYPE,     teleopType);
+  nodeHandle.setParam(PARAM_KEY_JOYSTICK_DEVICE, joystickDevice);
+  nodeHandle.setParam(PARAM_KEY_KEYBOARD_STEPS,  keyboardSteps);
+  nodeHandle.setParam(PARAM_KEY_AXIS_DEAD_ZONE,       axisDeadZone);
 
   //Advertise publisher with buffer size set to 1 and latching on.  The
   //publisher should basically just always contain the latest teleop state.
@@ -209,7 +242,7 @@ int main(int argc, char** argv)
   gPublisher = &publisher;
 
   //Create teleop source of the given type
-  gTeleopSource = teleopSourceFactory(&teleopType);
+  gTeleopSource = teleopSourceFactory(&teleopType, axisDeadZone, keyboardSteps, &joystickDevice);
   if (NULL == gTeleopSource) {
     ROS_ERROR("NULL teleop source\n");
     return 1;

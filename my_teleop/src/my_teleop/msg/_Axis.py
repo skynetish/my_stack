@@ -4,15 +4,15 @@ import struct
 
 
 class Axis(roslib.message.Message):
-  _md5sum = "a62ee37b76558a2a7518a5ca27dbdb05"
+  _md5sum = "ff848a94bb7e24a6adffc2343d23e191"
   _type = "my_teleop/Axis"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """int32 type
-float32 value
+float64 value
 
 """
   __slots__ = ['type','value']
-  _slot_types = ['int32','float32']
+  _slot_types = ['int32','float64']
 
   def __init__(self, *args, **kwds):
     """
@@ -53,7 +53,7 @@ float32 value
     """
     try:
       _x = self
-      buff.write(_struct_if.pack(_x.type, _x.value))
+      buff.write(_struct_id.pack(_x.type, _x.value))
     except struct.error, se: self._check_types(se)
     except TypeError, te: self._check_types(te)
 
@@ -67,8 +67,8 @@ float32 value
       end = 0
       _x = self
       start = end
-      end += 8
-      (_x.type, _x.value,) = _struct_if.unpack(str[start:end])
+      end += 12
+      (_x.type, _x.value,) = _struct_id.unpack(str[start:end])
       return self
     except struct.error, e:
       raise roslib.message.DeserializationError(e) #most likely buffer underfill
@@ -84,7 +84,7 @@ float32 value
     """
     try:
       _x = self
-      buff.write(_struct_if.pack(_x.type, _x.value))
+      buff.write(_struct_id.pack(_x.type, _x.value))
     except struct.error, se: self._check_types(se)
     except TypeError, te: self._check_types(te)
 
@@ -100,11 +100,11 @@ float32 value
       end = 0
       _x = self
       start = end
-      end += 8
-      (_x.type, _x.value,) = _struct_if.unpack(str[start:end])
+      end += 12
+      (_x.type, _x.value,) = _struct_id.unpack(str[start:end])
       return self
     except struct.error, e:
       raise roslib.message.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = roslib.message.struct_I
-_struct_if = struct.Struct("<if")
+_struct_id = struct.Struct("<id")

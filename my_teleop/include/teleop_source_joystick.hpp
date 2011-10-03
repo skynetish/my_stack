@@ -42,7 +42,6 @@
 #include <teleop_common.hpp>
 #include <teleop_source.hpp>
 #include <linux/joystick.h>
-#include <stdint.h>
 
 
 
@@ -90,16 +89,16 @@ private:
   int mFileDescriptor;
 
   /** Number of axes from driver */
-  uint8_t mNumAxes;
+  __u8 mNumAxes;
 
   /** Axis type map from driver */
-  uint8_t mAxisMap[ABS_CNT];
+  __u8 mAxisMap[ABS_CNT];
 
   /** Number of buttons from driver */
-  uint8_t mNumButtons;
+  __u8 mNumButtons;
 
   /** Button type map from driver */
-  uint16_t mButtonMap[KEY_MAX - BTN_MISC + 1];
+  __u16 mButtonMap[KEY_MAX - BTN_MISC + 1];
 
   /**
    * Convert driver axis value to teleop axis value.
@@ -108,7 +107,7 @@ private:
    *
    *   @return teleop axis value
    */
-  static float axisDriverValueToTeleopValue(int16_t axisValue);
+  static TeleopAxisValue axisDriverValueToTeleopValue(__s16 axisValue);
 
   /**
    * Convert driver button value to teleop button value.
@@ -117,7 +116,7 @@ private:
    *
    *   @return teleop button value
    */
-  static int buttonDriverValueToTeleopValue(int16_t buttonValue);
+  static TeleopButtonValue buttonDriverValueToTeleopValue(__s16 buttonValue);
 
   /**
    * Convert driver axis type to teleop axis type.
@@ -126,7 +125,7 @@ private:
    *
    *   @return teleop axis type
    */
-  static TeleopAxisType axisDriverTypeToTeleopType(uint8_t axisType);
+  static TeleopAxisType axisDriverTypeToTeleopType(__u8 axisType);
 
   /**
    * Convert driver button type to teleop button type.
@@ -135,7 +134,7 @@ private:
    *
    *   @return teleop button type
    */
-  static TeleopButtonType buttonDriverTypeToTeleopType(uint16_t buttonType);
+  static TeleopButtonType buttonDriverTypeToTeleopType(__u16 buttonType);
 
   /**
    * Handle a given event.

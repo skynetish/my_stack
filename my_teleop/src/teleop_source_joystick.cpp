@@ -37,7 +37,6 @@
 #include <linux/input.h>
 #include <linux/joystick.h>
 #include <fcntl.h>
-#include <stdint.h>
 #include <cstdio>
 
 
@@ -122,6 +121,7 @@ ListenResult TeleopSourceJoystick::listen(int timeoutSeconds, TeleopState* const
       teleopState->axes[i].value = 0.0;
     }
   }
+
   if (mNumButtons != teleopState->buttons.size()) {
     teleopState->buttons.resize(mNumButtons);
     for (size_t i = 0; i < mNumButtons; i++) {
@@ -248,15 +248,15 @@ std::string TeleopSourceJoystick::getDefaultDevice() {
   return std::string("/dev/input/js0");
 }
 //=============================================================================
-float TeleopSourceJoystick::axisDriverValueToTeleopValue(int16_t axisValue) {
-  return (float)(axisValue)/32767.0;
+TeleopAxisValue TeleopSourceJoystick::axisDriverValueToTeleopValue(__s16 axisValue) {
+  return (TeleopAxisValue)(axisValue)/32767.0;
 }
 //=============================================================================
-int TeleopSourceJoystick::buttonDriverValueToTeleopValue(int16_t buttonValue) {
-  return (int)buttonValue;
+TeleopButtonValue TeleopSourceJoystick::buttonDriverValueToTeleopValue(__s16 buttonValue) {
+  return (TeleopButtonValue)buttonValue;
 }
 //=============================================================================
-TeleopAxisType TeleopSourceJoystick::axisDriverTypeToTeleopType(uint8_t axisType) {
+TeleopAxisType TeleopSourceJoystick::axisDriverTypeToTeleopType(__u8 axisType) {
   switch (axisType) {
     //Most joysticks use left-right as X and up down as Y (joystick-space).  We
     //want to use the 6D space with X forward, Y to the left, and Z up.  So we
@@ -276,7 +276,7 @@ TeleopAxisType TeleopSourceJoystick::axisDriverTypeToTeleopType(uint8_t axisType
   return TELEOP_AXIS_TYPE_UNKNOWN;
 }
 //=============================================================================
-TeleopButtonType TeleopSourceJoystick::buttonDriverTypeToTeleopType(uint16_t buttonType) {
+TeleopButtonType TeleopSourceJoystick::buttonDriverTypeToTeleopType(__u16 buttonType) {
   switch (buttonType) {
     case BTN_0:         return TELEOP_BUTTON_TYPE_0;
     case BTN_1:         return TELEOP_BUTTON_TYPE_1;
