@@ -1,2 +1,0 @@
-Axis[] axes
-Button[] buttons
