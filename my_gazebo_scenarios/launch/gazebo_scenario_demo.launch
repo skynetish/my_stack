@@ -32,7 +32,7 @@
 
     <!-- Start the driver for the robot base -->
     <include file="$(find my_gazebo_drivers)/launch/gazebo_driver_diffdrive.launch" >
-      <arg name="driver_name"     value="base_driver" />
+      <arg name="node_name"       value="base_driver" />
       <arg name="model_name"      value="$(arg model_name)" />
     </include>
 
