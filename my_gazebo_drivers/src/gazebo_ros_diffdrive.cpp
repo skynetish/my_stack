@@ -53,7 +53,7 @@
 #define DEFAULT_INTERFACE_NAME  "position_iface_0"
 #define DEFAULT_COMMAND_TOPIC   "cmd_vel"
 #define DEFAULT_ODOMETRY_TOPIC  "odom"
-#define DEFAULT_TF_PARENT       "odom"
+#define DEFAULT_TF_PARENT       "tf_parent"
 #define DEFAULT_TF_CHILD        "base_link"
 
 
@@ -232,7 +232,7 @@ public:
 //Main
 int main(int argc, char** argv) {
   //Initialise
-  ros::init(argc,argv,"gazebo_ros_diffdrive");
+  ros::init(argc, argv, basename(argv[0]));
 
   //Create instance
   DiffDrive d;

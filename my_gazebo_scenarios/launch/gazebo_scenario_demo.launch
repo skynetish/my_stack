@@ -16,12 +16,19 @@
 
 
   <!-- ================================================ -->
-  <!-- Spawn a pioneer3dx robot in it's own namespace   -->
+  <!-- Create a pioneer3dx robot in it's own namespace   -->
   <!-- ================================================ -->
-  <group ns="pioneer3dx_1_namespace" if="$(arg create_pioneer3dx)" >
+  <arg name="pioneer3dx_1_namespace" value="pioneer3dx_1_namespace" />
+  <group ns="$(arg pioneer3dx_1_namespace)" if="$(arg create_pioneer3dx)" >
 
     <!-- Create a unique name for the gazebo robot model -->
-    <arg name="model_name"        value="pioneer3dx_1_name" />
+    <arg name="model_name"        value="pioneer3dx_1_model_name" />
+
+    <!-- Create a unique name for the base driver node -->
+    <arg name="base_driver_name"  value="pioneer3dx_1_base_driver_name" />
+
+    <!-- Create a unique name for the teleop source node -->
+    <arg name="teleop_source_name"  value="pioneer3dx_1_teleop_source_name" />
 
     <!-- Create the robot -->
     <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
@@ -31,16 +38,56 @@
     </include>
 
     <!-- Start the driver for the robot base -->
-    <include file="$(find my_gazebo_drivers)/launch/gazebo_driver_diffdrive.launch" >
-      <arg name="node_name"       value="base_driver" />
-      <arg name="model_name"      value="$(arg model_name)" />
-    </include>
+    <node
+      name="$(arg base_driver_name)"
+      pkg="my_gazebo_drivers"
+      type="gazebo_ros_diffdrive"
+      respawn="false"
+      output="screen"
+      >
+      <param name="model_name"      value="$(arg model_name)"     />
+    </node>
+
+    <!-- Start a teleop source -->
+    <node
+      name="$(arg teleop_source_name)"
+      pkg="teleop_ros"
+      type="teleop_source_ros"
+      respawn="false"
+      output="screen"
+      >
+      <param name="type" value="joystick" />
+    </node>
+
+    <!-- Start a teleop sink which writes to the base driver -->
+    <node
+      name="teleop_source_sink_twist"
+      pkg="teleop_ros"
+      type="teleop_sink_twist_ros"
+      respawn="false"
+      output="screen"
+      >
+      <param
+        name="topic_teleop"
+        value="/$(arg pioneer3dx_1_namespace)/$(arg teleop_source_name)/teleop"
+      />
+      <param
+        name="topic_twist"
+        value="/$(arg pioneer3dx_1_namespace)/$(arg base_driver_name)/cmd_vel"
+      />
+      <param name="has_lin_x" value="1" />
+      <param name="has_rot_z" value="1" />
+      <param name="max_lin_x" value="0.3" />
+      <param name="min_lin_x" value="-0.3" />
+      <param name="max_rot_z" value="1.57" />
+      <param name="min_rot_z" value="-1.57" />
+    </node>
 
   </group>
 
 
   <!-- ================================================ -->
-  <!-- Spawn an erratic robot in it's own namespace     -->
+  <!-- Create an erratic robot in it's own namespace     -->
   <!-- ================================================ -->
   <group ns="erratic_1_namespace" if="$(arg create_erratic)" >
 
@@ -58,7 +105,7 @@
 
 
   <!-- ================================================ -->
-  <!-- Spawn a pioneer2dx robot in it's own namespace   -->
+  <!-- Create a pioneer2dx robot in it's own namespace   -->
   <!-- ================================================ -->
   <group ns="pioneer2dx_1_namespace" if="$(arg create_pioneer2dx)" >
 
@@ -76,7 +123,7 @@
 
 
   <!-- ================================================ -->
-  <!-- Spawn a pr2 robot in it's own namespace          -->
+  <!-- Create a pr2 robot in it's own namespace          -->
   <!-- ================================================ -->
   <group ns="pr2_1_namespace" if="$(arg create_pr2)" >
 

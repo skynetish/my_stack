@@ -19,4 +19,7 @@
   <!-- We use gazebo drivers -->
   <depend package="my_gazebo_drivers" />
 
+  <!-- We use teleop stuff -->
+  <depend package="teleop_ros" />
+
 </package>
