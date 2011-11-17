@@ -23,6 +23,7 @@
 
 #include <ros/ros.h>
 #include <ros/console.h>
+#include <angles/angles.h>
 #include <tf/transform_broadcaster.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
@@ -77,7 +78,7 @@ public:
       this->posIface->Lock(1);
       this->posIface->data->cmdVelocity.pos.x = cmd_msg->linear.x;
       this->posIface->data->cmdVelocity.pos.y = cmd_msg->linear.y;
-      this->posIface->data->cmdVelocity.yaw = cmd_msg->angular.z;
+      this->posIface->data->cmdVelocity.yaw = -(cmd_msg->angular.z);
       this->posIface->Unlock();
     }
   }
@@ -190,7 +191,7 @@ public:
 
         // getting data for base_link to odom transform
         btQuaternion qt;
-        qt.setRPY(this->posIface->data->pose.roll, this->posIface->data->pose.pitch, this->posIface->data->pose.yaw);
+        qt.setRPY(this->posIface->data->pose.roll, this->posIface->data->pose.pitch, -(this->posIface->data->pose.yaw));
         btVector3 vt(this->posIface->data->pose.pos.x, this->posIface->data->pose.pos.y, this->posIface->data->pose.pos.z);
         tf::Transform base_link_to_odom(qt, vt);
         transform_broadcaster_.sendTransform(tf::StampedTransform(base_link_to_odom,ros::Time::now(), tfParent, tfChild));
@@ -209,7 +210,7 @@ public:
 
         odom.twist.twist.linear.x = this->posIface->data->velocity.pos.x;
         odom.twist.twist.linear.y = this->posIface->data->velocity.pos.y;
-        odom.twist.twist.angular.z = this->posIface->data->velocity.yaw;
+        odom.twist.twist.angular.z = -(this->posIface->data->velocity.yaw);
 
         odom.header.frame_id = odometryTopic;
 

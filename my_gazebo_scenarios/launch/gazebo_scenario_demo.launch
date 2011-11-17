@@ -21,59 +21,67 @@
   <arg name="pioneer3dx_1_namespace" value="pioneer3dx_1_namespace" />
   <group ns="$(arg pioneer3dx_1_namespace)" if="$(arg create_pioneer3dx)" >
 
-    <!-- Create a unique name for the gazebo robot model -->
+    <!-- Create a globally unique name for the gazebo robot model -->
     <arg name="model_name"        value="pioneer3dx_1_model_name" />
 
-    <!-- Create a unique name for the base driver node -->
-    <arg name="base_driver_name"  value="pioneer3dx_1_base_driver_name" />
+    <!-- Create a name for the base driver node -->
+    <arg name="base_driver_node"  value="pioneer3dx_1_base_driver_node" />
 
-    <!-- Create a unique name for the teleop source node -->
-    <arg name="teleop_source_name"  value="pioneer3dx_1_teleop_source_name" />
+    <!-- Create a name for the teleop source node -->
+    <arg name="teleop_source_node"  value="pioneer3dx_1_teleop_source_node" />
 
-    <!-- Create the robot -->
+    <!-- Create a name for the base teleop topic -->
+    <arg name="teleop_topic"  value="pioneer3dx_1_teleop_topic" />
+
+    <!-- Create a name for the base twist topic -->
+    <arg name="twist_topic"  value="pioneer3dx_1_twist_topic" />
+
+    <!-- Create the simulated robot -->
     <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
       <arg name="model_name"      value="$(arg model_name)" />
       <arg name="x"               value="1" />
-      <arg name="y"               value="8" />
+      <arg name="y"               value="1" />
     </include>
 
     <!-- Start the driver for the robot base -->
     <node
-      name="$(arg base_driver_name)"
+      name="$(arg base_driver_node)"
       pkg="my_gazebo_drivers"
       type="gazebo_ros_diffdrive"
       respawn="false"
       output="screen"
       >
-      <param name="model_name"      value="$(arg model_name)"     />
+      <param name="model_name"      value="$(arg model_name)"  />
+      <param name="command_topic"   value="$(arg twist_topic)" />
     </node>
 
     <!-- Start a teleop source -->
     <node
-      name="$(arg teleop_source_name)"
+      name="$(arg teleop_source_node)"
       pkg="teleop_ros"
       type="teleop_source_ros"
       respawn="false"
       output="screen"
       >
-      <param name="type" value="joystick" />
+      <param name="teleop_type"  value="joystick"            />
+      <param name="teleop_topic" value="$(arg teleop_topic)" />
     </node>
 
     <!-- Start a teleop sink which writes to the base driver -->
     <node
-      name="teleop_source_sink_twist"
+      name="teleop_source_sink_twist_node"
       pkg="teleop_ros"
       type="teleop_sink_twist_ros"
       respawn="false"
       output="screen"
       >
       <param
-        name="topic_teleop"
-        value="/$(arg pioneer3dx_1_namespace)/$(arg teleop_source_name)/teleop"
+        name="teleop_topic"
+        value="/$(arg pioneer3dx_1_namespace)/$(arg teleop_source_node)/$(arg teleop_topic)"
       />
       <param
-        name="topic_twist"
-        value="/$(arg pioneer3dx_1_namespace)/$(arg base_driver_name)/cmd_vel"
+        name="twist_topic"
+        value="/$(arg pioneer3dx_1_namespace)/$(arg base_driver_node)/$(arg twist_topic)"
       />
       <param name="has_lin_x" value="1" />
       <param name="has_rot_z" value="1" />
