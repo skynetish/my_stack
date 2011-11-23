@@ -18,7 +18,7 @@
   <!-- ================================================ -->
   <!-- Create a pioneer3dx robot in it's own namespace   -->
   <!-- ================================================ -->
-  <arg name="pioneer3dx_1_namespace" value="pioneer3dx_1_namespace" />
+  <arg name="pioneer3dx_1_namespace" value="/pioneer3dx_1_namespace" />
   <group ns="$(arg pioneer3dx_1_namespace)" if="$(arg create_pioneer3dx)" >
 
     <!-- Create a globally unique name for the gazebo robot model -->
@@ -77,18 +77,22 @@
       >
       <param
         name="teleop_topic"
-        value="/$(arg pioneer3dx_1_namespace)/$(arg teleop_source_node)/$(arg teleop_topic)"
+        value="$(arg pioneer3dx_1_namespace)/$(arg teleop_source_node)/$(arg teleop_topic)"
       />
       <param
         name="twist_topic"
-        value="/$(arg pioneer3dx_1_namespace)/$(arg base_driver_node)/$(arg twist_topic)"
+        value="$(arg pioneer3dx_1_namespace)/$(arg base_driver_node)/$(arg twist_topic)"
       />
       <param name="has_lin_x" value="1" />
-      <param name="has_rot_z" value="1" />
       <param name="max_lin_x" value="0.3" />
       <param name="min_lin_x" value="-0.3" />
-      <param name="max_rot_z" value="1.57" />
-      <param name="min_rot_z" value="-1.57" />
+      <param name="exp_lin_x" value="1" />
+      <param name="throttle_lin_x" value="1" />
+      <param name="has_rot_z" value="1" />
+      <param name="max_rot_z" value="0.8" />
+      <param name="min_rot_z" value="-0.8" />
+      <param name="exp_rot_z" value="0" />
+      <param name="throttle_rot_z" value="0" />
     </node>
 
   </group>
