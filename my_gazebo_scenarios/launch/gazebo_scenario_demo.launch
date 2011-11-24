@@ -43,7 +43,7 @@
       <arg name="y"               value="1" />
     </include>
 
-    <!-- Start the driver for the robot base -->
+    <!-- Start a robot base driver -->
     <node
       name="$(arg base_driver_node)"
       pkg="my_gazebo_drivers"
@@ -67,7 +67,7 @@
       <param name="teleop_topic" value="$(arg teleop_topic)" />
     </node>
 
-    <!-- Start a teleop sink which writes to the base driver -->
+    <!-- Start a teleop sink which reads from the teleop source and writes to the base driver -->
     <node
       name="teleop_source_sink_twist_node"
       pkg="teleop_ros"
@@ -83,11 +83,13 @@
         name="twist_topic"
         value="$(arg pioneer3dx_1_namespace)/$(arg base_driver_node)/$(arg twist_topic)"
       />
+
       <param name="has_lin_x" value="1" />
-      <param name="max_lin_x" value="0.3" />
-      <param name="min_lin_x" value="-0.3" />
+      <param name="max_lin_x" value="0.5" />
+      <param name="min_lin_x" value="-0.5" />
       <param name="exp_lin_x" value="1" />
       <param name="throttle_lin_x" value="1" />
+
       <param name="has_rot_z" value="1" />
       <param name="max_rot_z" value="0.8" />
       <param name="min_rot_z" value="-0.8" />
