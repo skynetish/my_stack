@@ -1,5 +1,6 @@
 <launch>
 
+
   <!-- ================================================ -->
   <!-- Which robots to create                           -->
   <!-- ================================================ -->
@@ -7,6 +8,7 @@
   <arg name="create_erratic"    default="false" />
   <arg name="create_pioneer2dx" default="false" />
   <arg name="create_pr2"        default="false" />
+
 
   <!-- ================================================ -->
   <!-- Teleop type                                      -->
@@ -23,29 +25,25 @@
   <!-- ================================================ -->
   <!-- Create a pioneer3dx robot in it's own namespace   -->
   <!-- ================================================ -->
-  <arg name="pioneer3dx_1_namespace" value="/pioneer3dx_1_namespace" />
-  <group ns="$(arg pioneer3dx_1_namespace)" if="$(arg create_pioneer3dx)" >
+  <group ns="pioneer3dx_1" if="$(arg create_pioneer3dx)" >
 
-    <!-- Create a globally unique name for the gazebo robot model -->
-    <arg name="model_name"        value="pioneer3dx_1_model_name" />
+    <!-- Names for gazebo models (must be globally unique) -->
+    <arg name="model_name"          value="pioneer3dx_1_model" />
 
-    <!-- Create a name for the base driver node -->
-    <arg name="base_driver_node"  value="pioneer3dx_1_base_driver_node" />
+    <!-- Names for nodes (must be unique within namespace) -->
+    <arg name="base_driver_node"    value="base_driver" />
+    <arg name="teleop_source_node"  value="teleop_source" />
+    <arg name="teleop_sink_node"    value="teleop_sink" />
 
-    <!-- Create a name for the teleop source node -->
-    <arg name="teleop_source_node"  value="pioneer3dx_1_teleop_source_node" />
-
-    <!-- Create a name for the base teleop topic -->
-    <arg name="teleop_topic"  value="pioneer3dx_1_teleop_topic" />
-
-    <!-- Create a name for the base twist topic -->
-    <arg name="twist_topic"  value="pioneer3dx_1_twist_topic" />
+    <!-- Names for topics (must be unique within namespace) -->
+    <arg name="teleop_topic"        value="$(arg teleop_source_node)/teleop" />
+    <arg name="twist_topic"         value="$(arg teleop_sink_node)/twist" />
 
     <!-- Create the simulated robot -->
     <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
-      <arg name="model_name"      value="$(arg model_name)" />
-      <arg name="x"               value="1" />
-      <arg name="y"               value="1" />
+      <arg name="model_name"        value="$(arg model_name)" />
+      <arg name="x"                 value="1" />
+      <arg name="y"                 value="1" />
     </include>
 
     <!-- Start a robot base driver -->
@@ -56,8 +54,8 @@
       respawn="false"
       output="screen"
       >
-      <param name="model_name"      value="$(arg model_name)"  />
       <param name="command_topic"   value="$(arg twist_topic)" />
+      <param name="model_name"      value="$(arg model_name)"  />
     </node>
 
     <!-- Start a teleop source -->
@@ -68,26 +66,20 @@
       respawn="false"
       output="screen"
       >
-      <param name="teleop_type"  value="$(arg teleop_type)"  />
       <param name="teleop_topic" value="$(arg teleop_topic)" />
+      <param name="teleop_type"  value="$(arg teleop_type)"  />
     </node>
 
     <!-- Start a teleop sink which reads from the teleop source and writes to the base driver -->
     <node
-      name="teleop_source_sink_twist_node"
+      name="$(arg teleop_sink_node)"
       pkg="teleop_ros"
       type="teleop_sink_twist_ros"
       respawn="false"
       output="screen"
       >
-      <param
-        name="teleop_topic"
-        value="$(arg pioneer3dx_1_namespace)/$(arg teleop_source_node)/$(arg teleop_topic)"
-      />
-      <param
-        name="twist_topic"
-        value="$(arg pioneer3dx_1_namespace)/$(arg base_driver_node)/$(arg twist_topic)"
-      />
+      <param name="teleop_topic" value="$(arg teleop_topic)" />
+      <param name="twist_topic" value="$(arg twist_topic)" />
 
       <param name="has_lin_x" value="1" />
       <param name="max_lin_x" value="0.5" />

@@ -33,6 +33,8 @@
 
 
 
+#define KEY_COMMAND_TOPIC       "command_topic"
+#define KEY_ODOMETRY_TOPIC      "odometry_topic"
 #define KEY_SERVER_ID           "server_id"
 #define KEY_THREADS             "threads"
 #define KEY_COMMAND_QUEUE       "command_queue"
@@ -40,11 +42,11 @@
 #define KEY_UPDATE_PERIOD       "update_period" //seconds
 #define KEY_MODEL_NAME          "model_name"
 #define KEY_INTERFACE_NAME      "interface_name"
-#define KEY_COMMAND_TOPIC       "command_topic"
-#define KEY_ODOMETRY_TOPIC      "odometry_topic"
 #define KEY_TF_PARENT           "tf_parent"
 #define KEY_TF_CHILD            "tf_child"
 
+#define DEFAULT_COMMAND_TOPIC   "cmd_vel"
+#define DEFAULT_ODOMETRY_TOPIC  "odom"
 #define DEFAULT_SERVER_ID       0
 #define DEFAULT_THREADS         2
 #define DEFAULT_COMMAND_QUEUE   100
@@ -52,8 +54,6 @@
 #define DEFAULT_UPDATE_PERIOD   0.01 //seconds
 #define DEFAULT_MODEL_NAME      "robot_description"
 #define DEFAULT_INTERFACE_NAME  "position_iface_0"
-#define DEFAULT_COMMAND_TOPIC   "cmd_vel"
-#define DEFAULT_ODOMETRY_TOPIC  "odom"
 #define DEFAULT_TF_PARENT       "tf_parent"
 #define DEFAULT_TF_CHILD        "base_link"
 
@@ -63,7 +63,8 @@
 class DiffDrive {
 public:
   libgazebo::PositionIface *posIface;
-  ros::NodeHandle* rnh_;
+  ros::NodeHandle* rnhParams_;
+  ros::NodeHandle* rnhTopics_;
   ros::Subscriber  sub_;
   ros::Publisher   pub_;
 
@@ -84,13 +85,14 @@ public:
   }
 
   //Constructor
-  DiffDrive() {
+  explicit DiffDrive(std::string nodeName) {
 
     //Create required objects
     libgazebo::Client *client = new libgazebo::Client();
     libgazebo::SimulationIface *simIface = new libgazebo::SimulationIface();
     this->posIface = new libgazebo::PositionIface();
-    this->rnh_ = new ros::NodeHandle("~");
+    this->rnhParams_ = new ros::NodeHandle("~");
+    this->rnhTopics_ = new ros::NodeHandle("");
 
     //Parameters
     int serverId;
@@ -106,30 +108,32 @@ public:
     std::string tfChild;
 
     //Load parameters and set defaults
-    rnh_->param(std::string(KEY_SERVER_ID), serverId, DEFAULT_SERVER_ID);
-    rnh_->param(std::string(KEY_THREADS), threads, DEFAULT_THREADS);
-    rnh_->param(std::string(KEY_COMMAND_QUEUE), commandQueue, DEFAULT_COMMAND_QUEUE);
-    rnh_->param(std::string(KEY_ODOMETRY_QUEUE), odometryQueue, DEFAULT_ODOMETRY_QUEUE);
-    rnh_->param(std::string(KEY_UPDATE_PERIOD), updatePeriod, DEFAULT_UPDATE_PERIOD);
-    rnh_->param(std::string(KEY_MODEL_NAME), modelName, std::string(DEFAULT_MODEL_NAME));
-    rnh_->param(std::string(KEY_INTERFACE_NAME), interfaceName, std::string(DEFAULT_INTERFACE_NAME));
-    rnh_->param(std::string(KEY_COMMAND_TOPIC), commandTopic, std::string(DEFAULT_COMMAND_TOPIC));
-    rnh_->param(std::string(KEY_ODOMETRY_TOPIC), odometryTopic, std::string(DEFAULT_ODOMETRY_TOPIC));
-    rnh_->param(std::string(KEY_TF_PARENT), tfParent, std::string(DEFAULT_TF_PARENT));
-    rnh_->param(std::string(KEY_TF_CHILD), tfChild, std::string(DEFAULT_TF_CHILD));
+    rnhParams_->param(std::string(KEY_COMMAND_TOPIC), commandTopic,
+                      nodeName + std::string("/") + std::string(DEFAULT_COMMAND_TOPIC));
+    rnhParams_->param(std::string(KEY_ODOMETRY_TOPIC), odometryTopic,
+                      nodeName + std::string("/") + std::string(DEFAULT_ODOMETRY_TOPIC));
+    rnhParams_->param(std::string(KEY_SERVER_ID), serverId, DEFAULT_SERVER_ID);
+    rnhParams_->param(std::string(KEY_THREADS), threads, DEFAULT_THREADS);
+    rnhParams_->param(std::string(KEY_COMMAND_QUEUE), commandQueue, DEFAULT_COMMAND_QUEUE);
+    rnhParams_->param(std::string(KEY_ODOMETRY_QUEUE), odometryQueue, DEFAULT_ODOMETRY_QUEUE);
+    rnhParams_->param(std::string(KEY_UPDATE_PERIOD), updatePeriod, DEFAULT_UPDATE_PERIOD);
+    rnhParams_->param(std::string(KEY_MODEL_NAME), modelName, std::string(DEFAULT_MODEL_NAME));
+    rnhParams_->param(std::string(KEY_INTERFACE_NAME), interfaceName, std::string(DEFAULT_INTERFACE_NAME));
+    rnhParams_->param(std::string(KEY_TF_PARENT), tfParent, std::string(DEFAULT_TF_PARENT));
+    rnhParams_->param(std::string(KEY_TF_CHILD), tfChild, std::string(DEFAULT_TF_CHILD));
 
     //Advertise final parameters
-    rnh_->setParam(std::string(KEY_SERVER_ID), serverId);
-    rnh_->setParam(std::string(KEY_THREADS), threads);
-    rnh_->setParam(std::string(KEY_COMMAND_QUEUE), commandQueue);
-    rnh_->setParam(std::string(KEY_ODOMETRY_QUEUE), odometryQueue);
-    rnh_->setParam(std::string(KEY_UPDATE_PERIOD), updatePeriod);
-    rnh_->setParam(std::string(KEY_MODEL_NAME), modelName);
-    rnh_->setParam(std::string(KEY_INTERFACE_NAME), interfaceName);
-    rnh_->setParam(std::string(KEY_COMMAND_TOPIC), commandTopic);
-    rnh_->setParam(std::string(KEY_ODOMETRY_TOPIC), odometryTopic);
-    rnh_->setParam(std::string(KEY_TF_PARENT), tfParent);
-    rnh_->setParam(std::string(KEY_TF_CHILD), tfChild);
+    rnhParams_->setParam(std::string(KEY_COMMAND_TOPIC), commandTopic);
+    rnhParams_->setParam(std::string(KEY_ODOMETRY_TOPIC), odometryTopic);
+    rnhParams_->setParam(std::string(KEY_SERVER_ID), serverId);
+    rnhParams_->setParam(std::string(KEY_THREADS), threads);
+    rnhParams_->setParam(std::string(KEY_COMMAND_QUEUE), commandQueue);
+    rnhParams_->setParam(std::string(KEY_ODOMETRY_QUEUE), odometryQueue);
+    rnhParams_->setParam(std::string(KEY_UPDATE_PERIOD), updatePeriod);
+    rnhParams_->setParam(std::string(KEY_MODEL_NAME), modelName);
+    rnhParams_->setParam(std::string(KEY_INTERFACE_NAME), interfaceName);
+    rnhParams_->setParam(std::string(KEY_TF_PARENT), tfParent);
+    rnhParams_->setParam(std::string(KEY_TF_CHILD), tfChild);
 
     //Connect to the gazebo server
     try {
@@ -161,8 +165,8 @@ public:
     this->posIface->Unlock();
 
     //Subscribe to the command topic and publish the odometry topic
-    this->sub_ = rnh_->subscribe<geometry_msgs::Twist>(commandTopic, commandQueue, &DiffDrive::cmdVelCallBack,this);
-    this->pub_ = rnh_->advertise<nav_msgs::Odometry>(odometryTopic, odometryQueue);
+    this->sub_ = rnhTopics_->subscribe<geometry_msgs::Twist>(commandTopic, commandQueue, &DiffDrive::cmdVelCallBack,this);
+    this->pub_ = rnhTopics_->advertise<nav_msgs::Odometry>(odometryTopic, odometryQueue);
 
     //Spawn threads
     ros::MultiThreadedSpinner s(threads);
@@ -226,17 +230,19 @@ public:
 
   //Destructor
   ~DiffDrive() {
-    delete this->rnh_;
+    delete this->rnhParams_;
+    delete this->rnhTopics_;
   }
 };
 
 //Main
 int main(int argc, char** argv) {
   //Initialise
-  ros::init(argc, argv, basename(argv[0]));
+  std::string nodeName = basename(argv[0]);
+  ros::init(argc, argv, nodeName);
 
   //Create instance
-  DiffDrive d;
+  DiffDrive d(nodeName);
 
   //Done
   return 0;
