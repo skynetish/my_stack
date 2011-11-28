@@ -8,6 +8,11 @@
   <arg name="create_pioneer2dx" default="false" />
   <arg name="create_pr2"        default="false" />
 
+  <!-- ================================================ -->
+  <!-- Teleop type                                      -->
+  <!-- ================================================ -->
+  <arg name="teleop_type"       default="keyboard" />
+
 
   <!-- ================================================ -->
   <!-- Create the world                                 -->
@@ -63,7 +68,7 @@
       respawn="false"
       output="screen"
       >
-      <param name="teleop_type"  value="joystick"            />
+      <param name="teleop_type"  value="$(arg teleop_type)"  />
       <param name="teleop_topic" value="$(arg teleop_topic)" />
     </node>
 
