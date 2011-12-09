@@ -62,7 +62,7 @@
     <node
       name="$(arg teleop_source_node)"
       pkg="teleop_ros"
-      type="teleop_source_ros"
+      type="teleop_source_node"
       respawn="false"
       output="screen"
       >
@@ -74,7 +74,7 @@
     <node
       name="$(arg teleop_sink_node)"
       pkg="teleop_ros"
-      type="teleop_sink_twist_ros"
+      type="teleop_sink_twist_node"
       respawn="false"
       output="screen"
       >
