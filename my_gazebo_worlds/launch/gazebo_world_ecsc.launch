@@ -5,7 +5,7 @@
 
   <!-- Gazebo -->
   <include file="$(find my_gazebo_worlds)/launch/gazebo_world.launch" >
-    <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world" />
+    <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world.xacro" />
     <arg name="args" value="$(arg args)" />
   </include>
 

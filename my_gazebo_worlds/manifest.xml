@@ -4,10 +4,7 @@
   <description brief="A collection of world, model, and launch files.">
 
     This package is a collection of world, model, and launch files used to launch various gazebo
-    worlds.  Since gazebo needs world files to be passed as physical files, *.world.xacro files are
-    converted to *.world files when building the package.  Only *.world.xacro files should be edited
-    (rather than editing *.world files directly), and the package should be re-built after any
-    changes to these files.
+    worlds in a consistent and easy manner.
 
     For reference, some of the materials which work well for walls and floors include:
 

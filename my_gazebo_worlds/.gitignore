@@ -1,7 +1,0 @@
-worlds/empty.world
-bin
-build
-.cproject
-.project
-.pydevproject
-cmake_install.cmake
