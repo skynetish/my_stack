@@ -23,40 +23,49 @@
 
 
   <!-- ================================================ -->
-  <!-- Create a pioneer3dx robot in it's own namespace   -->
+  <!-- Create a pioneer3dx robot in it's own namespace  -->
   <!-- ================================================ -->
   <group ns="pioneer3dx_1" if="$(arg create_pioneer3dx)" >
 
     <!-- Names for gazebo models (must be globally unique) -->
-    <arg name="model_name"          value="pioneer3dx_1_model" />
+    <arg name="model_name"                        value="pioneer3dx_1_model" />
 
     <!-- Names for nodes (must be unique within namespace) -->
-    <arg name="base_driver_node"    value="base_driver" />
-    <arg name="teleop_source_node"  value="teleop_source" />
-    <arg name="teleop_sink_node"    value="teleop_sink" />
+    <!-- arg name="base_driver_node"                  value="base_driver" / -->
+    <arg name="teleop_source_node"                value="teleop_source" />
+    <arg name="teleop_sink_node"                  value="teleop_sink" />
 
-    <!-- Names for topics (must be unique within namespace) -->
-    <arg name="teleop_topic"        value="$(arg teleop_source_node)/teleop" />
-    <arg name="twist_topic"         value="$(arg teleop_sink_node)/twist" />
+    <!-- Names for gazebo plugin "virtual" nodes -->
+    <arg name="gazebo_ros_diffdrive_plugin_node"  value="gazebo_ros_diffdrive_plugin" />
 
-    <!-- Create the simulated robot -->
+    <!-- Names for common topics (must be unique within namespace) -->
+    <arg name="teleop_topic"                      value="$(arg teleop_source_node)/teleop" />
+    <arg name="twist_topic"                       value="$(arg teleop_sink_node)/cmd_vel" />
+    <arg name="odom_topic"                        value="$(arg gazebo_ros_diffdrive_plugin_node)/odom" />
+
+    <!-- Parameters for gazebo plugins -->
+    <param name="$(arg gazebo_ros_diffdrive_plugin_node)/command_topic" value="$(arg twist_topic)" />
+    <param name="$(arg gazebo_ros_diffdrive_plugin_node)/odom_topic"    value="$(arg odom_topic)" />
+
+    <!-- Create the simulated robot (and plugins) -->
     <include file="$(find my_gazebo_robots)/launch/gazebo_robot_pioneer3dx.launch" >
-      <arg name="model_name"        value="$(arg model_name)" />
-      <arg name="x"                 value="1" />
-      <arg name="y"                 value="1" />
+      <arg name="model_name" value="$(arg model_name)" />
+      <arg name="x"          value="1" />
+      <arg name="y"          value="1" />
     </include>
 
-    <!-- Start a robot base driver -->
-    <node
+    <!-- Start a base driver -->
+    <!-- node
       name="$(arg base_driver_node)"
       pkg="my_gazebo_drivers"
       type="gazebo_ros_diffdrive"
       respawn="false"
       output="screen"
       >
-      <param name="command_topic"   value="$(arg twist_topic)" />
-      <param name="model_name"      value="$(arg model_name)"  />
-    </node>
+      <param name="model_name"    value="$(arg model_name)"  />
+      <param name="command_topic" value="$(arg twist_topic)" />
+      <param name="odom_topic"    value="$(arg odom_topic)" />
+    </node -->
 
     <!-- Start a teleop source -->
     <node
@@ -70,7 +79,7 @@
       <param name="teleop_type"  value="$(arg teleop_type)"  />
     </node>
 
-    <!-- Start a teleop sink which reads from the teleop source and writes to the base driver -->
+    <!-- Start a teleop sink which reads from the teleop source and writes to the simulated robot -->
     <node
       name="$(arg teleop_sink_node)"
       pkg="teleop_ros"
@@ -79,7 +88,7 @@
       output="screen"
       >
       <param name="teleop_topic" value="$(arg teleop_topic)" />
-      <param name="twist_topic" value="$(arg twist_topic)" />
+      <param name="twist_topic"  value="$(arg twist_topic)" />
 
       <param name="has_lin_x" value="1" />
       <param name="max_lin_x" value="0.5" />

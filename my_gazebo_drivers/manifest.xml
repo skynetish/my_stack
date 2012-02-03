@@ -13,11 +13,15 @@
   <!-- Dependencies -->
   <depend package="roscpp" />
   <depend package="gazebo" />
+  <depend package="gazebo_plugins" />
   <depend package="angles" />
   <depend package="tf" />
   <depend package="geometry_msgs" />
   <depend package="nav_msgs" />
 
+  <!-- Exports -->
+  <export>
+    <gazebo plugin_path="${prefix}/lib" />
+  </export>
+
 </package>
-
-
