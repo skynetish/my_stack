@@ -9,10 +9,6 @@
     convention, urdf robot descriptions are uploaded to a "robot_description" key in the parameter
     server on launch.  See the "my_robot_descriptions" package for more information about this.
 
-    The package also includes the "my_spawn_model" script, which is a modified version of the
-    standard gazebo "spawn_model" script.  The modified version simply ensures that the spawned
-    model is created in the current namespace by default.
-
   </description>
   <author>Kevin LeBlanc</author>
   <license>BSD</license>
