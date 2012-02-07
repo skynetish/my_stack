@@ -18,7 +18,7 @@
 
   <!-- Spawn robot -->
   <node
-    name="$(anon spawn_model)"
+    name="$(anon robot_spawn_model)"
     pkg="gazebo"
     type="spawn_model"
     args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -param robot_description -model $(arg model_name) -$(arg robot_format)"
