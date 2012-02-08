@@ -87,20 +87,20 @@
       respawn="false"
       output="screen"
       >
-      <param name="teleop_topic" value="$(arg teleop_topic)" />
-      <param name="twist_topic"  value="$(arg twist_topic)" />
+      <param name="teleop_topic"    value="$(arg teleop_topic)" />
+      <param name="twist_topic"     value="$(arg twist_topic)" />
 
-      <param name="has_lin_x" value="1" />
-      <param name="max_lin_x" value="0.5" />
-      <param name="min_lin_x" value="-0.5" />
-      <param name="exp_lin_x" value="1" />
-      <param name="throttle_lin_x" value="1" />
+      <param name="has_lin_x"       value="1" />
+      <param name="max_lin_x"       value="0.5" />
+      <param name="min_lin_x"       value="-0.5" />
+      <param name="quadratic_lin_x" value="1" />
+      <param name="throttle_lin_x"  value="1" />
 
-      <param name="has_rot_z" value="1" />
-      <param name="max_rot_z" value="0.8" />
-      <param name="min_rot_z" value="-0.8" />
-      <param name="exp_rot_z" value="0" />
-      <param name="throttle_rot_z" value="0" />
+      <param name="has_rot_z"       value="1" />
+      <param name="max_rot_z"       value="0.8" />
+      <param name="min_rot_z"       value="-0.8" />
+      <param name="quadratic_rot_z" value="0" />
+      <param name="throttle_rot_z"  value="0" />
     </node>
 
   </group>
