@@ -1,0 +1,475 @@
+\section{gazebo::DiffDrivePlugin Class Reference}
+\label{classgazebo_1_1DiffDrivePlugin}\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bf DiffDrivePlugin} (Entity $\ast$parent)
+\item 
+virtual {\bf $\sim$DiffDrivePlugin} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bf FiniChild} ()
+\item 
+virtual void {\bf InitChild} ()
+\item 
+virtual void {\bf LoadChild} (XMLConfigNode $\ast$node)
+\item 
+void {\bf ResetChild} ()
+\item 
+void {\bf SaveChild} (std::string \&prefix, std::ostream \&stream)
+\item 
+virtual void {\bf UpdateChild} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf cmdVelCallback} (const geometry\_\-msgs::Twist::ConstPtr \&cmd\_\-msg)
+\item 
+void {\bf GetPositionCmd} ()
+\item 
+void {\bf publish\_\-odometry} ()
+\item 
+void {\bf QueueThread} ()
+\item 
+void {\bf write\_\-position\_\-data} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bf alive\_\-}
+\item 
+boost::thread $\ast$ {\bf callback\_\-queue\_\-thread\_\-}
+\item 
+bool {\bf enableMotors}
+\item 
+Joint $\ast$ {\bf joints} [2]
+\item 
+ParamT$<$ std::string $>$ $\ast$ {\bf leftJointNameP}
+\item 
+boost::mutex {\bf lock}
+\item 
+nav\_\-msgs::Odometry {\bf odom\_\-}
+\item 
+float {\bf odomPose} [3]
+\item 
+float {\bf odomVel} [3]
+\item 
+Model $\ast$ {\bf parent\_\-}
+\item 
+PhysicsEngine $\ast$ {\bf physicsEngine}
+\item 
+libgazebo::PositionIface $\ast$ {\bf pos\_\-iface\_\-}
+\item 
+Time {\bf prevUpdateTime}
+\item 
+ros::Publisher {\bf pub\_\-}
+\item 
+ros::CallbackQueue {\bf queue\_\-}
+\item 
+ParamT$<$ std::string $>$ $\ast$ {\bf rightJointNameP}
+\item 
+std::string {\bf robotNamespace}
+\item 
+ParamT$<$ std::string $>$ $\ast$ {\bf robotNamespaceP}
+\item 
+ros::NodeHandle $\ast$ {\bf rosnode\_\-}
+\item 
+float {\bf rot\_\-}
+\item 
+ros::Subscriber {\bf sub\_\-}
+\item 
+std::string {\bf tf\_\-prefix\_\-}
+\item 
+std::string {\bf topicName}
+\item 
+ParamT$<$ std::string $>$ $\ast$ {\bf topicNameP}
+\item 
+ParamT$<$ float $>$ $\ast$ {\bf torqueP}
+\item 
+tf::TransformBroadcaster $\ast$ {\bf transform\_\-broadcaster\_\-}
+\item 
+ParamT$<$ float $>$ $\ast$ {\bf wheelDiamP}
+\item 
+ParamT$<$ float $>$ $\ast$ {\bf wheelSepP}
+\item 
+float {\bf wheelSpeed} [2]
+\item 
+float {\bf x\_\-}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 52 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!DiffDrivePlugin@{DiffDrivePlugin}}
+\index{DiffDrivePlugin@{DiffDrivePlugin}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{DiffDrivePlugin}]{\setlength{\rightskip}{0pt plus 5cm}DiffDrivePlugin::DiffDrivePlugin (
+\begin{DoxyParamCaption}
+\item[{Entity $\ast$}]{parent}
+\end{DoxyParamCaption}
+)}\label{classgazebo_1_1DiffDrivePlugin_a9e979e3042dfa911f7e867b4b1b72d3a}
+
+
+Definition at line 178 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!$\sim$DiffDrivePlugin@{$\sim$DiffDrivePlugin}}
+\index{$\sim$DiffDrivePlugin@{$\sim$DiffDrivePlugin}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{$\sim$DiffDrivePlugin}]{\setlength{\rightskip}{0pt plus 5cm}DiffDrivePlugin::$\sim$DiffDrivePlugin (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [virtual]}}\label{classgazebo_1_1DiffDrivePlugin_a0a4009c29475a19df6491f7b34ca17ef}
+
+
+Definition at line 209 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+
+
+\subsection{Member Function Documentation}
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!cmdVelCallback@{cmdVelCallback}}
+\index{cmdVelCallback@{cmdVelCallback}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{cmdVelCallback}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::cmdVelCallback (
+\begin{DoxyParamCaption}
+\item[{const geometry\_\-msgs::Twist::ConstPtr \&}]{cmd\_\-msg}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_aa35fc95b12f8f09eeb0415e86a80be3a}
+
+
+Definition at line 427 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!FiniChild@{FiniChild}}
+\index{FiniChild@{FiniChild}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{FiniChild}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::FiniChild (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [protected, virtual]}}\label{classgazebo_1_1DiffDrivePlugin_a03ddc3ac85c115835ba538033e9d3130}
+
+
+Definition at line 391 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!GetPositionCmd@{GetPositionCmd}}
+\index{GetPositionCmd@{GetPositionCmd}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{GetPositionCmd}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::GetPositionCmd (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a79b22df5447e081a5a487558a1898161}
+
+
+Definition at line 404 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!InitChild@{InitChild}}
+\index{InitChild@{InitChild}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{InitChild}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::InitChild (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [protected, virtual]}}\label{classgazebo_1_1DiffDrivePlugin_a4516f64f9824d9f404515993ce4810d0}
+
+
+Definition at line 300 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!LoadChild@{LoadChild}}
+\index{LoadChild@{LoadChild}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{LoadChild}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::LoadChild (
+\begin{DoxyParamCaption}
+\item[{XMLConfigNode $\ast$}]{node}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [protected, virtual]}}\label{classgazebo_1_1DiffDrivePlugin_ab91ad3718b17d5d22599c5441788dbda}
+
+
+Definition at line 224 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!publish\_\-odometry@{publish\_\-odometry}}
+\index{publish\_\-odometry@{publish\_\-odometry}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{publish\_\-odometry}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::publish\_\-odometry (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a773d0fead0cf9813331f9965910dcdc2}
+
+
+Definition at line 454 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!QueueThread@{QueueThread}}
+\index{QueueThread@{QueueThread}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{QueueThread}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::QueueThread (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_aaf96b683c4a77b8a84befb635d21592a}
+
+
+Definition at line 442 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!ResetChild@{ResetChild}}
+\index{ResetChild@{ResetChild}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{ResetChild}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::ResetChild (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [protected]}}\label{classgazebo_1_1DiffDrivePlugin_a5b7dbc79d9ce6d35bde546e1ea910be9}
+
+
+Definition at line 325 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!SaveChild@{SaveChild}}
+\index{SaveChild@{SaveChild}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{SaveChild}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::SaveChild (
+\begin{DoxyParamCaption}
+\item[{std::string \&}]{prefix, }
+\item[{std::ostream \&}]{stream}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [protected]}}\label{classgazebo_1_1DiffDrivePlugin_a618e71ea3442e6052e4159cf902e9f2a}
+
+
+Definition at line 315 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!UpdateChild@{UpdateChild}}
+\index{UpdateChild@{UpdateChild}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{UpdateChild}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::UpdateChild (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [protected, virtual]}}\label{classgazebo_1_1DiffDrivePlugin_a7d3055da0b4fd353aca9a096158c80ca}
+
+
+Definition at line 338 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!write\_\-position\_\-data@{write\_\-position\_\-data}}
+\index{write\_\-position\_\-data@{write\_\-position\_\-data}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{write\_\-position\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void DiffDrivePlugin::write\_\-position\_\-data (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a0616398291990eddaee6794446b6fd52}
+
+
+Definition at line 498 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+
+
+\subsection{Member Data Documentation}
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!alive\_\-@{alive\_\-}}
+\index{alive\_\-@{alive\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{alive\_\-}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf gazebo::DiffDrivePlugin::alive\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a99b6cf4a6575984130bf77e1bf9b6c9f}
+
+
+Definition at line 117 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!callback\_\-queue\_\-thread\_\-@{callback\_\-queue\_\-thread\_\-}}
+\index{callback\_\-queue\_\-thread\_\-@{callback\_\-queue\_\-thread\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{callback\_\-queue\_\-thread\_\-}]{\setlength{\rightskip}{0pt plus 5cm}boost::thread$\ast$ {\bf gazebo::DiffDrivePlugin::callback\_\-queue\_\-thread\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a3e5b344fea78a153e23ddcc96f93d6be}
+
+
+Definition at line 109 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!enableMotors@{enableMotors}}
+\index{enableMotors@{enableMotors}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{enableMotors}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf gazebo::DiffDrivePlugin::enableMotors}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ae0338203e20a947de76d2a33fb06571d}
+
+
+Definition at line 82 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!joints@{joints}}
+\index{joints@{joints}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{joints}]{\setlength{\rightskip}{0pt plus 5cm}Joint$\ast$ {\bf gazebo::DiffDrivePlugin::joints}[2]\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a897b0c3b79bd765936630b650208c22a}
+
+
+Definition at line 86 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!leftJointNameP@{leftJointNameP}}
+\index{leftJointNameP@{leftJointNameP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{leftJointNameP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$std::string$>$$\ast$ {\bf gazebo::DiffDrivePlugin::leftJointNameP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a793876e4d2c06674e2c37fa2c25c838a}
+
+
+Definition at line 88 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!lock@{lock}}
+\index{lock@{lock}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{lock}]{\setlength{\rightskip}{0pt plus 5cm}boost::mutex {\bf gazebo::DiffDrivePlugin::lock}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ac5a7ec6de36b6a125c21fd4c6e023f39}
+
+
+Definition at line 99 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!odom\_\-@{odom\_\-}}
+\index{odom\_\-@{odom\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{odom\_\-}]{\setlength{\rightskip}{0pt plus 5cm}nav\_\-msgs::Odometry {\bf gazebo::DiffDrivePlugin::odom\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ad4887a11cef015833063f0fa057ac74d}
+
+
+Definition at line 96 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!odomPose@{odomPose}}
+\index{odomPose@{odomPose}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{odomPose}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf gazebo::DiffDrivePlugin::odomPose}[3]\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a93beaaaa93189aafdd6e4fdb261ecbde}
+
+
+Definition at line 83 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!odomVel@{odomVel}}
+\index{odomVel@{odomVel}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{odomVel}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf gazebo::DiffDrivePlugin::odomVel}[3]\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a12d059a2841940a7623f0c17d9013a8b}
+
+
+Definition at line 84 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!parent\_\-@{parent\_\-}}
+\index{parent\_\-@{parent\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{parent\_\-}]{\setlength{\rightskip}{0pt plus 5cm}Model$\ast$ {\bf gazebo::DiffDrivePlugin::parent\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a20ca9e7cef943f11fb686725d3f1f970}
+
+
+Definition at line 73 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!physicsEngine@{physicsEngine}}
+\index{physicsEngine@{physicsEngine}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{physicsEngine}]{\setlength{\rightskip}{0pt plus 5cm}PhysicsEngine$\ast$ {\bf gazebo::DiffDrivePlugin::physicsEngine}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a2a9ae7852ba50eac98135d77d2d4b7fb}
+
+
+Definition at line 87 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!pos\_\-iface\_\-@{pos\_\-iface\_\-}}
+\index{pos\_\-iface\_\-@{pos\_\-iface\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{pos\_\-iface\_\-}]{\setlength{\rightskip}{0pt plus 5cm}libgazebo::PositionIface$\ast$ {\bf gazebo::DiffDrivePlugin::pos\_\-iface\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a76c7d493a41eb63e06a6ca85d9ca134c}
+
+
+Definition at line 72 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!prevUpdateTime@{prevUpdateTime}}
+\index{prevUpdateTime@{prevUpdateTime}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{prevUpdateTime}]{\setlength{\rightskip}{0pt plus 5cm}Time {\bf gazebo::DiffDrivePlugin::prevUpdateTime}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a384e2c43a7e1d7494741cfa2477f99ca}
+
+
+Definition at line 80 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!pub\_\-@{pub\_\-}}
+\index{pub\_\-@{pub\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{pub\_\-}]{\setlength{\rightskip}{0pt plus 5cm}ros::Publisher {\bf gazebo::DiffDrivePlugin::pub\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a92718144bfdc2527f6e971590f2761ed}
+
+
+Definition at line 93 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!queue\_\-@{queue\_\-}}
+\index{queue\_\-@{queue\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{queue\_\-}]{\setlength{\rightskip}{0pt plus 5cm}ros::CallbackQueue {\bf gazebo::DiffDrivePlugin::queue\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a9401ec20a04a3cd0a5a4a7079a8e00fb}
+
+
+Definition at line 108 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!rightJointNameP@{rightJointNameP}}
+\index{rightJointNameP@{rightJointNameP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{rightJointNameP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$std::string$>$$\ast$ {\bf gazebo::DiffDrivePlugin::rightJointNameP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a81c1de952961f6942982fe0e0b385a6b}
+
+
+Definition at line 89 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!robotNamespace@{robotNamespace}}
+\index{robotNamespace@{robotNamespace}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{robotNamespace}]{\setlength{\rightskip}{0pt plus 5cm}std::string {\bf gazebo::DiffDrivePlugin::robotNamespace}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ac2bb267616db23fc332f621c17ee6867}
+
+
+Definition at line 102 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!robotNamespaceP@{robotNamespaceP}}
+\index{robotNamespaceP@{robotNamespaceP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{robotNamespaceP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$std::string$>$$\ast$ {\bf gazebo::DiffDrivePlugin::robotNamespaceP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ad17a6252d9dddbb82e63e22af1b0abb2}
+
+
+Definition at line 101 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!rosnode\_\-@{rosnode\_\-}}
+\index{rosnode\_\-@{rosnode\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{rosnode\_\-}]{\setlength{\rightskip}{0pt plus 5cm}ros::NodeHandle$\ast$ {\bf gazebo::DiffDrivePlugin::rosnode\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a3f95546ce1d727b092e065ad363c66a1}
+
+
+Definition at line 92 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!rot\_\-@{rot\_\-}}
+\index{rot\_\-@{rot\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{rot\_\-}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf gazebo::DiffDrivePlugin::rot\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_adb1a1a181fda6e8bd94c8924cc62269c}
+
+
+Definition at line 116 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!sub\_\-@{sub\_\-}}
+\index{sub\_\-@{sub\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{sub\_\-}]{\setlength{\rightskip}{0pt plus 5cm}ros::Subscriber {\bf gazebo::DiffDrivePlugin::sub\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a1733f2eaaf4e30d1bc20a907557abb47}
+
+
+Definition at line 94 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!tf\_\-prefix\_\-@{tf\_\-prefix\_\-}}
+\index{tf\_\-prefix\_\-@{tf\_\-prefix\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{tf\_\-prefix\_\-}]{\setlength{\rightskip}{0pt plus 5cm}std::string {\bf gazebo::DiffDrivePlugin::tf\_\-prefix\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ad0a1d144c0fab4422de673b6ea1a52bc}
+
+
+Definition at line 97 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!topicName@{topicName}}
+\index{topicName@{topicName}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{topicName}]{\setlength{\rightskip}{0pt plus 5cm}std::string {\bf gazebo::DiffDrivePlugin::topicName}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a7a363d7177ff094979ca9c6b801acc9b}
+
+
+Definition at line 105 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!topicNameP@{topicNameP}}
+\index{topicNameP@{topicNameP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{topicNameP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$std::string$>$$\ast$ {\bf gazebo::DiffDrivePlugin::topicNameP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_aa75ec8e40922cc2a572f2344c163cab1}
+
+
+Definition at line 104 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!torqueP@{torqueP}}
+\index{torqueP@{torqueP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{torqueP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$float$>$$\ast$ {\bf gazebo::DiffDrivePlugin::torqueP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_ac9d09f0dcc80f73f1b36acf35761c34c}
+
+
+Definition at line 76 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!transform\_\-broadcaster\_\-@{transform\_\-broadcaster\_\-}}
+\index{transform\_\-broadcaster\_\-@{transform\_\-broadcaster\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{transform\_\-broadcaster\_\-}]{\setlength{\rightskip}{0pt plus 5cm}tf::TransformBroadcaster$\ast$ {\bf gazebo::DiffDrivePlugin::transform\_\-broadcaster\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a12532b5efe44e919922e44a33343aa80}
+
+
+Definition at line 95 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!wheelDiamP@{wheelDiamP}}
+\index{wheelDiamP@{wheelDiamP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{wheelDiamP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$float$>$$\ast$ {\bf gazebo::DiffDrivePlugin::wheelDiamP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a6874ef22d87aed9588a83a26459df472}
+
+
+Definition at line 75 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!wheelSepP@{wheelSepP}}
+\index{wheelSepP@{wheelSepP}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{wheelSepP}]{\setlength{\rightskip}{0pt plus 5cm}ParamT$<$float$>$$\ast$ {\bf gazebo::DiffDrivePlugin::wheelSepP}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_adb819234190b3cb5a95d3c408bf73633}
+
+
+Definition at line 74 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!wheelSpeed@{wheelSpeed}}
+\index{wheelSpeed@{wheelSpeed}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{wheelSpeed}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf gazebo::DiffDrivePlugin::wheelSpeed}[2]\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_a2d1454931ce7c70633aa0773d8cbf3b3}
+
+
+Definition at line 77 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+\index{gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}!x\_\-@{x\_\-}}
+\index{x\_\-@{x\_\-}!gazebo::DiffDrivePlugin@{gazebo::DiffDrivePlugin}}
+\subsubsection[{x\_\-}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf gazebo::DiffDrivePlugin::x\_\-}\hspace{0.3cm}{\ttfamily  [private]}}\label{classgazebo_1_1DiffDrivePlugin_afc221c51ce76ba4d6e419047323b4e25}
+
+
+Definition at line 115 of file gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp.
+
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/home/klc/Code/github.com/my\_\-stack/my\_\-gazebo\_\-drivers/src/{\bf gazebo\_\-ros\_\-diffdrive\_\-plugin.cpp}\end{DoxyCompactItemize}

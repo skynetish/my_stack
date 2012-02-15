@@ -1,93 +1,34 @@
-<!DOCTYPE html>
 <html>
 <head>
-  <meta charset='utf-8'>
-
-  <title>skynetish/my_stack @ GitHub</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #d39f64;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #2c609b; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #2c609b; }
-    h3 { text-align: center; color: #2c609b; }
-    a { color: #2c609b; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+<title>my_stack Documentation</title>
+<link type="text/css" rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <a href="https://github.com/skynetish/my_stack"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
-  <div id="container">
 
-    <div class="download">
-      <a href="https://github.com/skynetish/my_stack/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/skynetish/my_stack/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
-    </div>
+<h1>my_stack Documentation</h1>
 
-    <h1><a href="https://github.com/skynetish/my_stack">my_stack</a>
-      <span class="small">by <a href="https://github.com/skynetish">skynetish</a></span></h1>
+<div class="nav">
+<a href="licenses.html">View packages by license</a>
+</div>
 
-    <div class="description">
-      Experimental ROS packages.
-    </div>
+<h2>Packages (292)</h2>
 
-    
-      <p>A collection of experimental ROS packages.  As packages mature they will normally be moved to separate projects.</p>
-    
+<div class="greybox">
+<ul>
+<a href="#arm_navigation">arm_navigation</a> (20), <a href="#assimp">assimp</a> (1), <a href="#bond_core">bond_core</a> (5), <a href="#bullet">bullet</a> (1), <a href="#common">common</a> (4), <a href="#common_msgs">common_msgs</a> (9), <a href="#common_rosdeps">common_rosdeps</a> (1), <a href="#common_tutorials">common_tutorials</a> (3), <a href="#control">control</a> (1), <a href="#diagnostics">diagnostics</a> (5), <a href="#diagnostics_monitors">diagnostics_monitors</a> (2), <a href="#documentation">documentation</a> (1), <a href="#driver_common">driver_common</a> (3), <a href="#eigen">eigen</a> (1), <a href="#erratic_robot">erratic_robot</a> (7), <a href="#executive_smach">executive_smach</a> (3), <a href="#executive_smach_visualization">executive_smach_visualization</a> (1), <a href="#filters">filters</a> (1), <a href="#geometry">geometry</a> (4), <a href="#geometry_experimental">geometry_experimental</a> (8), <a href="#geometry_tutorials">geometry_tutorials</a> (1), <a href="#geometry_visualization">geometry_visualization</a> (1), <a href="#image_common">image_common</a> (4), <a href="#image_pipeline">image_pipeline</a> (5), <a href="#image_transport_plugins">image_transport_plugins</a> (2), <a href="#joystick_drivers">joystick_drivers</a> (6), <a href="#laser_pipeline">laser_pipeline</a> (3), <a href="#my_stack">my_stack</a> (5), <a href="#navigation">navigation</a> (16), <a href="#nodelet_core">nodelet_core</a> (3), <a href="#orocos_kinematics_dynamics">orocos_kinematics_dynamics</a> (3), <a href="#p2os">p2os</a> (5), <a href="#perception_pcl">perception_pcl</a> (4), <a href="#physics_ode">physics_ode</a> (2), <a href="#pluginlib">pluginlib</a> (1), <a href="#point_cloud_perception">point_cloud_perception</a> (1), <a href="#pr2_common">pr2_common</a> (4), <a href="#pr2_controllers">pr2_controllers</a> (10), <a href="#pr2_ethercat_drivers">pr2_ethercat_drivers</a> (3), <a href="#pr2_mechanism">pr2_mechanism</a> (7), <a href="#pr2_simulator">pr2_simulator</a> (5), <a href="#robot_model">robot_model</a> (12), <a href="#robot_model_tutorials">robot_model_tutorials</a> (1), <a href="#robot_model_visualization">robot_model_visualization</a> (1), <a href="#ros">ros</a> (18), <a href="#ros_comm">ros_comm</a> (49), <a href="#ros_tutorials">ros_tutorials</a> (3), <a href="#rx">rx</a> (9), <a href="#simulator_gazebo">simulator_gazebo</a> (5), <a href="#slam_gmapping">slam_gmapping</a> (1), <a href="#stage">stage</a> (1), <a href="#teleop">teleop</a> (5), <a href="#vision_opencv">vision_opencv</a> (5), <a href="#visualization">visualization</a> (4), <a href="#visualization_common">visualization_common</a> (2), <a href="#visualization_tutorials">visualization_tutorials</a> (2), <a href="#xacro">xacro</a> (1)
+</ul>
+</div>
 
-    
+<div class="packages">
+<h3 class="group"><a name="my_stack"></a><a href="#my_stack"><b>my_stack</b></a></h3>
+<ul><li class="package"><a href="my_gazebo_drivers/html/index.html">my_gazebo_drivers</a></li>
+<li class="package"><a href="my_gazebo_robots/html/index.html">my_gazebo_robots</a></li>
+<li class="package"><a href="my_gazebo_scenarios/html/index.html">my_gazebo_scenarios</a></li>
+<li class="package"><a href="my_gazebo_worlds/html/index.html">my_gazebo_worlds</a></li>
+<li class="package"><a href="my_robot_descriptions/html/index.html">my_robot_descriptions</a></li></ul>
+</div>
 
-    
-
-    
-      <h2>License</h2>
-      <p>BSD</p>
-    
-
-    
-      <h2>Authors</h2>
-      <p>Kevin LeBlanc (kevin.canadian@gmail.com)<br/>      </p>
-    
-
-    
-      <h2>Contact</h2>
-      <p>Kevin LeBlanc (kevin.canadian@gmail.com)<br/>      </p>
-    
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/skynetish/my_stack/zipball/master">zip</a> or
-      <a href="https://github.com/skynetish/my_stack/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/skynetish/my_stack</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/skynetish/my_stack">skynetish/my_stack</a>
-    </div>
-
-  </div>
-
+<p class="footer"><small>autogenerated on Wed, 15 Feb 2012 22:47:20</small></p>
 </body>
 </html>

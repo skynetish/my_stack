@@ -1,0 +1,249 @@
+\section{/home/klc/Code/github.com/my\_\-stack/my\_\-gazebo\_\-drivers/src/gazebo\_\-ros\_\-diffdrive.cpp File Reference}
+\label{gazebo__ros__diffdrive_8cpp}\index{/home/klc/Code/github.com/my\_\-stack/my\_\-gazebo\_\-drivers/src/gazebo\_\-ros\_\-diffdrive.cpp@{/home/klc/Code/github.com/my\_\-stack/my\_\-gazebo\_\-drivers/src/gazebo\_\-ros\_\-diffdrive.cpp}}
+{\ttfamily \#include $<$gazebo/gazebo.h$>$}\par
+{\ttfamily \#include $<$gazebo/GazeboError.hh$>$}\par
+{\ttfamily \#include $<$gazebo/Quatern.hh$>$}\par
+{\ttfamily \#include $<$ros/ros.h$>$}\par
+{\ttfamily \#include $<$ros/console.h$>$}\par
+{\ttfamily \#include $<$angles/angles.h$>$}\par
+{\ttfamily \#include $<$tf/transform\_\-broadcaster.h$>$}\par
+{\ttfamily \#include $<$geometry\_\-msgs/Twist.h$>$}\par
+{\ttfamily \#include $<$nav\_\-msgs/Odometry.h$>$}\par
+{\ttfamily \#include $<$boost/bind.hpp$>$}\par
+Include dependency graph for gazebo\_\-ros\_\-diffdrive.cpp:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{gazebo__ros__diffdrive_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bf DiffDrive}
+\end{DoxyCompactItemize}
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf DEFAULT\_\-COMMAND\_\-QUEUE}~100
+\item 
+\#define {\bf DEFAULT\_\-COMMAND\_\-TOPIC}~\char`\"{}cmd\_\-vel\char`\"{}
+\item 
+\#define {\bf DEFAULT\_\-INTERFACE\_\-NAME}~\char`\"{}position\_\-iface\_\-0\char`\"{}
+\item 
+\#define {\bf DEFAULT\_\-MODEL\_\-NAME}~\char`\"{}robot\_\-description\char`\"{}
+\item 
+\#define {\bf DEFAULT\_\-ODOMETRY\_\-QUEUE}~1
+\item 
+\#define {\bf DEFAULT\_\-ODOMETRY\_\-TOPIC}~\char`\"{}odom\char`\"{}
+\item 
+\#define {\bf DEFAULT\_\-SERVER\_\-ID}~0
+\item 
+\#define {\bf DEFAULT\_\-TF\_\-CHILD}~\char`\"{}base\_\-link\char`\"{}
+\item 
+\#define {\bf DEFAULT\_\-TF\_\-PARENT}~\char`\"{}tf\_\-parent\char`\"{}
+\item 
+\#define {\bf DEFAULT\_\-THREADS}~2
+\item 
+\#define {\bf DEFAULT\_\-UPDATE\_\-PERIOD}~0.01
+\item 
+\#define {\bf KEY\_\-COMMAND\_\-QUEUE}~\char`\"{}command\_\-queue\char`\"{}
+\item 
+\#define {\bf KEY\_\-COMMAND\_\-TOPIC}~\char`\"{}command\_\-topic\char`\"{}
+\item 
+\#define {\bf KEY\_\-INTERFACE\_\-NAME}~\char`\"{}interface\_\-name\char`\"{}
+\item 
+\#define {\bf KEY\_\-MODEL\_\-NAME}~\char`\"{}model\_\-name\char`\"{}
+\item 
+\#define {\bf KEY\_\-ODOMETRY\_\-QUEUE}~\char`\"{}odometry\_\-queue\char`\"{}
+\item 
+\#define {\bf KEY\_\-ODOMETRY\_\-TOPIC}~\char`\"{}odometry\_\-topic\char`\"{}
+\item 
+\#define {\bf KEY\_\-SERVER\_\-ID}~\char`\"{}server\_\-id\char`\"{}
+\item 
+\#define {\bf KEY\_\-TF\_\-CHILD}~\char`\"{}tf\_\-child\char`\"{}
+\item 
+\#define {\bf KEY\_\-TF\_\-PARENT}~\char`\"{}tf\_\-parent\char`\"{}
+\item 
+\#define {\bf KEY\_\-THREADS}~\char`\"{}threads\char`\"{}
+\item 
+\#define {\bf KEY\_\-UPDATE\_\-PERIOD}~\char`\"{}update\_\-period\char`\"{}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int {\bf main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+
+
+\subsection{Define Documentation}
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-COMMAND\_\-QUEUE@{DEFAULT\_\-COMMAND\_\-QUEUE}}
+\index{DEFAULT\_\-COMMAND\_\-QUEUE@{DEFAULT\_\-COMMAND\_\-QUEUE}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-COMMAND\_\-QUEUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-COMMAND\_\-QUEUE~100}\label{gazebo__ros__diffdrive_8cpp_a68ffe50743a7896867ca4a7d01092525}
+
+
+Definition at line 52 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-COMMAND\_\-TOPIC@{DEFAULT\_\-COMMAND\_\-TOPIC}}
+\index{DEFAULT\_\-COMMAND\_\-TOPIC@{DEFAULT\_\-COMMAND\_\-TOPIC}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-COMMAND\_\-TOPIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-COMMAND\_\-TOPIC~\char`\"{}cmd\_\-vel\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a88ab198012ad9fd21bc254626b7e297e}
+
+
+Definition at line 48 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-INTERFACE\_\-NAME@{DEFAULT\_\-INTERFACE\_\-NAME}}
+\index{DEFAULT\_\-INTERFACE\_\-NAME@{DEFAULT\_\-INTERFACE\_\-NAME}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-INTERFACE\_\-NAME}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-INTERFACE\_\-NAME~\char`\"{}position\_\-iface\_\-0\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_ab516f99d9b5027619fabda9c05892c15}
+
+
+Definition at line 56 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-MODEL\_\-NAME@{DEFAULT\_\-MODEL\_\-NAME}}
+\index{DEFAULT\_\-MODEL\_\-NAME@{DEFAULT\_\-MODEL\_\-NAME}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-MODEL\_\-NAME}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-MODEL\_\-NAME~\char`\"{}robot\_\-description\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a39d0c3d0b96288cd4997549cc3ecc4d9}
+
+
+Definition at line 55 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-ODOMETRY\_\-QUEUE@{DEFAULT\_\-ODOMETRY\_\-QUEUE}}
+\index{DEFAULT\_\-ODOMETRY\_\-QUEUE@{DEFAULT\_\-ODOMETRY\_\-QUEUE}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-ODOMETRY\_\-QUEUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-ODOMETRY\_\-QUEUE~1}\label{gazebo__ros__diffdrive_8cpp_a858ff692b175cfa1b91f84b0d584b20f}
+
+
+Definition at line 53 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-ODOMETRY\_\-TOPIC@{DEFAULT\_\-ODOMETRY\_\-TOPIC}}
+\index{DEFAULT\_\-ODOMETRY\_\-TOPIC@{DEFAULT\_\-ODOMETRY\_\-TOPIC}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-ODOMETRY\_\-TOPIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-ODOMETRY\_\-TOPIC~\char`\"{}odom\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a337c1c3b23ddfadf297ae17f4dc93e1f}
+
+
+Definition at line 49 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-SERVER\_\-ID@{DEFAULT\_\-SERVER\_\-ID}}
+\index{DEFAULT\_\-SERVER\_\-ID@{DEFAULT\_\-SERVER\_\-ID}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-SERVER\_\-ID}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-SERVER\_\-ID~0}\label{gazebo__ros__diffdrive_8cpp_a0ff9a709a4374667951fb31163003661}
+
+
+Definition at line 50 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-TF\_\-CHILD@{DEFAULT\_\-TF\_\-CHILD}}
+\index{DEFAULT\_\-TF\_\-CHILD@{DEFAULT\_\-TF\_\-CHILD}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-TF\_\-CHILD}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-TF\_\-CHILD~\char`\"{}base\_\-link\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a0358705c8694284d288f0187e0d011c4}
+
+
+Definition at line 58 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-TF\_\-PARENT@{DEFAULT\_\-TF\_\-PARENT}}
+\index{DEFAULT\_\-TF\_\-PARENT@{DEFAULT\_\-TF\_\-PARENT}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-TF\_\-PARENT}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-TF\_\-PARENT~\char`\"{}tf\_\-parent\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a5b1a3d3c086515db97209ceaafa98159}
+
+
+Definition at line 57 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-THREADS@{DEFAULT\_\-THREADS}}
+\index{DEFAULT\_\-THREADS@{DEFAULT\_\-THREADS}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-THREADS}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-THREADS~2}\label{gazebo__ros__diffdrive_8cpp_af3f16d9b8a1ac1802eea6524155052c9}
+
+
+Definition at line 51 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!DEFAULT\_\-UPDATE\_\-PERIOD@{DEFAULT\_\-UPDATE\_\-PERIOD}}
+\index{DEFAULT\_\-UPDATE\_\-PERIOD@{DEFAULT\_\-UPDATE\_\-PERIOD}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{DEFAULT\_\-UPDATE\_\-PERIOD}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEFAULT\_\-UPDATE\_\-PERIOD~0.01}\label{gazebo__ros__diffdrive_8cpp_a9064e22b01bc8ae3350cefd103a4a2dc}
+
+
+Definition at line 54 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-COMMAND\_\-QUEUE@{KEY\_\-COMMAND\_\-QUEUE}}
+\index{KEY\_\-COMMAND\_\-QUEUE@{KEY\_\-COMMAND\_\-QUEUE}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-COMMAND\_\-QUEUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-COMMAND\_\-QUEUE~\char`\"{}command\_\-queue\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_adae44ae0588dd90ab5f114337933004e}
+
+
+Definition at line 40 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-COMMAND\_\-TOPIC@{KEY\_\-COMMAND\_\-TOPIC}}
+\index{KEY\_\-COMMAND\_\-TOPIC@{KEY\_\-COMMAND\_\-TOPIC}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-COMMAND\_\-TOPIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-COMMAND\_\-TOPIC~\char`\"{}command\_\-topic\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_abf7a2dd6a4db4df02ec95dacaf116122}
+
+
+Definition at line 36 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-INTERFACE\_\-NAME@{KEY\_\-INTERFACE\_\-NAME}}
+\index{KEY\_\-INTERFACE\_\-NAME@{KEY\_\-INTERFACE\_\-NAME}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-INTERFACE\_\-NAME}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-INTERFACE\_\-NAME~\char`\"{}interface\_\-name\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a507d0de0321d431dbef9e235cf1c222f}
+
+
+Definition at line 44 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-MODEL\_\-NAME@{KEY\_\-MODEL\_\-NAME}}
+\index{KEY\_\-MODEL\_\-NAME@{KEY\_\-MODEL\_\-NAME}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-MODEL\_\-NAME}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-MODEL\_\-NAME~\char`\"{}model\_\-name\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a2c53a2fc3c18baa21d5871179ae085a8}
+
+
+Definition at line 43 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-ODOMETRY\_\-QUEUE@{KEY\_\-ODOMETRY\_\-QUEUE}}
+\index{KEY\_\-ODOMETRY\_\-QUEUE@{KEY\_\-ODOMETRY\_\-QUEUE}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-ODOMETRY\_\-QUEUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-ODOMETRY\_\-QUEUE~\char`\"{}odometry\_\-queue\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a0ec020516db9e7a344c908eff44e743d}
+
+
+Definition at line 41 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-ODOMETRY\_\-TOPIC@{KEY\_\-ODOMETRY\_\-TOPIC}}
+\index{KEY\_\-ODOMETRY\_\-TOPIC@{KEY\_\-ODOMETRY\_\-TOPIC}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-ODOMETRY\_\-TOPIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-ODOMETRY\_\-TOPIC~\char`\"{}odometry\_\-topic\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_ab75ee4b79a80a1bd5262af8bbad37d04}
+
+
+Definition at line 37 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-SERVER\_\-ID@{KEY\_\-SERVER\_\-ID}}
+\index{KEY\_\-SERVER\_\-ID@{KEY\_\-SERVER\_\-ID}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-SERVER\_\-ID}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-SERVER\_\-ID~\char`\"{}server\_\-id\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_aba838f74774271adc62f5223c844f0fe}
+
+
+Definition at line 38 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-TF\_\-CHILD@{KEY\_\-TF\_\-CHILD}}
+\index{KEY\_\-TF\_\-CHILD@{KEY\_\-TF\_\-CHILD}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-TF\_\-CHILD}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-TF\_\-CHILD~\char`\"{}tf\_\-child\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a70e360a50e857ffc6f32982ee73488f1}
+
+
+Definition at line 46 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-TF\_\-PARENT@{KEY\_\-TF\_\-PARENT}}
+\index{KEY\_\-TF\_\-PARENT@{KEY\_\-TF\_\-PARENT}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-TF\_\-PARENT}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-TF\_\-PARENT~\char`\"{}tf\_\-parent\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a526b0d72a46fac5e090caf049c1bb2ac}
+
+
+Definition at line 45 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-THREADS@{KEY\_\-THREADS}}
+\index{KEY\_\-THREADS@{KEY\_\-THREADS}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-THREADS}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-THREADS~\char`\"{}threads\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a1c0b253edf7ef5e6eaf91e33c729947e}
+
+
+Definition at line 39 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!KEY\_\-UPDATE\_\-PERIOD@{KEY\_\-UPDATE\_\-PERIOD}}
+\index{KEY\_\-UPDATE\_\-PERIOD@{KEY\_\-UPDATE\_\-PERIOD}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{KEY\_\-UPDATE\_\-PERIOD}]{\setlength{\rightskip}{0pt plus 5cm}\#define KEY\_\-UPDATE\_\-PERIOD~\char`\"{}update\_\-period\char`\"{}}\label{gazebo__ros__diffdrive_8cpp_a86e39a07c79ab4ac9750a5c7fae16b3d}
+
+
+Definition at line 42 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
+
+
+\subsection{Function Documentation}
+\index{gazebo\_\-ros\_\-diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}!main@{main}}
+\index{main@{main}!gazebo_ros_diffdrive.cpp@{gazebo\_\-ros\_\-diffdrive.cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{char $\ast$$\ast$}]{argv}
+\end{DoxyParamCaption}
+)}\label{gazebo__ros__diffdrive_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}
+
+
+Definition at line 239 of file gazebo\_\-ros\_\-diffdrive.cpp.
+
