@@ -1,20 +1,2 @@
 <map id="G" name="G">
-<area shape="rect" id="node5" href="$Param_8hh.html" title="gazebo/Param.hh" alt="" coords="2565,83,2687,112"/>
-<area shape="rect" id="node26" href="$Controller_8hh.html" title="gazebo/Controller.hh" alt="" coords="223,160,365,189"/>
-<area shape="rect" id="node34" href="$Model_8hh.html" title="gazebo/Model.hh" alt="" coords="803,83,923,112"/>
-<area shape="rect" id="node61" href="$transform__listener_8h.html" title="tf/transform_listener.h" alt="" coords="1973,83,2122,112"/>
-<area shape="rect" id="node110" href="$Body_8hh.html" title="gazebo/Body.hh" alt="" coords="530,160,645,189"/>
-<area shape="rect" id="node118" href="$World_8hh.html" title="gazebo/World.hh" alt="" coords="975,160,1095,189"/>
-<area shape="rect" id="node126" href="$Simulator_8hh.html" title="gazebo/Simulator.hh" alt="" coords="2762,83,2903,112"/>
-<area shape="rect" id="node135" href="$ControllerFactory_8hh.html" title="gazebo/ControllerFactory.hh" alt="" coords="2663,160,2850,189"/>
-<area shape="rect" id="node139" href="$PhysicsEngine_8hh.html" title="gazebo/PhysicsEngine.hh" alt="" coords="26,160,199,189"/>
-<area shape="rect" id="node23" href="$XMLConfig_8hh.html" title="XMLConfig.hh" alt="" coords="3191,160,3295,189"/>
-<area shape="rect" id="node42" href="$Pose3d_8hh.html" title="Pose3d.hh" alt="" coords="669,160,751,189"/>
-<area shape="rect" id="node45" href="$Joint_8hh.html" title="Joint.hh" alt="" coords="439,160,506,189"/>
-<area shape="rect" id="node51" href="$Entity_8hh.html" title="Entity.hh" alt="" coords="826,160,901,189"/>
-<area shape="rect" id="node63" href="$PointCloud_8h.html" title="sensor_msgs/PointCloud.h" alt="" coords="1362,160,1541,189"/>
-<area shape="rect" id="node68" href="$Empty_8h.html" title="std_msgs/Empty.h" alt="" coords="2261,160,2391,189"/>
-<area shape="rect" id="node78" href="$callback__queue_8h.html" title="ros/callback_queue.h" alt="" coords="1821,160,1965,189"/>
-<area shape="rect" id="node80" href="$FrameGraph_8h.html" title="tf/FrameGraph.h" alt="" coords="1221,160,1338,189"/>
-<area shape="rect" id="node85" href="$thread_8hpp.html" title="boost/thread.hpp" alt="" coords="1989,160,2106,189"/>
 </map>
