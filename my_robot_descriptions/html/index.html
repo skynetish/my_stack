@@ -3,18 +3,12 @@
 <title>my_robot_descriptions: Main Page</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
-<link href="$relpath<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
   $(document).ready(function() { searchBox.OnSelectItem(0); });
-</script>/search.css" rel="stylesheet" type="text/css"/>
-<script type="text/javaScript" src="$relpath<link href="search/search.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="search/search.js"></script>
-<script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
-</script>/search.js"></script>
+</script>
 
 </head>
 <body onload='searchBox.OnSelectItem(0);'>
@@ -54,49 +48,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h3>my_robot_descriptions: A collection of robot descriptions.</h3>
 <p class=description><em>
 
-    This package is a collection of urdf (and possibly other) files describing various robots.  Most
-    robots have descriptions in their own robot-specific packages, but these descriptions are often
-    written in inconsistent or even incorrect ways, using differing naming conventions and improper
-    namespace handling.  In particular, many robot descriptions do not properly allow all topics to
-    be pushed into a particular namespace, which causes problems for multi-robot setups.  This
-    package tries to clean up these robot descriptions and present them in a consistent manner,
-    while also providing a place to store customised robot descriptions.
+    This package is a collection of robot descriptions.  Most robots have
+    descriptions in their own robot-specific packages, but these descriptions
+    are often written in inconsistent or even incorrect ways, using differing
+    naming conventions and improper namespace handling.  In particular, many
+    robot descriptions do not properly allow all topics to be pushed into a
+    particular namespace, which causes problems for multi-robot setups.  This
+    package tries to clean up these robot descriptions and present them in a
+    consistent manner, while also providing a place to store customised robot
+    descriptions.
 
-    By convention, urdf robot descriptions are normally uploaded to a &quot;robot_description&quot; key in the
-    parameter server on launch.  Some ROS nodes and gazebo plugins assume that this convention is
-    followed, and some things may actually break if this is not done.  The intention is to avoid
-    such dependencies, but in some cases this may be difficult, so by default the convention should
-    normally be followed.
+    The robot descriptions are stored in *.urdf.xacro format, and they should
+    be edited directly.  The xacro package is used to load the descriptions
+    into the parameter server.
 
-    The urdf descriptions are stored in *.urdf.xacro format, and they should be edited directly.
-    This means we don't have to build this package to &quot;process&quot; the xacro files.  Instead, xacro can
-    be used to load the descriptions into the parameter server.
-
-    The preferred way of handling robot descriptions involves the following files:
+    It is suggested that robot descriptions use the following file structure:
 
       urdf/
         common.xacro          - common xacro definitions
-        (part).urdf[.xacro]   - urdf definition for a robot part/sensor (robot element has no name)
+        (part).urdf[.xacro]   - definition of robot part (element has no name)
 
       robots/
-        (robot).urdf[.xacro]  - urdf definition for a robot (robot element has name)
+        (robot).urdf[.xacro]  - definition of robot (robot element has name)
 
-    By convention, each robot should subscribe to the following topics in its namespace:
+    By convention, each robot should subscribe to the following topics:
 
-      geometry_msgs/Twist   cmd_vel   Desired 6D velocity (subset of the fields are considered)
+      geometry_msgs/Twist   cmd_vel             Desired velocity
       (...add entries for other controllers)
 
-    By convention each robot may publish the following topics in its namespace:
+    By convention each robot may publish the following topics:
 
-      nav_msgs/Odometry     pose_ground_truth   Ground truth 6D pose
-      nav_msgs/Odometry     odom                Odometric updates in 6D
-      nav_msgs/Odometry     imu                 Inertial updates in 6D
+      nav_msgs/Odometry     pose_ground_truth   Ground truth pose
+      nav_msgs/Odometry     odom                Odometric updates
+      nav_msgs/Odometry     imu                 Inertial updates
       (...add entries for other sensors)
-
 
   </em></p>
 <p>
-<li>Homepage: <a href=""></a></li>
+<li>Homepage: <a href="https://github.com/skynetish/my_stack/wiki">https://github.com/skynetish/my_stack/wiki</a></li>
 </p>
 </div>
  </div></div>
@@ -118,8 +107,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <br clear="all" />
 <hr size="1"><div style="align: right;">
 <a href="http://ros.org/wiki/my_robot_descriptions">my_robot_descriptions</a><br />
-Author(s): Kevin LeBlanc</br />
-<small>autogenerated on Sat Feb 25 2012 18:26:41</small>
+Author(s): Kevin LeBlanc (kevin.canadian@gmail.com)</br />
+<small>autogenerated on Sun Feb 26 2012 08:48:09</small>
 </div>
 </body>
 </html>
