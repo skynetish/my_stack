@@ -1,25 +1,21 @@
 <package>
 
   <!-- Package summary -->
-  <description brief="A collection of launch files.">
+  <description brief="Launch files for creating gazebo scenarios." >
 
-    This package is a collection of launch files used to launch various gazebo scenarios.
+    This package is a collection of launch files used to create various
+    scenarios in gazebo.  Each scenario includes a world and a number of
+    robots.
 
   </description>
-  <author>Kevin LeBlanc</author>
+  <author>Kevin LeBlanc (kevin.canadian@gmail.com)</author>
   <license>BSD</license>
-  <url></url>
+  <url>https://github.com/skynetish/my_stack/wiki</url>
 
-  <!-- We use gazebo worlds -->
+  <!-- Package dependencies -->
   <depend package="my_gazebo_worlds" />
-
-  <!-- We use gazebo robots -->
   <depend package="my_gazebo_robots" />
-
-  <!-- We use gazebo drivers -->
   <depend package="my_gazebo_drivers" />
-
-  <!-- We use teleop stuff -->
   <depend package="teleop_ros" />
 
 </package>

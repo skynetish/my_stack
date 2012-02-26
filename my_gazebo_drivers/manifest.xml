@@ -1,23 +1,22 @@
 <package>
 
   <!-- Package summary -->
-  <description brief="Gazebo drivers.">
+  <description brief="Gazebo drivers and plugins." >
 
-    This package contains gazebo robot drivers.
+    This package contains gazebo drivers and plugins.
 
   </description>
-  <author>Kevin LeBlanc</author>
+  <author>Kevin LeBlanc (kevin.canadian@gmail.com)</author>
   <license>BSD</license>
-  <url></url>
+  <url>https://github.com/skynetish/my_stack/wiki</url>
 
-  <!-- Dependencies -->
+  <!-- Package dependencies -->
   <depend package="roscpp" />
-  <depend package="gazebo" />
-  <depend package="gazebo_plugins" />
-  <depend package="angles" />
-  <depend package="tf" />
   <depend package="geometry_msgs" />
   <depend package="nav_msgs" />
+  <depend package="gazebo" />
+  <depend package="angles" />
+  <depend package="tf" />
 
   <!-- Exports -->
   <export>

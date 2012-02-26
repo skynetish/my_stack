@@ -1,37 +1,28 @@
 <package>
 
   <!-- Package summary -->
-  <description brief="A collection of launch files.">
+  <description brief="Launch files for creating simulated robots in gazebo." >
 
-    This package is a collection of launch files used to launch various robots in gazebo.  The idea
-    is that launching these files should be equivalent to powering on the created robots.  Drivers
-    for controllers and sensors will normally have to be connected separately, as needed.  By
-    convention, urdf robot descriptions are uploaded to a "robot_description" key in the parameter
-    server on launch.  See the "my_robot_descriptions" package for more information about this.
+    This package is a collection of launch files used to create various robots
+    in gazebo.  The idea is that launching these files should be equivalent to
+    powering on the created robots.  Drivers for controllers and sensors may be
+    included in robot descriptions as gazebo plugins, or they may need to be
+    run separately.
 
   </description>
-  <author>Kevin LeBlanc</author>
+  <author>Kevin LeBlanc (kevin.canadian@gmail.com)</author>
   <license>BSD</license>
-  <url></url>
+  <url>https://github.com/skynetish/my_stack/wiki</url>
 
-  <!-- We use xacro to process certain XML files -->
+  <!-- Package dependencies -->
   <depend package="xacro" />
-
-  <!-- We use the gazebo simulator -->
   <depend package="gazebo" />
-
-  <!-- We use the gazebo simulator plugins (they may be used in some robot descriptions) -->
   <depend package="gazebo_plugins" />
-
-  <!-- We use robot descriptions -->
   <depend package="my_robot_descriptions" />
 
-  <!-- Exported values -->
+  <!-- Exports -->
   <export>
-
-    <!-- This allows gazebo to find resources in our local "Media" directory -->
     <gazebo gazebo_media_path="${prefix}" />
-
   </export>
 
 </package>

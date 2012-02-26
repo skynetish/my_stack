@@ -1,38 +1,27 @@
 <package>
 
   <!-- Package summary -->
-  <description brief="A collection of world, model, and launch files.">
+  <description brief="A collection of world, model, and launch files." >
 
-    This package is a collection of world, model, and launch files used to launch various gazebo
-    worlds in a consistent and easy manner.
+    This package is a collection of world, model, and launch files used to
+    launch various gazebo worlds.
 
-    For reference, some of the materials which work well for walls and floors include:
-
-      Gazebo/White
-      Gazebo/WoodFloor
-      Gazebo/LightWood
-      Gazebo/CeilingTiled
-      Gazebo/GrayGrid
-      Gazebo/Rocky
-      Gazebo/Rockwall
+    The world descriptions are stored in *.world.xacro format, and they should
+    be edited directly.  The xacro package is used to load the descriptions
+    into the parameter server.
 
   </description>
-  <author>Kevin LeBlanc</author>
+  <author>Kevin LeBlanc (kevin.canadian@gmail.com)</author>
   <license>BSD</license>
-  <url></url>
+  <url>https://github.com/skynetish/my_stack/wiki</url>
 
-  <!-- We use xacro to process certain XML files -->
+  <!-- Package dependencies -->
   <depend package="xacro" />
-
-  <!-- We use the gazebo simulator -->
   <depend package="gazebo" />
 
-  <!-- Exported values -->
+  <!-- Exports -->
   <export>
-
-    <!-- This allows gazebo to find resources in our local "Media" directory -->
     <gazebo gazebo_media_path="${prefix}" />
-
   </export>
 
 </package>
