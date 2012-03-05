@@ -1,0 +1,29 @@
+<launch>
+
+  <!-- Required general arguments -->
+  <arg name="model_name" />
+  <arg name="robot_description" value="$(find my_robot_descriptions)/robots/amigobot.urdf.xacro" />
+  <arg name="robot_format"      value="urdf" />
+
+  <!-- Optional position arguments -->
+  <arg name="x"     default="0" />
+  <arg name="y"     default="0" />
+  <arg name="z"     default="0" />
+  <arg name="roll"  default="0" />
+  <arg name="pitch" default="0" />
+  <arg name="yaw"   default="0" />
+
+  <!-- Use generic launch file -->
+  <include file="$(find my_gazebo_robots)/launch/gazebo_robot.launch" >
+    <arg name="model_name"        value="$(arg model_name)"         />
+    <arg name="robot_description" value="$(arg robot_description)"  />
+    <arg name="robot_format"      value="$(arg robot_format)"       />
+    <arg name="x"                 value="$(arg x)"                  />
+    <arg name="y"                 value="$(arg y)"                  />
+    <arg name="z"                 value="$(arg z)"                  />
+    <arg name="roll"              value="$(arg roll)"               />
+    <arg name="pitch"             value="$(arg pitch)"              />
+    <arg name="yaw"               value="$(arg yaw)"                />
+  </include>
+
+</launch>
