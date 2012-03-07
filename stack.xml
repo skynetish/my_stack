@@ -19,7 +19,7 @@
   <depend stack="robot_model" />
   <depend stack="xacro"/>
   <depend stack="simulator_gazebo" />
-  <depend stack="teleop" />
+  <depend stack="generic_teleop" />
   <depend stack="turtlebot" />
   <depend stack="erratic_robot" />
   <depend stack="p2os" />
