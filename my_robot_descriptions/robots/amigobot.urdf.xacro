@@ -9,9 +9,11 @@
     <include filename="$(find amigobot_description)/urdf/amigobot_base.xacro" />
     <!-- My Kinect -->
     <include filename="$(find my_robot_descriptions)/urdf/kinect.urdf.xacro" />
+
+    <property name="parent_link_name" value="base_top_link" />
     
     <amigobot />
 
-    <turtlebot_kinect suffix="amigobot" parent_name="base_top_link" x="0.15" y="0" z="0.05" rr="0" rp="0" ry="0"/>
+    <turtlebot_kinect suffix="amigobot" parent_name="${parent_link_name}" x="0.15" y="0" z="0.05" rr="0" rp="0" ry="0"/>
 
 </robot>
