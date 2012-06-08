@@ -1,0 +1,22 @@
+<launch>
+
+  <!-- Extra arguments for gazebo -->
+  <arg name="args" default="" />
+
+  <!-- Gazebo -->
+  <include file="$(find my_gazebo_worlds)/launch/gazebo_world.launch" >
+    <arg name="world" value="$(find my_gazebo_worlds)/worlds/empty.world.xacro" />
+    <arg name="args" value="$(arg args)" />
+  </include>
+
+  <!-- Walls -->
+  <node
+    name="$(anon walls_spawn_model_node)"
+    pkg="gazebo"
+    type="spawn_model"
+    args="-gazebo -model walls -file $(find my_gazebo_worlds)/models/ecsc_lab_circuit.model"
+    respawn="false"
+    output="screen"
+  />
+
+</launch>

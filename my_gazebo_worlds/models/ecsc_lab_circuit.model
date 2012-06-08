@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
-<model:physical name="peishome">
+<model:physical name="ecsc_lab_circuit">
   <xyz>0 0 0</xyz>
   <rpy>0 0 0</rpy>
   <static>true</static>
-  <body:map name="peishome_body">
-    <geom:map name="peishome_geom">
-      <image>peishome.png</image>
+  <body:map name="ecsc_lab_circuit_body">
+    <geom:map name="ecsc_lab_circuit_geom">
+      <image>ecsc_lab_circuit.png</image>
       <threshold>200</threshold>
       <granularity>1</granularity>
       <negative>false</negative>
       <height>2.0</height>
-      <scale>0.025</scale>
+      <scale>0.01</scale>
       <offset>0 0 0</offset>
       <material>Gazebo/LightWood</material>
     </geom:map>
