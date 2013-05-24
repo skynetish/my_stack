@@ -1,7 +1,7 @@
 -Tests
 -Tutorials
 -Add other robot models (turtlebot, etc.)
--Add sensors
+-Add sensors (kinect, etc.)
 -Restructure gazebo_ros_diffdrive and gazebo_ros_diffdrive_plugin nodes like others
 -Launch files for robots with drivers
 -Launch file for teleop source and teleop twist sink combinations
